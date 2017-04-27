@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        \Carbon\Carbon::setLocale(config('app.locale'));
+
+        view()->composer('*', function($view) {
+            $articleTags = \Cache::rememberForever('tags.list.articles', function() {
+                return \App\Tag::whereType('articles')->get();
+            });
+            $marketTags = \Cache::rememberForever('tags.list.markets', function() {
+                return \App\Tag::whereType('markets')->get();
+            });
+            $productTags = \Cache::rememberForever('tags.list.products', function() {
+                return \App\Tag::whereType('products')->get();
+            });
+            $categories = \Cache::rememberForever('categories.list', function() {
+                return config('project.categories');
+            });
+
+            $currentUser = auth()->user();
+            $currentRouteName = \Route::currentRouteName();
+            $currentLocale = app()->getLocale();
+            $currentUrl = current_url();
+
+            $view->with(compact('articleTags', 'marketTags', 'productTags', 'currentUser', 'currentRouteName', 'currentLocale', 'currentUrl', 'categories'));
+        });
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        if ($this->app->environment('local')) {
+            $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
+        }
+    }
+}
