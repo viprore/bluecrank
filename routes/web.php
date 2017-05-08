@@ -89,6 +89,10 @@ Route::get('auth/register', [
     'as' => 'users.create',
     'uses' => 'UserController@create'
 ]);
+Route::post('auth/register', [
+    'as' => 'users.store',
+    'uses' => 'UsersController@store',
+]);
 Route::get('auth/confirm/{code}', [
     'as' => 'users.confirm',
     'uses' => 'UserController@confirm'

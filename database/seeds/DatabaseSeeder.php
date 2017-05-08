@@ -45,6 +45,9 @@ class DatabaseSeeder extends Seeder
         App\Review::truncate();
         App\User::truncate();
         App\Vote::truncate();
+        App\Ship::truncate();
+        App\Order::truncate();
+        App\Item::truncate();
         $this->command->info('Truncated: all tables');
 
         /* Main Seeding */
@@ -69,7 +72,14 @@ class DatabaseSeeder extends Seeder
 
         /* 관심목록 */
         $this->call(MarkkablesTableSeeder::class);
-    }
+
+        /* 아이템, 주문, 배송지 */
+        $this->call(BuyProcessRelatedTableSeeder::class);
+
+        /* 인증 예약 */
+        $this->call(CertificationsTableSeeder::class);
+
+   }
 
 
 }

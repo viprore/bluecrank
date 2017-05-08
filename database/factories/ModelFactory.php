@@ -159,3 +159,63 @@ $factory->define(App\Review::class, function () {
         'updated_at' => $date,
     ];
 });
+
+$factory->define(App\Ship::class, function () {
+    $faker = Faker\Factory::create('ko_KR');
+
+    $alias = [
+        '회사', '집', '가게', '친구집'
+    ];
+    return [
+        'alias' => $faker->randomElement($alias),
+        'name' => $faker->name,
+        'location' => $faker->address,
+        'phone' => $faker->phoneNumber,
+        'contact' => $faker->phoneNumber,
+    ];
+});
+
+$factory->define(App\Order::class, function () {
+    $faker = Faker\Factory::create('ko_KR');
+    $request = [
+        '빠른 시일 내로 배송 부탁드립니다.',
+        '부서지기 쉬우니 안전배송 부탁드려요',
+        '올때 연락 주세요',
+        '부재시 연락 주세요',
+        '울면서 건네주세요.'
+    ];
+
+    return [
+        'name' => $faker->name,
+        'location' => $faker->address,
+        'phone' => $faker->phoneNumber,
+        'contact' => $faker->phoneNumber,
+        'request' => $faker->randomElement($request)
+    ];
+});
+
+$factory->define(App\Item::class, function (Faker\Generator $faker) {
+    $optionId = App\Option::pluck('id')->toArray();
+    return [
+        'option_id' => $faker->randomElement($optionId),
+        'count' => $faker->numberBetween(1, 5),
+    ];
+});
+
+$factory->define(App\Certification::class, function (Faker\Generator $faker) {
+    $status = ['예약접수', '예약확인', '인증완료'];
+    $reserveDate = $faker->dateTimeBetween('+1 days', '+2 weeks');
+    $time = $faker->numberBetween(1, 5);
+
+    $market_id = ($faker->randomElement([true, false])) ?
+        $faker->randomElement(App\Market::pluck('id')->toArray()) : null;
+
+    return [
+        'market_id' => $market_id,
+        'reserved_date' => date('Y-m-d', $reserveDate->getTimestamp()),
+        'time' => $time,
+        'status' => $faker->randomElement($status),
+        'location' => $faker->address,
+        'item_info' => $faker->paragraph,
+    ];
+});

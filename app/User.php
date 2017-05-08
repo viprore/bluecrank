@@ -58,6 +58,21 @@ class User extends Authenticatable
      */
     protected $casts = ['activated' => 'boolean',];
 
+    public function certifications()
+    {
+        return $this->hasMany(Certification::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function ships()
+    {
+        return $this->hasMany(Ship::class);
+    }
+
     public function articles()
     {
         return $this->hasMany(Article::class);

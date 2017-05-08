@@ -61,7 +61,7 @@ class SocialController extends Controller
             } else {
                 if (! $native_user->activated) {
                     flash()->error(
-                        trans('auth.sessions.error_not_confirmed')
+                        '가입확인해 주세요.'
                     );
 
                     return redirect('/');
@@ -97,7 +97,7 @@ class SocialController extends Controller
         auth()->login($native_user);
 
         flash(
-            trans('auth.sessions.info_welcome', ['name' => auth()->user()->name])
+            auth()->user()->name . '님, 환영합니다.'
         );
 
         return redirect(route('home'));
