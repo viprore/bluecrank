@@ -30,6 +30,10 @@ class RouteServiceProvider extends ServiceProvider
         Route::model('comment', \App\Comment::class);
         Route::model('market', \App\Market::class);
         Route::model('product', \App\Product::class);
+        Route::model('option', \App\Option::class);
+        Route::model('item', \App\Item::class);
+        Route::model('order', \App\Order::class);
+        Route::model('ship', \App\Ship::class);
 //        Route::model('market', \App\Market::class);
     }
 

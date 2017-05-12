@@ -27,6 +27,9 @@ Route::get('/home', [
     'uses' => 'WelcomeController@locale',
 ]);*/
 
+/* 인증/점검 */
+Route::resource('certifications', 'CertificationController');
+
 /* 아티클 */
 Route::resource('articles', 'ArticleController');
 Route::get('tags/{slug}/articles', [
@@ -55,10 +58,7 @@ Route::get('categories/{category}/products', [
     'as' => 'categories.products.index',
     'uses' => 'ProductController@index',
 ]);
-Route::post('wants/{product}', [
-    'as' => 'users.want',
-    'uses' => 'HomeController@want'
-]);
+
 
 /* 첨부 파일 */
 Route::resource('attachments', 'AttachmentController', ['only' => ['store', 'destroy']]);
@@ -91,7 +91,7 @@ Route::get('auth/register', [
 ]);
 Route::post('auth/register', [
     'as' => 'users.store',
-    'uses' => 'UsersController@store',
+    'uses' => 'UserController@store',
 ]);
 Route::get('auth/confirm/{code}', [
     'as' => 'users.confirm',
@@ -104,6 +104,11 @@ Route::post('auth/manage', [
 Route::post('auth/profile', [
     'as' => 'users.profile',
     'uses' => 'UserController@profile'
+]);
+
+Route::get('auth/orders', [
+    'as' => 'users.order',
+    'uses' => 'HomeController@order'
 ]);
 
 /* 사용자 인증 */
@@ -153,3 +158,22 @@ Route::get('shops', [
     'as' => 'shops.index',
     'uses' => 'WelcomeController@shop'
 ]);
+
+/* 구매관련 */
+Route::resource('carts', 'ItemController', ['except' => ['show', 'create', 'edit']]);
+Route::resource('orders', 'OrderController', ['except' => ['destroy']]);
+Route::resource('ships', 'ShipController');
+
+Route::get('auth/carts', [
+    'as' => 'users.cart',
+    'uses' => 'HomeController@mycart'
+]);
+
+Route::post('wants/{product}', [
+    'as' => 'users.want',
+    'uses' => 'HomeController@want'
+]);
+/*Route::post('carts', [
+    'as' => 'users.cart',
+    'uses' => 'HomeController@cart'
+]);*/

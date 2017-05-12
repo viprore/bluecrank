@@ -7,15 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 class Ship extends Model
 {
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'alias',
         'name',
-        'location',
-        'phone',
+        'postcode',
+        'find_address',
+        'input_address',
+        'contact',
         'contact',
     ];
 

@@ -18,8 +18,9 @@ class CreateShipsTable extends Migration
             $table->unsignedInteger('user_id');
             $table->string('alias');
             $table->string('name');
-            $table->string('location');
-            $table->string('phone');
+            $table->string('postcode');
+            $table->string('find_address');
+            $table->string('input_address');
             $table->string('contact');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -34,7 +35,7 @@ class CreateShipsTable extends Migration
     public function down()
     {
         Schema::table('ships', function (Blueprint $table) {
-            $table->foreign('ships_user_id_foreign');
+            $table->dropForeign('ships_user_id_foreign');
         });
 
         Schema::dropIfExists('ships');

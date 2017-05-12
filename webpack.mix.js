@@ -12,7 +12,10 @@ const { mix } = require('laravel-mix');
  */
 
 mix.js('resources/assets/js/app.js', 'public/js')
-   .sass('resources/assets/sass/app.scss', 'public/css');
+    .js('node_modules/flexslider/jquery.flexslider.js', 'public/js')
+    .sass('resources/assets/sass/app.scss', 'public/css')
+   .less('node_modules/flexslider/flexslider.css', 'public/css')
+   ;
 
 mix.scripts([
     'node_modules/highlightjs/highlight.pack.js',

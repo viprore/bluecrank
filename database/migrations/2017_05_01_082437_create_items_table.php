@@ -15,11 +15,13 @@ class CreateItemsTable extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('user_id');
             $table->unsignedInteger('order_id')->nullable();
             $table->unsignedInteger('option_id');
             $table->integer('count');
 
             $table->foreign('option_id')->references('id')->on('options')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -32,6 +34,7 @@ class CreateItemsTable extends Migration
     {
         Schema::table('items', function (Blueprint $table) {
             $table->dropForeign('items_option_id_foreign');
+            $table->dropForeign('items_user_id_foreign');
         });
 
         Schema::dropIfExists('items');

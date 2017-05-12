@@ -17,10 +17,17 @@ class CreateOrdersTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('user_id');
             $table->string('name');
-            $table->string('location');
-            $table->string('phone');
+            $table->string('postcode');
+            $table->string('find_address');
+            $table->string('input_address');
             $table->string('contact');
-            $table->string('request')->nullable();
+            $table->string('please')->nullable();
+            $table->enum('paymethod', ['계좌이체', '무통장입금', '신용카드'])->default('계좌이체');
+            $table->unsignedInteger('amount');
+            $table->string('ship_code')->nullable();
+            $table->enum('status', [
+                '입금전', '입금완료', '배송준비', '배송중', '구매결정', '반품', '취소'])
+                ->default('입금전');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

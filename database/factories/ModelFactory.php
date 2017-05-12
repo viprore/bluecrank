@@ -139,7 +139,7 @@ $factory->define(App\Option::class, function (Faker\Generator $faker) {
     return [
         'size' => $faker->randomElement(['XS', 'S', 'M', 'L', 'XL', '460', '480', '500', '520', '540',]),
         'color' => $faker->colorName,
-        'inventory' => 1,
+        'inventory' => 999,
         'etc' => $faker->realText(20),
     ];
 });
@@ -169,8 +169,9 @@ $factory->define(App\Ship::class, function () {
     return [
         'alias' => $faker->randomElement($alias),
         'name' => $faker->name,
-        'location' => $faker->address,
-        'phone' => $faker->phoneNumber,
+        'postcode' => $faker->postcode,
+        'find_address' => $faker->address,
+        'input_address' => $faker->streetName . " " . $faker->company,
         'contact' => $faker->phoneNumber,
     ];
 });
@@ -187,10 +188,13 @@ $factory->define(App\Order::class, function () {
 
     return [
         'name' => $faker->name,
-        'location' => $faker->address,
-        'phone' => $faker->phoneNumber,
+        'postcode' => $faker->postcode,
+        'find_address' => $faker->address,
+        'input_address' => $faker->streetName . " " . $faker->company,
         'contact' => $faker->phoneNumber,
-        'request' => $faker->randomElement($request)
+        'please' => $faker->randomElement($request),
+        'paymethod' => $faker->randomElement(['계좌이체', '무통장입금', '신용카드']),
+        'amount' => $faker->numberBetween(0, 1000) * 10000
     ];
 });
 

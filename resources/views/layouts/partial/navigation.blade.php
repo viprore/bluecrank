@@ -34,21 +34,21 @@
                         중고장터
                     </a>
                 </li>--}}
-                <li {!! str_contains(request()->path(), ['tags', 'articles']) ? 'class="active"' : '' !!}>
+                {{--<li {!! str_contains(request()->path(), ['tags', 'articles']) ? 'class="active"' : '' !!}>
                     <a href="{{ route('articles.index') }}">
                         커뮤니티
                     </a>
-                </li>
-                <li {!! str_contains(request()->path(), 'malls') ? 'class="active"' : '' !!}>
+                </li>--}}
+                {{--<li {!! str_contains(request()->path(), 'shops') ? 'class="active"' : '' !!}>
                     <a href="{{ route('shops.index') }}">
                         오프라인매장
                     </a>
-                </li>
-                <li {!! str_contains(request()->path(), 'malls') ? 'class="active"' : '' !!}>
-                    <a href="#">
+                </li>--}}
+                {{--<li {!! str_contains(request()->path(), 'certifications') ? 'class="active"' : '' !!}>
+                    <a href="{{ route('certifications.index') }}">
                         점검/인증예약
                     </a>
-                </li>
+                </li>--}}
             </ul>
 
             <!-- Right Side Of Navbar -->
@@ -66,12 +66,23 @@
                         </a>
                     </li>
                 @else
+                    <li>
+                        <a href="{{ route('carts.index') }}">
+                            카트
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('orders.index') }}">
+                            주문내역
+                        </a>
+                    </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                             {{ Auth::user()->name }} <span class="caret"></span>
                         </a>
 
                         <ul class="dropdown-menu" role="menu">
+
                             <li>
                                 <a href="#">
                                     프로필

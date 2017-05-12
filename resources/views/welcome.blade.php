@@ -70,6 +70,21 @@
                 margin-bottom: 30px;
             }
         </style>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="{{ mix('js/app.js') }}"></script>
+
+        <script>
+            $(window).on('load', function() {
+                $('.flexslider').flexslider({
+                    animation: "slide"
+                });
+
+
+            });
+
+        </script>
     </head>
     <body>
         <div class="flex-center position-ref full-height">
@@ -82,9 +97,11 @@
                 @include('flash::message')
 
                 <div class="links">
-                    <a href="{{ route('products.index') }}">BC몰</a>
+                    <a href="http://www.bluecrank.net">BC몰(Old)</a>
+                    <a href="{{ route('products.index') }}">BC몰(New)</a>
                     {{--<a href="{{ route('markets.index') }}">중고장터</a>--}}
                     <a href="{{ route('articles.index') }}">커뮤니티</a>
+                    <a href="#">인증/점검</a>
                     @if (auth()->guest())
                         <a href="{{ route('sessions.create') }}">로그인</a>
                         <a href="{{ route('users.create') }}">회원가입</a>
@@ -94,6 +111,9 @@
                         </a>
                     @endif
                 </div>
+
+
+
             </div>
         </div>
     </body>

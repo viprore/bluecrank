@@ -69,12 +69,8 @@
             border-radius: 12px;
         }
 
-
-
-
-
-
     </style>
+    <link rel="stylesheet" href="{{ mix('css/flexslider.css') }}">
 @stop
 
 @section('content')
@@ -85,10 +81,8 @@
             <a href="{{ route('products.index') }}">
                 BC몰
             </a>
-            <small>
-                글 목록
-            </small>
         </h4>
+
     </div>
 
     <div class="text-right action__market">
@@ -137,6 +131,22 @@
 
         <div class="col-md-12 list__article">
             <div class="row">
+                <div class="flexslider">
+                    <ul class="slides">
+                        <li>
+                            <img src="http://bluecrank.net/web/upload/homi/main_img/main_img1.jpg" />
+                        </li>
+                        <li>
+                            <img src="http://bluecrank.net/web/upload/homi/main_img/main_img2.jpg" />
+                        </li>
+                        <li>
+                            <img src="http://bluecrank.net/web/upload/homi/main_img/main_img3.jpg" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+
                 @forelse($products as $product)
                     <div class="col-sm-6 col-lg-4 col-md-6">
                         <div class="thumbnail">
@@ -256,25 +266,12 @@
 
 @section('script')
     @parent
+    <script src="{{ mix('js/jquery.flexslider.js') }}"></script>
     <script>
-//        var div = $('.thumbnail-wrapper'); // 이미지를 감싸는 div
-//        var img = $('.img-product');
-//
-//        var divAspect = 90 / 120; // div의 가로세로비는 알고 있는 값이다
-//        var imgAspect = img.height / img.width;
-//
-//        alert("divAspect : " + divAspect + " // imgAspect : " + img.width);
-//
-//        if (imgAspect <= divAspect) {
-//            // 이미지가 div보다 납작한 경우 세로를 div에 맞추고 가로는 잘라낸다
-//            var imgWidthActual = div.offsetHeight / imgAspect;
-//            var imgWidthToBe = div.offsetHeight / divAspect;
-//            var marginLeft = -Math.round((imgWidthActual - imgWidthToBe) / 2);
-//            img.style.cssText = 'width: auto; height: 100%; margin-left: '
-//                + marginLeft + 'px;'
-//        } else {
-//            // 이미지가 div보다 길쭉한 경우 가로를 div에 맞추고 세로를 잘라낸다
-//            img.style.cssText = 'width: 100%; height: auto; margin-left: 0;';
-//        }
+        $(window).on('load', function() {
+            $('.flexslider').flexslider({
+                animation: "slide"
+            });
+        });
     </script>
 @endsection

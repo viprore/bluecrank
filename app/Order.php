@@ -12,11 +12,15 @@ class Order extends Model
      * @var array
      */
     protected $fillable = [
+        'user_id',
         'name',
-        'location',
-        'phone',
+        'postcode',
+        'find_address',
+        'input_address',
         'contact',
-        'request',
+        'please',
+        'paymethod',
+        'amount'
     ];
 
     /**

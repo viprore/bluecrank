@@ -31,8 +31,9 @@ class BuyProcessRelatedTableSeeder extends Seeder
 
         foreach ($orders as $order) {
             foreach (range(1, rand(1, 5)) as $index) {
+                $user_id = $order->user_id;
                 $order->items()->save(
-                    factory(App\Item::class)->make()
+                    factory(App\Item::class)->make(compact('user_id'))
                 );
             }
         }
