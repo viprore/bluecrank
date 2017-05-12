@@ -170,7 +170,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Laracasts\Flash\FlashServiceProvider::class,
         SocialiteProviders\Manager\ServiceProvider::class,
-        Maknz\Slack\SlackServiceProvider::class,
+//        Maknz\Slack\SlackServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -241,7 +241,7 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
         'Flash' => Laracasts\Flash\Flash::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
-        'Slack' => Maknz\Slack\Facades\Slack::class,
+//        'Slack' => Maknz\Slack\Facades\Slack::class,
     ],
 
 ];
