@@ -42,9 +42,9 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3"><img src="{{ $item->option->product->attachments->first()->url }}"
+                    <div class="col-xs-3"><img src="{{ $item->option->product->attachments->first()->url }}"
                                                class="img-thumbnail w-100"></div>
-                    <div class="col-md-9">
+                    <div class="col-xs-9">
                         <dl>
                             <dt>{{ $item->option->product->ad_title }}</dt>
                             <dd>색상 : {{ $item->option->color }} // 사이즈 : {{ $item->option->size }}</dd>

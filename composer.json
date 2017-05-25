@@ -12,7 +12,6 @@
         "laracasts/flash": "^2.0",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
-//        "maknz/slack": "^1.7",
         "socialiteproviders/google": "^3.0",
         "socialiteproviders/kakao": "^3.0",
         "socialiteproviders/naver": "^3.0"

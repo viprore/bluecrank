@@ -58,7 +58,7 @@ class ProductController extends Controller implements Cacheable
             $query = $query->whereRaw($raw, [$keyword]);
         }
 
-        $products = $this->cache($cacheKey, 1, $query, 'paginate', 6);
+        $products = $this->cache($cacheKey, 1, $query, 'paginate', 3);
 
         return view('products.index', compact('products'));
     }
@@ -86,8 +86,9 @@ class ProductController extends Controller implements Cacheable
         $payload = [
             "_token" => $request->input('_token'),
             "ad_title" => $request->input('ad_title'),
+            "ad_status" => $request->input('ad_status'),
             "ad_short_description" => $request->input('ad_short_description'),
-            "category" => $request->input('category')[0],
+            "category" => $request->input('category'),
             "price" => $request->input('price'),
             "description" => $request->input('description'),
         ];
@@ -180,8 +181,9 @@ class ProductController extends Controller implements Cacheable
         $payload = [
             "_token" => $request->input('_token'),
             "ad_title" => $request->input('ad_title'),
+            "ad_status" => $request->input('ad_status'),
             "ad_short_description" => $request->input('ad_short_description'),
-            "category" => $request->input('category')[0],
+            "category" => $request->input('category'),
             "price" => $request->input('price'),
             "description" => $request->input('description'),
         ];

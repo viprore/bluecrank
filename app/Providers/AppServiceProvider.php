@@ -28,13 +28,16 @@ class AppServiceProvider extends ServiceProvider
             $categories = \Cache::rememberForever('categories.list', function() {
                 return config('project.categories');
             });
+            $statusList = \Cache::rememberForever('status.list', function() {
+                return config('project.order_status');
+            });
 
             $currentUser = auth()->user();
             $currentRouteName = \Route::currentRouteName();
             $currentLocale = app()->getLocale();
             $currentUrl = current_url();
 
-            $view->with(compact('articleTags', 'marketTags', 'productTags', 'currentUser', 'currentRouteName', 'currentLocale', 'currentUrl', 'categories'));
+            $view->with(compact('articleTags', 'marketTags', 'productTags', 'currentUser', 'currentRouteName', 'currentLocale', 'currentUrl', 'categories', 'statusList'));
         });
     }
 

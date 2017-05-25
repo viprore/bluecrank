@@ -164,16 +164,67 @@ Route::resource('carts', 'ItemController', ['except' => ['show', 'create', 'edit
 Route::resource('orders', 'OrderController', ['except' => ['destroy']]);
 Route::resource('ships', 'ShipController');
 
+Route::post('status/{status}/orders/{order}', [
+    'as' => 'orders.status',
+    'uses' => 'OrderController@updateStatus'
+]);
+
+Route::get('cancel/orders', [
+    'as' => 'orders.index.cancel',
+    'uses' => 'OrderController@index'
+]);
+
+Route::get('json/ships/{ship}', [
+    'as' => 'users.ship',
+    'uses' => 'ShipController@getJsonShip'
+]);
+
+Route::get('shops/{state}', [
+    'as' => 'shops.state',
+    'uses' => 'OrderController@getCity'
+]);
+
+
+
 Route::get('auth/carts', [
     'as' => 'users.cart',
     'uses' => 'HomeController@mycart'
 ]);
 
+/*Route::get('auth/carts', [
+    'as' => 'users.cart',
+    'uses' => 'HomeController@mycart'
+]);*/
+
 Route::post('wants/{product}', [
     'as' => 'users.want',
     'uses' => 'HomeController@want'
 ]);
+
+Route::post('buyone', [
+    'as' => 'users.direct',
+    'uses' => 'ItemController@direct'
+]);
+
 /*Route::post('carts', [
     'as' => 'users.cart',
     'uses' => 'HomeController@cart'
 ]);*/
+
+/* Admin */
+Route::resource('admin', 'AdminController', ['except' => ['show', 'create', 'edit']]);
+Route::get('admin/status/{slug}', [
+    'as' => 'admin.orders.status',
+    'uses' => 'AdminController@status'
+]);
+
+Route::post('admin/orders/{order}/status/{slug}', [
+    'as' => 'admin.orders.update',
+    'uses' => 'AdminController@statusPost'
+]);
+
+Route::resource('reviews', 'ReviewController');
+Route::get('reviews/create/{id}', [
+    'as' => 'reviews.create',
+    'uses' => 'ReviewController@create'
+]);

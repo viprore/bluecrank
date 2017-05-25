@@ -63,6 +63,21 @@
                                 <tr>
                                     <td colspan="4" bgcolor="#CCCCCC"><b>서울특별시</b><a name="seoul" id="seoul"></a></td>
                                 </tr>
+                                {{--@php
+                                    $seoul = $shops->where('state', '서울시');
+                                @endphp
+                                @forelse($seoul as $shop)
+                                    <tr class="{{ $loop->index % 2 == 0 ? 'odd' : 'even' }}">
+                                        <td height="24">행복한자전거 본점</td>
+                                        <td width="50">1기</td>
+                                        <td width="60">이병익</td>
+                                        <td width="350">서울시 서초구 반포동 62-1</td>
+                                    </tr>
+                                @empty
+                                    <tr class="odd">
+                                        <td colspan="4">No data</td>
+                                    </tr>
+                                @endforelse--}}
                                 <tr class="odd">
                                     <td height="24">행복한자전거 본점</td>
                                     <td width="50">1기</td>

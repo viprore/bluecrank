@@ -19,6 +19,8 @@ class Ship extends Model
      * @var array
      */
     protected $fillable = [
+        'user_id',
+        'alias',
         'name',
         'postcode',
         'find_address',

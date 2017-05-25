@@ -70,7 +70,7 @@ class User extends Authenticatable
 
     public function carts()
     {
-        return $this->hasMany(Item::class);
+        return $this->hasMany(Item::class)->where('order_id','=',null);
     }
 
     public function ships()

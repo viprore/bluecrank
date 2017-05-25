@@ -41,10 +41,12 @@ class AttachmentController extends Controller
 
                 if ($request->input('article_id')) {
                     $attachments[] = \App\Article::findOrFail($request->input('article_id'))->attachments()->create($payload);
-                }else if ($request->input('product_id')) {
+                 }else if ($request->input('product_id')) {
                     $attachments[] = \App\Product::findOrFail($request->input('product_id'))->attachments()->create($payload);
-                }else if ($request->input('market_id')) {
+                } else if ($request->input('market_id')) {
                     $attachments[] = \App\Market::findOrFail($request->input('market_id'))->attachments()->create($payload);
+                } else if ($request->input('review_id')) {
+                    $attachments[] = \App\Review::findOrFail($request->input('review_id'))->attachments()->create($payload);
                 } else {
                     $attachments[] = \App\Attachment::create($payload);
                 }

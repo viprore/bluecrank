@@ -26,7 +26,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedInteger('amount');
             $table->string('ship_code')->nullable();
             $table->enum('status', [
-                '입금전', '입금완료', '배송준비', '배송중', '구매결정', '반품', '취소'])
+                '입금전', '입금완료', '배송준비', '배송중', '배송완료', '구매결정', '반품', '취소'])
                 ->default('입금전');
             $table->timestamps();
 

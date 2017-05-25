@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Shop;
 use Illuminate\Http\Request;
 
 class WelcomeController extends Controller
@@ -21,6 +22,7 @@ class WelcomeController extends Controller
      * @return \Illuminate\Contracts\View\Factory
      */
     public function shop() {
+        $shops = Shop::all();
         return view('shop.index');
     }
 

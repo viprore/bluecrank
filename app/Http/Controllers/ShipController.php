@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Ship;
 use Illuminate\Http\Request;
 
 class ShipController extends Controller
@@ -80,5 +81,10 @@ class ShipController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getJsonShip(Ship $ship)
+    {
+        return response()->json($ship, 200, [], JSON_PRETTY_PRINT);
     }
 }

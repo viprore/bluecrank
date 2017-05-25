@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('style')
+    @parent
     <style>
         .item_info h3 {
             font-size: 1.5em;
@@ -31,14 +32,15 @@
             font-weight: 600;
         }
 
-        .option-quantity-left{
-            float:left;
+        .option-quantity-left {
+            float: left;
         }
-        .option-quantity-left h5,.option-quantity-right h5,.occasional h5{
-            text-transform:uppercase;
-            font-size:1em;
-            color:#3c43a4;
-            margin:0 0 1em;
+
+        .option-quantity-left h5, .option-quantity-right h5, .occasional h5 {
+            text-transform: uppercase;
+            font-size: 1em;
+            color: #3c43a4;
+            margin: 0 0 1em;
         }
 
         .option-quantity-right {
@@ -48,8 +50,8 @@
 
         /*-- quantity-starts --*/
         .value-minus,
-        .value-plus,.value-minus1,
-        .value-plus1{
+        .value-plus, .value-minus1,
+        .value-plus1 {
             height: 40px;
             line-height: 24px;
             width: 40px;
@@ -62,12 +64,13 @@
             text-align: center;
             -webkit-user-select: none;
             -moz-user-select: none;
-            border:1px solid #b2b2b2;
+            border: 1px solid #b2b2b2;
             vertical-align: bottom;
         }
+
         .quantity-select .entry.value-minus:before,
-        .quantity-select .entry.value-plus:before,.quantity-select .entry.value-minus1:before,
-        .quantity-select .entry.value-plus1:before{
+        .quantity-select .entry.value-plus:before, .quantity-select .entry.value-minus1:before,
+        .quantity-select .entry.value-plus1:before {
             content: "";
             width: 13px;
             height: 2px;
@@ -78,7 +81,8 @@
             margin-top: -0.5px;
             position: absolute;
         }
-        .quantity-select .entry.value-plus:after,.quantity-select .entry.value-plus1:after{
+
+        .quantity-select .entry.value-plus:after, .quantity-select .entry.value-plus1:after {
             content: "";
             height: 13px;
             width: 2px;
@@ -89,10 +93,11 @@
             margin-top: -6.2px;
             position: absolute;
         }
-        .value,.value1  {
+
+        .value, .value1 {
             cursor: default;
             width: 40px;
-            height:40px;
+            height: 40px;
             padding: 8px 0px;
             color: #A9A9A9;
             line-height: 24px;
@@ -102,15 +107,17 @@
             display: inline-block;
             margin-right: 3px;
         }
+
         .quantity-select .entry.value-minus:hover,
-        .quantity-select .entry.value-plus:hover,.quantity-select .entry.value-minus1:hover,
-        .quantity-select .entry.value-plus1:hover{
+        .quantity-select .entry.value-plus:hover, .quantity-select .entry.value-minus1:hover,
+        .quantity-select .entry.value-plus1:hover {
             background: #E5E5E5;
         }
 
-        .quantity-select .entry.value-minus,.quantity-select .entry.value-minus1{
+        .quantity-select .entry.value-minus, .quantity-select .entry.value-minus1 {
             margin-left: 0;
         }
+
         /*-- quantity-end --*/
     </style>
     <link rel="stylesheet" href="{{ mix('css/flexslider.css') }}">
@@ -205,7 +212,13 @@
                     </div>
                     <div class="form-group text-center">
                         @if(Auth::check())
-                            <button type="button" class="btn btn-danger btn__want">찜하기</button>
+                            <button type="button" class="btn btn-danger btn__want">
+                                @if(empty(Auth::user()->wantProducts->where('id', '=', $product->id)->first()))
+                                    찜하기
+                                @else
+                                    찜하기 해제
+                                @endif
+                            </button>
                             <button type="button" class="btn btn-success  btn__cart">카트</button>
                             <button type="button" class="btn btn-primary  btn__buy">구매</button>
                         @else
@@ -244,10 +257,58 @@
                         삭제
                     </button>
                 @endcan
+                <a href="{{ route('reviews.create', $product->id) }}" class="btn btn-success">
+                    <i class="fa fa-pencil-square-o"></i>
+                    리뷰 작성
+                </a>
                 <a href="{{ route('products.index') }}" class="btn btn-default">
                     <i class="fa fa-list"></i>
                     목록
                 </a>
+            </div>
+
+            <div class="container__reviews">
+                <div class="page-header">
+                    <h4>
+                        리뷰({{ $product->reviews->count() }})
+                    </h4>
+                </div>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>글쓴이</th>
+                        <th>날짜</th>
+                        <th>제목</th>
+                        <th>평점</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @forelse($product->reviews as $review)
+
+                        <tr>
+                            <td>{{ $review->user->name }}</td>
+                            <td>{{ $review->created_at }}</td>
+                            <td><a href="{{ route('reviews.show', $review->id) }}">{{ $review->title }}</a></td>
+                            <td>
+                                @for($i=0; $i<5; $i++)
+                                    @if($i < $review->rating)
+                                        <span class="glyphicon glyphicon-star text-danger"></span>
+                                    @else
+                                        <span class="glyphicon glyphicon-star-empty text-danger"></span>
+                                    @endif
+
+                                @endfor
+                                    {{ '('.$review->rating.')' }}
+                            </td>
+                        </tr>
+
+                    @empty
+                        <tr>
+                            <td colspan="4">No data</td>
+                        </tr>
+                    @endforelse
+                    </tbody>
+                </table>
             </div>
 
             <div class="container__comment">
@@ -268,14 +329,14 @@
             });
         });
 
-        $('.value-plus1').on('click', function(){
-            var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10)+1;
+        $('.value-plus1').on('click', function () {
+            var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10) + 1;
             divUpd.text(newVal);
         });
 
-        $('.value-minus1').on('click', function(){
-            var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10)-1;
-            if(newVal>=1) divUpd.text(newVal);
+        $('.value-minus1').on('click', function () {
+            var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10) - 1;
+            if (newVal >= 1) divUpd.text(newVal);
         });
         $('.button__delete').on('click', function (e) {
             var productId = $('article').data('id');
@@ -293,14 +354,14 @@
         $('.btn__want').on('click', function (e) {
             var productId = $('article').data('id');
 
-            if (confirm('찜하기')) {
-                $.ajax({
-                    type: 'POST',
-                    url: '/wants/' + productId
-                }).then(function () {
-                    window.location.href = '/products/' + productId;
-                });
-            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/wants/' + productId
+            }).then(function () {
+                window.location.href = '/products/' + productId;
+            });
+
         });
 
         $('.btn__cart').on('click', function (e) {
@@ -309,7 +370,7 @@
             var optionTxt = $('#select_option option:selected').text();
             var count = parseInt($('.value1').text(), 10);
 
-            if(confirm(optionTxt + " " + count + "개를 장바구니에 추가합니다.")){
+            if (confirm(optionTxt + " " + count + "개를 장바구니에 추가합니다.")) {
                 $.ajax({
 //                    type: 'POST',
 //                    url: '/carts/' + optionId + '/count/' + count
@@ -323,19 +384,42 @@
                     window.location.href = '/products/' + productId;
                 });
             }
-
-
-
-//            var productId = $('article').data('id');
-//
-//            if (confirm('찜하기')) {
-//                $.ajax({
-//                    type: 'POST',
-//                    url: '/wants/' + productId
-//                }).then(function () {
-//                    window.location.href = '/products/' + productId;
-//                });
-//            }
         });
+
+        $('.btn__buy').on('click', function (e) {
+            var optionId = $('#select_option option:selected').val();
+            var optionTxt = $('#select_option option:selected').text();
+            var count = parseInt($('.value1').text(), 10);
+
+            if (confirm(optionTxt + " " + count + "개를 바로 구매합니다.")) {
+                post_to_url('/buyone', {
+                    '_token': $('meta[name="csrf-token"]').attr('content'),
+                    'option_id': optionId,
+                    'count': count
+                });
+            }
+        });
+
+        function post_to_url(path, params, method) {
+            method = method || "post"; // 전송 방식 기본값을 POST로
+
+
+            var form = document.createElement("form");
+            form.setAttribute("method", method);
+            form.setAttribute("action", path);
+
+            //히든으로 값을 주입시킨다.
+            for (var key in params) {
+                var hiddenField = document.createElement("input");
+                hiddenField.setAttribute("type", "hidden");
+                hiddenField.setAttribute("name", key);
+                hiddenField.setAttribute("value", params[key]);
+
+                form.appendChild(hiddenField);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
     </script>
 @stop

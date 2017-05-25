@@ -20,6 +20,7 @@ class Order extends Model
         'contact',
         'please',
         'paymethod',
+        'shipmethod',
         'amount'
     ];
 

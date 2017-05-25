@@ -53,6 +53,41 @@ class ItemController extends Controller
 
     }
 
+    public function direct(Request $request)
+    {
+        $option_id = $request->input('option_id');
+        $count = $request->input('count');
+
+        $option = Option::find($option_id);
+
+        if ($option->inventory < $count) {
+            flash('죄송합니다. 재고량이 부족합니다.', 'warning');
+            return response()->json([], 204, [], JSON_PRETTY_PRINT);
+        }
+
+        $user = \Auth::user();
+        $item = $user->carts
+            ->where('order_id', '=', null)
+            ->where('option_id', '=', $option->id)->first();
+
+        if ($item) {
+            flash('장바구니에 상품의 수량을 ' . $count . '개로 변경합니다.', 'info');
+            $item->update([
+                'count' => $count,
+            ]);
+        } else {
+            $item = Item::create([
+                'user_id' => $user->id,
+                'option_id' => $option->id,
+                'count' => $count,
+            ]);
+            flash('카트에 상품이 담겼습니다.');
+        }
+
+        $items = [$item->id];
+        return redirect(route('orders.create', compact('items')));
+    }
+
 
 
     /**

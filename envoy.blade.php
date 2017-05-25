@@ -43,7 +43,7 @@ cd {{ $release_dir }} && git clone -b master {{ $remote }} {{ $distname }};
     ln -nfs {{ $global }} {{ $local }};
 @endforeach
 
-cd {{ $release_dir }}/{{ $distname }} && composer install --prefer-dist --no-scripts --no-dev;
+cd {{ $release_dir }}/{{ $distname }} && composer install --prefer-dist --no-scripts;
 
 ln -nfs {{ $release_dir }}/{{ $distname }} {{ $project_root }};
 

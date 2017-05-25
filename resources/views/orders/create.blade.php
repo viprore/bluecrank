@@ -5,6 +5,12 @@
         $viewName = 'orders.index';
         $total_amount= 0;
         $itemIdList = '';
+        if(old('shipmethod', $order->shipmethod) == 'direct'){
+            $ship_method = 'direct';
+        }else{
+            $ship_method = 'toshop';
+        }
+
     @endphp
 
     <div class="page-header">
@@ -28,92 +34,191 @@
                             </div>
                             <div id="panel-element-43672" class="panel-collapse collapse in">
                                 <div class="panel-body">
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>주소록</th>
-                                            <th>
-                                                <div class="form-inline">
-                                                    <div class="btn-group">
-                                                        <button type="button" class="btn btn-default dropdown-toggle"
-                                                                data-toggle="dropdown" aria-expanded="false">
-                                                            직접입력 <span class="caret"></span>
-                                                        </button>
-                                                        <ul class="dropdown-menu" role="menu">
-                                                            <li><a href="#">직접입력</a></li>
-                                                            <li class="divider"></li>
-                                                            @forelse(\Auth::user()->ships as $ship)
-                                                                <li><a href="#">{{ $ship->alias }}</a></li>
-                                                            @empty
-                                                            @endforelse
-                                                        </ul>
-                                                    </div>
-                                                    <div class="input-group">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li role="presentation" {!! $ship_method == 'direct' ? 'class="active"' : '' !!}>
+                                            <a href="#direct" aria-controls="direct"
+                                               role="tab" data-toggle="pill" onclick="editShipMethod('direct')">직접배송</a>
+                                        </li>
+                                        <li role="presentation" {!! $ship_method == 'toshop' ? 'class="active"' : '' !!}>
+                                            <a href="#toshop" aria-controls="toshop" role="tab"
+                                               data-toggle="pill" onclick="editShipMethod('toshop')">인근매장으로 배송</a></li>
+                                        <input type="hidden" id="shipmethod" name="shipmethod"
+                                               value="{{ $ship_method }}">
+                                    </ul>
+
+                                    <!-- Tab panes -->
+                                    <div class="tab-content">
+                                        <div role="tabpanel"
+                                             class="tab-pane fade {!! $ship_method == 'direct' ? 'in active' : '' !!}"
+                                             id="direct">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th>주소록</th>
+                                                    <th>
+                                                        <div class="form-inline">
+                                                            <div class="btn-group">
+                                                                <button type="button"
+                                                                        class="btn btn-default dropdown-toggle"
+                                                                        data-toggle="dropdown" aria-expanded="false">
+                                                                    직접입력 <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li><a href="#">직접입력</a></li>
+                                                                    <li class="divider"></li>
+                                                                    @forelse(\Auth::user()->ships as $ship)
+                                                                        <li><a href="#"
+                                                                               ship-id="{{ $ship->id }}">{{ $ship->alias }}</a>
+                                                                        </li>
+                                                                    @empty
+                                                                    @endforelse
+                                                                </ul>
+                                                            </div>
+                                                            <div class="input-group">
                                             <span class="input-group-addon" id="basic-addon1">
-                                                <input type="checkbox">
+                                                <input type="checkbox" id="cb_save" name="ship_save">
                                             </span>
-                                                        <input type="text" class="form-control" disabled
-                                                               placeholder="주소록을 저장합니다"
-                                                               aria-describedby="basic-addon1">
-                                                    </div>
-                                                </div>
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>이름</td>
-                                            <td>
-                                                <input type="text" class="form-control" name="name" id="name"
-                                                       value="{{ old('name', $order->name) }}">
-                                                {!! $errors->first('name', '<span class="form-error">:message</span>') !!}
-                                            </td>
+                                                                <input type="text" class="form-control" disabled
+                                                                       id="alias"
+                                                                       name="alias"
+                                                                       placeholder="주소록을 저장합니다"
+                                                                       aria-describedby="basic-addon1">
+                                                            </div>
+                                                        </div>
+                                                    </th>
 
-                                        </tr>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>이름</td>
+                                                    <td>
+                                                        <input type="text" class="form-control" name="name" id="name"
+                                                               value="{{ old('name', $order->name) }}">
+                                                        {!! $errors->first('name', '<span class="form-error">:message</span>') !!}
+                                                    </td>
 
-                                        <tr>
-                                            <td rowspan="3">주소</td>
-                                            <td>
-                                                <div class="form-inline">
-                                                    <a id="modal-261803" href="#modal-container-261803" role="button"
-                                                       class="btn btn-default"
-                                                       data-toggle="modal">주소찾기</a>
-                                                    <input type="text" class="form-control disabled" name="postcode"
-                                                           id="postcode"
-                                                           value="{{ old('postcode', $order->postcode) }}">
-                                                </div>
+                                                </tr>
 
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="text" class="form-control disabled" id="find_address"
-                                                       name="find_address"
-                                                       value="{{ old('find_address', $order->find_address) }}"></td>
-                                        </tr>
-                                        <tr>
-                                            <td><input type="text" class="form-control disabled" id="input_address"
-                                                       name="input_address"
-                                                       value="{{ old('input_address', $order->input_address) }}">
-                                                {!! $errors->first('postcode', '<span class="form-error">:message</span>') !!}
-                                                {!! $errors->first('find_address', '<span class="form-error">:message</span>') !!}
-                                                {!! $errors->first('input_address', '<span class="form-error">:message</span>') !!}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>연락처</td>
-                                            <td><input type="text" class="form-control" id="contact" name="contact"
-                                                       value="{{ old('contact', $order->contact) }}">
-                                                {!! $errors->first('contact', '<span class="form-error">:message</span>') !!}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>요청사항</td>
-                                            <td><textarea class="form-control" rows="3" id="please" name="please"
-                                                          value="{{ old('please', $order->please) }}"></textarea>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                                <tr>
+                                                    <td rowspan="3">주소</td>
+                                                    <td>
+                                                        <div class="form-inline">
+                                                            <button type="button" id="postcodify_search_button"
+                                                                    class="btn btn-default">주소찾기
+                                                            </button>
+                                                            {{--<a id="modal-261803" href="#modal-container-261803" role="button"
+                                                               class="btn btn-default"
+                                                               data-toggle="modal">주소찾기</a>--}}
+                                                            <input type="text"
+                                                                   class="form-control disabled postcodify_postcode5"
+                                                                   name="postcode"
+                                                                   id="postcode"
+                                                                   value="{{ old('postcode', $order->postcode) }}">
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="text"
+                                                               class="form-control disabled postcodify_address"
+                                                               id="find_address"
+                                                               name="find_address"
+                                                               value="{{ old('find_address', $order->find_address) }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="text"
+                                                               class="form-control disabled postcodify_extra_info"
+                                                               id="input_address"
+                                                               name="input_address"
+                                                               value="{{ old('input_address', $order->input_address) }}">
+                                                        {!! $errors->first('postcode', '<span class="form-error">:message</span>') !!}
+                                                        {!! $errors->first('find_address', '<span class="form-error">:message</span>') !!}
+                                                        {!! $errors->first('input_address', '<span class="form-error">:message</span>') !!}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>연락처</td>
+                                                    <td><input type="text" class="form-control" id="contact"
+                                                               name="contact"
+                                                               value="{{ old('contact', $order->contact) }}">
+                                                        {!! $errors->first('contact', '<span class="form-error">:message</span>') !!}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>요청사항</td>
+                                                    <td><textarea class="form-control" rows="3" id="please"
+                                                                  name="please"
+                                                                  value="{{ old('please', $order->please) }}"></textarea>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div role="tabpanel"
+                                             class="tab-pane fade {!! $ship_method == 'toshop' ? 'in active' : '' !!}"
+                                             id="toshop">
+                                            <table class="table">
+                                                <tbody>
+                                                <tr>
+                                                    <td>매장선택</td>
+                                                    <td>
+                                                        <select id="states" class="form-control" onchange="makeModal()">
+                                                            @foreach($states as $state)
+                                                                <option value="{{ $state }}">{{ $state }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <button type="button" class="btn btn-primary btn-sm"
+                                                                data-toggle="modal" data-target="#myModal">
+                                                            매장선택
+                                                        </button>
+                                                    {{--<a class="btn btn-primary" href="#">검색 </a></td>--}}
+
+                                                </tr>
+                                                <tr>
+                                                    <td>매장정보</td>
+                                                    <td>
+                                                        <h4 id="shop_name">{{ old('postcode2', $order->postcode) ? old('postcode2', $order->postcode) : '매장정보 없음'  }}</h4>
+                                                        <p id="shop_address">{{ old('find_address2', $order->find_address) ? old('find_address2', $order->find_address) : '상단에 매장선택을 이용하세요!'  }}</p>
+                                                        {!! $errors->first('postcode2', '<span class="form-error">:message</span>') !!}
+                                                        <input type="hidden" id="postcode2" name="postcode2"
+                                                               value="{{ old('postcode2', $order->postcode) }}">
+                                                        <input type="hidden" id="find_address2" name="find_address2"
+                                                               value="{{ old('find_address2', $order->find_address) }}">
+                                                        <input type="hidden" id="input_address2" name="input_address2"
+                                                               value="{{ old('input_address2', $order->input_address) }}">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>이름</td>
+                                                    <td>
+                                                        <input type="text" name="name2" class="form-control"
+                                                               placeholder="홍길동"
+                                                               value="{{ old('name2', $order->name) }}">
+                                                        {!! $errors->first('name2', '<span class="form-error">:message</span>') !!}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>연락처</td>
+                                                    <td>
+                                                        <input type="text" name="contact2" class="form-control"
+                                                               placeholder="010-5882-7469"
+                                                               value="{{ old('contact2', $order->contact) }}">
+                                                        {!! $errors->first('contact2', '<span class="form-error">:message</span>') !!}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>요청사항</td>
+                                                    <td><textarea name="please2" class="form-control" row="5"
+                                                                  placeholder="완제품 조립 및 도착 후 피팅까지 부탁드립니다."
+                                                                  value="{{ old('please2', $order->please) }}"></textarea>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
 
 
                                 </div>
@@ -243,4 +348,138 @@
         </div>
     </div>
 
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">매장선택</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>매장명</th>
+                            <th>담당미캐닉</th>
+                            <th>매장주소</th>
+                            <th>적용</th>
+                        </tr>
+                        </thead>
+                        <tbody id="shoplist">
+                        @foreach($shops as $shop)
+                            <tr>
+                                <td>{{ $shop->name }}</td>
+                                <td>{{ $shop->mechanic }}</td>
+                                <td>{{ $shop->address }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-success" onclick="selectShop(this)">선택</button>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@stop
+
+@section('script')
+    @parent
+    <script src="//d1p7wdleee1q2z.cloudfront.net/post/search.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#states").select2({
+                placeholder: "시/도"
+            });
+            $('#cb_save').change(function () {
+                if ($('#cb_save').is(":checked")) {
+                    $('#alias').prop('disabled', false)
+                        .attr('placeholder', 'ex) 집, 회사');
+
+                } else {
+                    $('#alias').prop('disabled', true)
+                        .attr('placeholder', '주소록을 저장합니다');
+
+                }
+            });
+            $('.dropdown-menu li a').click(function () {
+                var shipId = $(this).attr('ship-id');
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/json/ships/' + shipId
+                }).then(function (data) {
+                    $('#name').val(data.name);
+                    $('#postcode').val(data.postcode);
+                    $('#find_address').val(data.find_address);
+                    $('#input_address').val(data.input_address);
+                    $('#contact').val(data.contact);
+                });
+            });
+        });
+
+        $(function () {
+            $("#postcodify_search_button").postcodifyPopUp();
+        });
+
+        function makeModal() {
+            var state = $('#states').val();
+            $('#shoplist').empty();
+            $.ajax({
+                type: 'GET',
+                url: '/shops/' + state
+            }).then(function (data) {
+                for (var i in data) {
+                    $('#shoplist').append('<tr><td>' + data[i].name + '</td>' +
+                        '<td>' + data[i].mechanic + '</td>' +
+                        '<td>' + data[i].address + '</td>' +
+                        '<td><button type="button" class="btn btn-success" onclick="selectShop(this)">선택</button></td></tr>')
+                }
+            });
+        }
+
+        function editShipMethod(method) {
+            $('#shipmethod').val(method);
+        }
+
+        function selectShop(btnClick) {
+            var selected_tr = btnClick.parentNode.parentNode;
+            var childs = selected_tr.childNodes;
+            var name = null;
+            var mechanic = null;
+            var address = null;
+
+            var i=0;
+            while(address == null){
+                if(childs[i].nodeName == 'TD'){
+                    if(name == null) {
+                        name = childs[i].textContent;
+                    }else if(mechanic == null) {
+                        mechanic = childs[i].textContent;
+                    }else{
+                        address = childs[i].textContent;
+                        break;
+                    }
+                }
+                i++;
+            }
+
+            $('#shop_name').replaceWith("<h4 id='shop_name'>" + name + "(" + mechanic + ")" + "</h4>");
+            $('#shop_address').replaceWith("<p id='shop_address'>" + address + "</p>");
+            $('#postcode2').val(name + "(" + mechanic + ")");
+            $('#find_address2').val(address);
+            $('#input_address2').val('전화번호 정보가 없습니다');
+
+            $('#myModal').modal('toggle');
+
+        }
+
+    </script>
 @stop

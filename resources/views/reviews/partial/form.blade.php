@@ -1,69 +1,26 @@
-
-
-<div class="form-group {{ $errors->has('ad_title') ? 'has-error' : '' }}">
-    <label for="ad_title">상품 제목</label>
-    <input type="text" name="ad_title" id="ad_title" value="{{ old('ad_title', $product->ad_title) }}"
-           class="form-control"/>
-    {!! $errors->first('ad_title', '<span class="form-error">:message</span>') !!}
-</div>
-
-<div class="form-group {{ $errors->has('ad_short_description') ? 'has-error' : '' }}">
-    <label for="ad_short_description">간략 소개</label>
-    <textarea name="ad_short_description" id="ad_short_description" rows="3" class="form-control">{{ old('ad_short_description', $product->ad_short_description) }}</textarea>
-    {!! $errors->first('ad_short_description', '<span class="form-error">:message</span>') !!}
-</div>
-
-<div class="form-group {{ $errors->has('ad_status') ? 'has-error' : '' }}">
-    <label for="status">상태</label>
-    <select name="ad_status" id="ad_status" class="form-control">
-        <option value="준비중" {{ $product->ad_status==='준비중' ? 'selected="selected"' : '' }}>준비중</option>
-        <option value="판매" {{ $product->ad_status==='판매' ? 'selected="selected"' : '' }}>판매</option>
-        <option value="매진" {{ $product->ad_status==='매진' ? 'selected="selected"' : '' }}>매진</option>
-    </select>
-</div>
-
-<div class="form-group {{ $errors->has('category') ? 'has-error' : '' }}">
-    <label for="category">카테고리</label>
-    <select name="category" id="category" class="form-control">
-        @foreach($categories as $slug => $locale)
-            <option value="{{ $slug }}" {{ $product->category===$slug ? 'selected="selected"' : '' }}>
-                {{ $locale[$currentLocale] }}
-            </option>
-        @endforeach
-    </select>
-    {!! $errors->first('category', '<span class="form-error">:message</span>') !!}
-</div>
-
-<div class="form-group {{ $errors->has('price') ? 'has-error' : '' }}">
-    <label for="price">가격</label>
-    <input type="text" name="price" id="price" value="{{ old('price', $product->price) }}"
-           onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)' style='ime-mode:disabled;'
-           class="form-control"/>
-    {!! $errors->first('price', '<span class="form-error">:message</span>') !!}
+<div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
+    <label for="title">제목</label>
+    <input type="text" name="title" id="title" value="{{ old('title', $review->title) }}" class="form-control"/>
+    {!! $errors->first('title', '<span class="form-error">:message</span>') !!}
 </div>
 
 <div class="form-group {{ $errors->has('tags') ? 'has-error' : '' }}">
-    <label for="tags">태그</label>
-    <select name="tags[]" id="tags" multiple="multiple" class="form-control">
-        @foreach($productTags as $tag)
-            <option value="{{ $tag->id }}" {{ $product->tags->contains($tag->id) ? 'selected="selected"' : '' }}>
-                {{ $tag->name }}
-            </option>
-        @endforeach
-    </select>
-    {!! $errors->first('tags', '<span class="form-error">:message</span>') !!}
+    <label for="rating">평점</label>
+    <input type="text" name="rating" id="rating" value="{{ old('rating', $review->rating) }}"
+           onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)' style='ime-mode:disabled;'
+           class="form-control"/>
+    {!! $errors->first('rating', '<span class="form-error">:message</span>') !!}
 </div>
 
+<div class="form-group {{ $errors->has('content') ? 'has-error' : '' }}">
+    <label for="content">본문</label>
 
-<div class="form-group {{ $errors->has('description') ? 'has-error' : '' }}">
-    <label for="description">본문</label>
-    <textarea name="description" id="description" rows="10"
-              class="form-control">{{ old('description', $product->description) }}</textarea>
-    {!! $errors->first('description', '<span class="form-error">:message</span>') !!}
+    <textarea name="content" id="content" rows="10" class="form-control">{{ old('content', $review->content) }}</textarea>
+    {!! $errors->first('content', '<span class="form-error">:message</span>') !!}
 
     {{--마크다운 컴파일 결과 미리보기--}}
     <div class="preview__content">
-        {!! markdown(old('description', '미리보기')) !!}
+        {!! markdown(old('content', '...')) !!}
     </div>
 </div>
 
@@ -81,18 +38,26 @@
 
     <div id="my-dropzone" class="dropzone"></div>
 </div>
+
 @section('style')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 @stop
 @section('script')
     @parent
+
     <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
     <script>
         var simplemde = new SimpleMDE({
-            element: document.getElementById("description"),
+            element: document.getElementById("content"),
             forceSync: true,
             placeholder: "입력하세요",
+            previewRender: function(plainText, preview) { // Async method
+                setTimeout(function(){
+                    preview.innerHTML = customMarkdownParser(plainText);
+                }, 250);
 
+                return "Loading...";
+            },
             promptURLs: true,
             spellChecker: false,
         });
@@ -113,7 +78,7 @@
             uploadMultiple: true,
             params: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
-                product_id: '{{ $product->id }}'
+                review_id: '{{ $review->id }}'
             },
             dictDefaultMessage: '<div class="text-center text-muted">' +
             "<h2>첨부할 파일을 끌어다 놓으세요!</h2>" +
@@ -138,7 +103,7 @@
                 // 책에 없는 내용
                 // 이미 파일일 경우 handleContent() 호출.
                 if (/^image/.test(data[i].mime)) {
-                    handleContent('description', data[i].url);
+                    handleContent('content', data[i].url);
                 }
             }
         });
@@ -154,7 +119,7 @@
                 handleFormElement(data.id, true);
 
                 if (/^image/.test(data.mime)) {
-                    handleContent('description', data.url, true);
+                    handleContent('content', data.url, true);
                 }
             })
         });
@@ -172,13 +137,18 @@
                 name: 'attachments[]',
                 value: id
             }).appendTo(form);
-        };
+        }
+
+//        var simplemde = new SimpleMDE({
+//            element: document.getElementById("content")
+//        });
 
         // 컨텐트 영역의 캐럿 위치에 이미지 마크다운을 삽입한다.
         var handleContent = function (objId, imgUrl, remove) {
             var caretPos = document.getElementById(objId).selectionStart;
             var content = $('#' + objId).val();
             var imgMarkdown = '![](' + imgUrl + ')';
+
             if (remove) {
                 $('#' + objId).val(
                     content.replace(imgMarkdown, '')
@@ -186,12 +156,16 @@
                 simplemde.value($('#' + objId).val());
                 return;
             }
+
             $('#' + objId).val(
                 content.substring(0, caretPos) +
                 imgMarkdown + '\n' +
                 content.substring(caretPos)
+
             );
+
             simplemde.value($('#' + objId).val());
+
         };
 
         // 드롭존의 가시성을 토글한다.
@@ -201,10 +175,6 @@
         });
 
 
-        $('#tags').select2({
-            placeholder: '자전거 태그를 선택하세요(최대 3개)',
-            maximumSelectionLength: 3
-        });
 
         function onlyNumber(event) {
             event = event || window.event;
@@ -223,13 +193,5 @@
                 event.target.value = event.target.value.replace(/[^0-9]/g, "");
         }
 
-        // 상단 스크롤 헤더 숨기기
-        simplemde.codemirror.on("focus", function () {
-            if (simplemde.isFullscreenActive()) {
-                $('.navbar').hide();
-            } else {
-                $('.navbar').show();
-            }
-        });
     </script>
 @stop

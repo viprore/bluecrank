@@ -3,7 +3,8 @@
         <div class="navbar-header">
 
             <!-- Collapsed Hamburger -->
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#app-navbar-collapse">
                 <span class="sr-only">Toggle Navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -34,16 +35,16 @@
                         중고장터
                     </a>
                 </li>--}}
-                {{--<li {!! str_contains(request()->path(), ['tags', 'articles']) ? 'class="active"' : '' !!}>
+                <li {!! str_contains(request()->path(), ['tags', 'articles']) ? 'class="active"' : '' !!}>
                     <a href="{{ route('articles.index') }}">
                         커뮤니티
                     </a>
-                </li>--}}
-                {{--<li {!! str_contains(request()->path(), 'shops') ? 'class="active"' : '' !!}>
+                </li>
+                <li {!! str_contains(request()->path(), 'shops') ? 'class="active"' : '' !!}>
                     <a href="{{ route('shops.index') }}">
                         오프라인매장
                     </a>
-                </li>--}}
+                </li>
                 {{--<li {!! str_contains(request()->path(), 'certifications') ? 'class="active"' : '' !!}>
                     <a href="{{ route('certifications.index') }}">
                         점검/인증예약
@@ -82,7 +83,13 @@
                         </a>
 
                         <ul class="dropdown-menu" role="menu">
-
+                            @if(Auth::user()->isAdmin())
+                                <li>
+                                    <a href="{{ route('admin.index') }}">
+                                        관리자 페이지
+                                    </a>
+                                </li>
+                            @endif
                             <li>
                                 <a href="#">
                                     프로필

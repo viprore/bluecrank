@@ -74,12 +74,12 @@ class HomeController extends Controller
         return response()->json([], 200, [], JSON_PRETTY_PRINT);
     }
 
-    public function mycart()
+    /*public function mycart()
     {
         $user = \Auth::user();
         $items = $user->carts;
         return view('carts.index', compact('items'));
-    }
+    }*/
 
     public function order()
     {
