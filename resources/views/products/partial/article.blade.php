@@ -1,5 +1,6 @@
 <div class="media">
-  <a class="pull-left" href="{{ gravatar_profile_url('info@bluecrank.net') }}">
+
+  {{--<a class="pull-left" href="{{ gravatar_profile_url('info@bluecrank.net') }}">
     <img class="media-object img-thumbnail" src="{{ gravatar_url('info@bluecrank.net', 48) }}" alt="블루크랭크">
   </a>
 
@@ -23,7 +24,7 @@
           • 댓글 {{ $product->comment_count }}
         @endif
       </small>
-    </p>
+    </p>--}}
 
     {{--@if ($viewName === 'products.index')
       @include('tags.partial.list', ['tags' => $product->tags])

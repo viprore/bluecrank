@@ -120,7 +120,6 @@
 
         /*-- quantity-end --*/
     </style>
-    <link rel="stylesheet" href="{{ mix('css/flexslider.css') }}">
 @stop
 @section('content')
     @php $viewName = 'products.show'; @endphp
@@ -134,6 +133,7 @@
                 / {{ $product->ad_title }}
             </small>
         </h4>
+
     </div>
 
     <div class="row container__article">
@@ -153,19 +153,40 @@
                 @else
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="flexslider">
-                                <ul class="slides">
+                            <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                                <!-- Indicators -->
+                                @if($product->attachments->count() > 1)
+                                    <ol class="carousel-indicators">
+                                        @foreach($product->attachments as $attachment)
+                                            <li data-target="#carousel-example-generic"
+                                                data-slide-to="{{ $loop->index }}"
+                                                    {!! $loop->index == 0 ? 'class="active"' : '' !!}></li>
+                                        @endforeach
+                                    </ol>
+                                @endif
+
+
+                            <!-- Wrapper for slides -->
+                                <div class="carousel-inner" role="listbox">
                                     @forelse($product->attachments as $attachment)
-                                        <li data-thumb="{{ $attachment->url }}">
-                                            <img src="{{ $attachment->url }}"/>
-                                        </li>
+                                        <div class="item {{ $loop->index == 0 ? 'active' : '' }}">
+                                            <img class="img-thumbnail" src="{{ $attachment->url }}" alt="">
+                                            <div class="carousel-caption"></div>
+                                        </div>
                                     @empty
-                                        <li>
-                                            no image
-                                        </li>
                                     @endforelse
 
-                                </ul>
+                                </div>
+
+                                <!-- Controls -->
+                                {{--<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>--}}
                             </div>
                         </div>
                         <div class="col-md-8 item_info">
@@ -228,7 +249,9 @@
                 @endif
             </div>
 
+
             <article data-id="{{ $product->id }}" id="item__article">
+                <hr/>
                 @include('products.partial.article', compact('product'))
 
                 <div class="content__article">
@@ -298,7 +321,7 @@
                                     @endif
 
                                 @endfor
-                                    {{ '('.$review->rating.')' }}
+                                {{ '('.$review->rating.')' }}
                             </td>
                         </tr>
 
@@ -320,7 +343,6 @@
 
 @section('script')
     @parent
-    <script src="{{ mix('js/jquery.flexslider.js') }}"></script>
     <script>
         $(window).on('load', function () {
             $('.flexslider').flexslider({
