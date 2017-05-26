@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Product;
 use Illuminate\Http\Request;
+use League\HTMLToMarkdown\HtmlConverter;
 
 class ProductController extends Controller implements Cacheable
 {
@@ -37,7 +38,7 @@ class ProductController extends Controller implements Cacheable
         $cacheKey = cache_key('products.index');
 
         if (strpos($request->route()->getName(), 'tags')) {
-            $query = $slug ? \App\Tag::whereSlug($slug)->firstOrFail()->markets()
+            $query = $slug ? \App\Tag::whereSlug($slug)->firstOrFail()->products()
                 : new Product;
         } else {
             $query = $slug ? Product::whereCategory($slug)
@@ -54,8 +55,9 @@ class ProductController extends Controller implements Cacheable
 
 
         if ($keyword = request()->input('q')) {
-            $raw = 'MATCH(ad_title,, ad_short_description, brand, model, description) AGAINST(? IN BOOLEAN MODE)';
+            $raw = 'MATCH(ad_title, ad_short_description) AGAINST(? IN BOOLEAN MODE)';
             $query = $query->whereRaw($raw, [$keyword]);
+
         }
 
         $products = $this->cache($cacheKey, 1, $query, 'paginate', 3);
@@ -176,6 +178,8 @@ class ProductController extends Controller implements Cacheable
      */
     public function update(ProductRequest $request, Product $product)
     {
+        
+
         $this->authorize('update', $product);
 
         $payload = [

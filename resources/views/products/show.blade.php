@@ -185,7 +185,7 @@
                                     <select name="select_option[]" id="select_option" class="form-control">
                                         @foreach($product->options as $option)
                                             <option value="{{ $option->id }}">
-                                                {{ $option->color . " - (" . $option->size .")" }}
+                                                {{ strpos($option->color, '-') ? ($option->color . " - (" . $option->size .")") : $option->size }}
                                             </option>
                                         @endforeach
                                     </select>

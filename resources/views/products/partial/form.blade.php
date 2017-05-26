@@ -45,6 +45,7 @@
 <div class="form-group {{ $errors->has('tags') ? 'has-error' : '' }}">
     <label for="tags">태그</label>
     <select name="tags[]" id="tags" multiple="multiple" class="form-control">
+
         @foreach($productTags as $tag)
             <option value="{{ $tag->id }}" {{ $product->tags->contains($tag->id) ? 'selected="selected"' : '' }}>
                 {{ $tag->name }}

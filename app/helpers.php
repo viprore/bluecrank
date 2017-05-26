@@ -188,3 +188,21 @@ if (! function_exists('array_transpose')) {
         return $res;
     }
 }
+
+// TODO 만들다 맘
+if (! function_exists('cleanNoLinkAttachment')) {
+    function cleanNoLinkAttachment()
+    {
+        $results = array();
+        $handler = opendir(attachments_path());
+
+        while ($file = readdir($handler)) {
+            if ($file != '.' && $file != '..' && is_dir($file) != '1') {
+                $results[] = $file;
+            }
+        }
+
+        closedir($handler);
+        return $results;
+    }
+}
