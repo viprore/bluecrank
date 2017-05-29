@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@section('style')
+    <style>
+        .img-w100{
+            width: 100%;
+        }
+    </style>
+@endsection
+
 @section('content')
     @php $viewName = 'shop.index'; @endphp
 
@@ -24,8 +32,10 @@
         </div>--}}
 
         <div class="col-md-12 list__article">
-            <div class="row"></div>
-            <div class="row" align="center">
+            <div class="row">
+                <img class="img-w100" src="{{ url('icons/shops.png') }}">
+            </div>
+            {{--<div class="row" align="center">
                 <table width="800" border="0" cellspacing="0" cellpadding="0">
                     <tr>
                         <td height="374" valign="top">
@@ -63,7 +73,7 @@
                                 <tr>
                                     <td colspan="4" bgcolor="#CCCCCC"><b>서울특별시</b><a name="seoul" id="seoul"></a></td>
                                 </tr>
-                                {{--@php
+                                --}}{{--@php
                                     $seoul = $shops->where('state', '서울시');
                                 @endphp
                                 @forelse($seoul as $shop)
@@ -77,7 +87,7 @@
                                     <tr class="odd">
                                         <td colspan="4">No data</td>
                                     </tr>
-                                @endforelse--}}
+                                @endforelse--}}{{--
                                 <tr class="odd">
                                     <td height="24">행복한자전거 본점</td>
                                     <td width="50">1기</td>
@@ -972,7 +982,7 @@
                     </tr>
                 </table>
 
-            </div>
+            </div>--}}
         </div>
     </div>
 @stop

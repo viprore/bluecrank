@@ -101,7 +101,7 @@
                     <a href="{{ route('products.index') }}">BC몰(New)</a>
                     {{--<a href="{{ route('markets.index') }}">중고장터</a>--}}
                     <a href="{{ route('articles.index') }}">커뮤니티</a>
-                    <a href="#">인증/점검</a>
+                    {{--<a href="#">인증/점검</a>--}}
                     @if (auth()->guest())
                         <a href="{{ route('sessions.create') }}">로그인</a>
                         <a href="{{ route('users.create') }}">회원가입</a>

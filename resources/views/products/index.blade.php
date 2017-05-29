@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
 @section('style')
+    @parent
     <style>
+        .my-6 {
+            margin-top: 2em;
+            margin-bottom: 2em;
+        }
+
         .ad_inform {
             padding: 10px;
         }
@@ -17,11 +23,11 @@
         }
 
         .caption h4 {
+            display: block;
+            /*width: 200px; */
             white-space: nowrap;
-        }
-
-        .thumbnail img {
-            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .img-product {
@@ -39,10 +45,13 @@
         }
 
         .glyphicon-heart {
+            padding-right: 3px;
             color: #d17581;
         }
 
         .glyphicon-comment {
+            padding-left: 3px;
+            padding-right: 3px;
             color: #2a88bd;
         }
 
@@ -50,6 +59,9 @@
             padding: 0
         }
 
+        .padding-option {
+            padding: 3px;
+        }
 
 
         .thumbnail .caption-full {
@@ -130,7 +142,7 @@
         </div>
 
         <div class="col-md-9 list__article">
-            <div class="row">
+            <div class="row my-6">
 
                 <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
                     <!-- Indicators -->
@@ -160,24 +172,12 @@
                         <span class="sr-only">Next</span>
                     </a>--}}
                 </div>
-                {{--<div class="flexslider">
-                    <ul class="slides">
-                        <li>
-                            <img src="http://bluecrank.net/web/upload/homi/main_img/main_img1.jpg" />
-                        </li>
-                        <li>
-                            <img src="http://bluecrank.net/web/upload/homi/main_img/main_img2.jpg" />
-                        </li>
-                        <li>
 
-                        </li>
-                    </ul>
-                </div>--}}
             </div>
             <div class="row">
 
                 @forelse($products as $product)
-                    <div class="col-sm-6 col-lg-4 col-md-6">
+                    <div class="col-sm-6 col-md-6 col-lg-4 padding-option">
                         <div class="thumbnail">
                             <div class="ad_inform">
                                 <a class="pull-left" href="{{ gravatar_profile_url('info@bluecrank.net') }}">
@@ -190,9 +190,9 @@
                                     {{ $product->created_at->diffForHumans() }}
                                 </p>
                             </div>
-                            <div class="thumbnail-wrapper">
+                            <div class="embed-responsive embed-responsive-4by3">
                                 <a href="{{ route('products.show', $product->id) }}">
-                                    <img class="img-product" src="{{ $product->attachments->count() > 0 ? $product->attachments->first()->url : 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQlzvW0rg_vTZkwz20Ot15G_zcKgx2L5DTtgUNPOrArVnPjpRoJiK8hJZc' }}" alt="">
+                                    <img class="img-product embed-responsive-item" src="{{ $product->attachments->count() > 0 ? $product->attachments->first()->url : 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQlzvW0rg_vTZkwz20Ot15G_zcKgx2L5DTtgUNPOrArVnPjpRoJiK8hJZc' }}" alt="">
                                 </a>
                             </div>
                             <div class="caption">
