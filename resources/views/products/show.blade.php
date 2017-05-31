@@ -74,7 +74,7 @@
             content: "";
             width: 13px;
             height: 2px;
-            background: #000;
+            background: #969696;
             left: 50%;
             margin-left: -7px;
             top: 50%;
@@ -86,7 +86,7 @@
             content: "";
             height: 13px;
             width: 2px;
-            background: #000;
+            background: #969696;
             left: 50%;
             margin-left: -1.4px;
             top: 50%;
@@ -99,10 +99,10 @@
             width: 40px;
             height: 40px;
             padding: 8px 0px;
-            color: #A9A9A9;
+            color: #fff;
             line-height: 24px;
             border: 1px solid #E5E5E5;
-            background-color: #E5E5E5;
+            background-color: #685555;
             text-align: center;
             display: inline-block;
             margin-right: 3px;
@@ -242,6 +242,10 @@
                             </button>
                             <button type="button" class="btn btn-success  btn__cart">카트</button>
                             <button type="button" class="btn btn-primary  btn__buy">구매</button>
+                            @if($product->cafe_id != 0)
+                                <a href="http://bluecrank.net/product/detail.html?product_no={{ $product->cafe_id }}" class="btn btn-warning">카드결제(임시)</a>
+                            @endif
+
                         @else
                             <a href="{{ route('sessions.create') }}">로그인</a>후 구매 가능합니다.
                         @endif

@@ -13,7 +13,7 @@ class WelcomeController extends Controller
      * @return \Illuminate\Contracts\View\Factory
      */
     public function index() {
-        return view('welcome');
+        return view('renew');
     }
 
     /**

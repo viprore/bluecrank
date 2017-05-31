@@ -31,11 +31,16 @@ return [
     */
     'tags' => [
         'products' =>[
-            'goodprice' => '가성비甲',
-            'commute' => '출퇴근용',
-            'forrider' => '라이더전용',
-            'display' => '이뿌다잉',
+            'giant' => '자이언트',
+            'fuji' => '후지',
+            'focus' => '포커스',
+            'canon' => '캐논데일',
+            'goodprice' => '가성비갑',
+            'female' => '여성용',
+            'commute' => '출퇴근',
+            'river' => '한강라이딩',
             'highend' => '하이엔드',
+            'sale' => '특가할인',
         ],
         'markets' =>[
             'goodprice' => '가성비甲',

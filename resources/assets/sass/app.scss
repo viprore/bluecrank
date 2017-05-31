@@ -522,11 +522,20 @@ span.form-error {
     margin-bottom: 2em;
   }
 
+  .item__banner {
+    &>a {
+      display: none;
+    }
+
+  }
+
   .item__comment {
     &>a.pull-left {
       display: none;
     }
   }
+
+
 
 }
 

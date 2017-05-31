@@ -33,34 +33,58 @@ class ProductController extends Controller implements Cacheable
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $slug = null)
+    public function index(Request $request, $category = null)
     {
-        $cacheKey = cache_key('products.index');
+        // #1 Category로 물품 제한
+        $query = $category ? Product::whereCategory($category)
+            : new Product;
 
-        if (strpos($request->route()->getName(), 'tags')) {
-            $query = $slug ? \App\Tag::whereSlug($slug)->firstOrFail()->products()
-                : new Product;
-        } else {
-            $query = $slug ? Product::whereCategory($slug)
-                : new Product;
-        }
+        // 정렬 옵션
         $query = $query->orderBy(
             $request->input('sort', 'created_at'),
             $request->input('order', 'desc')
         );
 
+        // 운영자가 아닐 경우 판매된 상품, 매진된 상품만 전시
         if (!\Auth::check() || !$request->user()->isAdmin()) {
             $query = $query->whereIn('ad_status', ['판매', '매진']);
         }
 
+        // 검색 관련 쿼리 및 캐싱
+        $cacheKey = cache_key('products.index');
 
         if ($keyword = request()->input('q')) {
             $raw = 'MATCH(ad_title, ad_short_description) AGAINST(? IN BOOLEAN MODE)';
             $query = $query->whereRaw($raw, [$keyword]);
+        }
+
+        $products = $query->get();
+
+
+
+        // 태그 활용
+
+
+        $slug = $request->input('slug');
+        if (!empty($slug)) {
+            $slugs = explode(' ', $slug);
+
+            $sIds = array();
+            foreach ($products as $product) {
+                $tags = $product->tags->pluck('slug')->all();
+
+                $result = array_intersect($tags, $slugs);
+
+                if (count($result) == count($slugs)) {
+                    array_push($sIds, $product->id);
+                }
+            }
+            $query = $query->whereIn('id', $sIds);
 
         }
 
         $products = $this->cache($cacheKey, 1, $query, 'paginate', 3);
+
 
         return view('products.index', compact('products'));
     }
@@ -178,7 +202,7 @@ class ProductController extends Controller implements Cacheable
      */
     public function update(ProductRequest $request, Product $product)
     {
-        
+
 
         $this->authorize('update', $product);
 
@@ -241,5 +265,7 @@ class ProductController extends Controller implements Cacheable
     {
 
     }
+
+
 
 }
