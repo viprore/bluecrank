@@ -94,12 +94,16 @@
 
         .button__slug {
             font-size: 16px;
+            margin: 4px;
         }
 
-        .item__banner img{
+        .item__banner img {
             width: 100%;
         }
 
+        .no-padding {
+            padding: 1px;
+        }
 
 
     </style>
@@ -171,46 +175,57 @@
         </div>
 
         <div class="col-md-9 list__article">
-            <div class="row">
+            @if(!strpos(request()->fullUrl(), 'slug') and !strpos(request()->fullUrl(), 'page') and !strpos(request()->fullUrl(), 'category'))
+                <div class="row">
 
-                <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-                    <!-- Indicators -->
-                {{--<ol class="carousel-indicators">--}}
-                {{--<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>--}}
-                {{--<li data-target="#carousel-example-generic" data-slide-to="1"></li>--}}
-                {{--<li data-target="#carousel-example-generic" data-slide-to="2"></li>--}}
-                {{--</ol>--}}
+                    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                        <!-- Indicators -->
+                    {{--<ol class="carousel-indicators">--}}
+                    {{--<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>--}}
+                    {{--<li data-target="#carousel-example-generic" data-slide-to="1"></li>--}}
+                    {{--<li data-target="#carousel-example-generic" data-slide-to="2"></li>--}}
+                    {{--</ol>--}}
 
-                <!-- Wrapper for slides -->
-                    <div class="carousel-inner" role="listbox">
-                        <div class="item active">
-                            <img src="http://bluecrank.net/web/upload/homi/main_img/main_img3.jpg"/>
-                            <div class="carousel-caption">
+                    <!-- Wrapper for slides -->
+                        <div class="carousel-inner" role="listbox">
+                            <div class="item active">
+                                <img src="http://bluecrank.net/web/upload/homi/main_img/main_img3.jpg"/>
+                                <div class="carousel-caption">
 
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Controls -->
+                        {{--<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>--}}
                     </div>
 
-                    <!-- Controls -->
-                    {{--<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>--}}
                 </div>
+            @endif
 
-            </div>
-            <div class="thumbnail row my-6 inner__padding">
-                인기태그 :
-                @foreach($productTags as $tag)
-                    <a href="#" id="{{ $tag->slug }}"
-                       class="button__slug btn btn-sm {{ str_contains(request()->input('slug'), $tag->slug) ? 'btn-info' : 'btn-secondary' }}">
-                        # {{ $tag->name }}
-                    </a>
-                @endforeach
+            {{--<div class="thumbnail row my-6 inner__padding">--}}
+
+            <div class="row my-6">
+                <div class="col-md-12 no-padding">
+                    <div class="panel panel-default">
+                        <div class="panel-heading"><b>인기태그</b></div>
+                        <div class="panel-body">
+                            @foreach($productTags as $tag)
+                                <button type="button" id="{{ $tag->slug }}"
+                                        class="button__slug btn btn-sm {{ str_contains(request()->input('slug'), $tag->slug) ? 'btn-info' : 'btn-default' }}">
+                                    # {{ $tag->name }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="row">
 
@@ -260,7 +275,11 @@
 
             @if($products->count())
                 <div class="text-center">
-                    {!! $products->render() !!}
+                    {!! $products->appends([
+                        'slug' => request()->input('slug'),
+                        'sort' => request()->input('sort'),
+                        'order' => request()->input('order'),
+                    ])->links() !!}
                 </div>
             @endif
         </div>
@@ -373,9 +392,9 @@
                     });
 
                     if (slugParam.length < 1) {
-                        location.href = removeParam('slug', $(location).attr('href'));
+                        location.href = removeParam('page', removeParam('slug', $(location).attr('href')));
                     } else {
-                        location.href = replaceUrlParam($(location).attr('href'), 'slug', slugParam);
+                        location.href = removeParam('page', replaceUrlParam($(location).attr('href'), 'slug', slugParam));
                     }
                 }
 

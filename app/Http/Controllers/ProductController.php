@@ -202,8 +202,6 @@ class ProductController extends Controller implements Cacheable
      */
     public function update(ProductRequest $request, Product $product)
     {
-
-
         $this->authorize('update', $product);
 
         $payload = [

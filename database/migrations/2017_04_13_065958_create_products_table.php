@@ -24,7 +24,7 @@ class CreateProductsTable extends Migration
             $table->tinyInteger('view_count')->default(0);
             $table->string('ad_title');
             $table->enum('ad_status', ['준비중', '판매', '매진']);
-            $table->string('ad_short_description');
+            $table->string('ad_short_description')->nullable();
             $table->unsignedInteger('price');
             $table->text('description')->nullable();
             $table->timestamps();

@@ -37,7 +37,7 @@ class ProductRequest extends FormRequest
 
         return [
             'ad_title' => ['required'],
-            'ad_short_description' => ['required', 'max:50'],
+            'ad_short_description' => ['max:50'],
             'tags' => ['required', 'array'],
             'category' => ['required'],
             'price' => ['required'],
