@@ -20,10 +20,10 @@ class Shop extends Model
      */
     protected $fillable = [
         'name',
-        'batch',
-        'mechanic',
         'address',
         'state',
         'city',
+        'contact',
+        'homepage',
     ];
 }

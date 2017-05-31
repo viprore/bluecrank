@@ -363,8 +363,8 @@
                         <thead>
                         <tr>
                             <th>매장명</th>
-                            <th>담당미캐닉</th>
                             <th>매장주소</th>
+                            <th>연락처</th>
                             <th>적용</th>
                         </tr>
                         </thead>
@@ -372,8 +372,8 @@
                         @foreach($shops as $shop)
                             <tr>
                                 <td>{{ $shop->name }}</td>
-                                <td>{{ $shop->mechanic }}</td>
                                 <td>{{ $shop->address }}</td>
+                                <td>{{ $shop->contact }}</td>
                                 <td>
                                     <button type="button" class="btn btn-success" onclick="selectShop(this)">선택</button>
                                 </td>
@@ -438,8 +438,8 @@
             }).then(function (data) {
                 for (var i in data) {
                     $('#shoplist').append('<tr><td>' + data[i].name + '</td>' +
-                        '<td>' + data[i].mechanic + '</td>' +
                         '<td>' + data[i].address + '</td>' +
+                        '<td>' + data[i].contact + '</td>' +
                         '<td><button type="button" class="btn btn-success" onclick="selectShop(this)">선택</button></td></tr>')
                 }
             });
@@ -453,29 +453,29 @@
             var selected_tr = btnClick.parentNode.parentNode;
             var childs = selected_tr.childNodes;
             var name = null;
-            var mechanic = null;
             var address = null;
+            var contact = null;
 
             var i=0;
-            while(address == null){
+            while(contact == null){
                 if(childs[i].nodeName == 'TD'){
                     if(name == null) {
                         name = childs[i].textContent;
-                    }else if(mechanic == null) {
-                        mechanic = childs[i].textContent;
-                    }else{
+                    }else if(address == null) {
                         address = childs[i].textContent;
+                    }else{
+                        contact = childs[i].textContent;
                         break;
                     }
                 }
                 i++;
             }
 
-            $('#shop_name').replaceWith("<h4 id='shop_name'>" + name + "(" + mechanic + ")" + "</h4>");
+            $('#shop_name').replaceWith("<h4 id='shop_name'>" + name + "(매장 연락처: " + contact + ")" + "</h4>");
             $('#shop_address').replaceWith("<p id='shop_address'>" + address + "</p>");
-            $('#postcode2').val(name + "(" + mechanic + ")");
+            $('#postcode2').val(name);
             $('#find_address2').val(address);
-            $('#input_address2').val('전화번호 정보가 없습니다');
+            $('#input_address2').val(contact);
 
             $('#myModal').modal('toggle');
 

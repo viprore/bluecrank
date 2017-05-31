@@ -80,7 +80,7 @@ class OrderController extends Controller
         // TODO :: 캐시에 박기(변경 별로 없으니)
         $states = \DB::table('shops')->distinct()->pluck('state');
 
-        $shops = Shop::whereState('서울시')->get();
+        $shops = Shop::whereState('서울')->get();
 
         return view('orders.create', compact('order', 'items', 'states', 'shops'));
     }
