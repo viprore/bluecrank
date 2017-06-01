@@ -38,10 +38,14 @@ class SessionController extends Controller
         ]);
 
         if (! auth()->attempt($request->only('email', 'password'), $request->has('remember'))) {
-            if (\App\User::socialUser($request->input('email'))->first()) {
-                return $this->respondError('이전에 소셜 계정으로 접속하셨습니다.');
+            $user = \App\User::socialUser($request->input('email'))->first();
+            if ($user) {
+                if (!$user->activated) {
+                    return $this->respondError('가입시 기입한 이메일을 확인해주세요.');
+                }else{
+                    return $this->respondError('이전에 소셜 계정으로 접속하셨습니다.');
+                }
             }
-
             return $this->respondError('이메일 또는 비밀번호가 맞지 않습니다.');
         }
 
@@ -64,7 +68,7 @@ class SessionController extends Controller
         auth()->logout();
         flash('잘가열!');
 
-        return redirect(route('root'));
+        return redirect(route('products.index'));
     }
 
     /* Helpers */
@@ -94,6 +98,6 @@ class SessionController extends Controller
 
         return ($return = request('return'))
             ? redirect(urldecode($return))
-            : redirect()->intended('home');
+            : redirect()->intended('products');
     }
 }

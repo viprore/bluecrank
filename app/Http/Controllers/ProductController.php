@@ -83,7 +83,7 @@ class ProductController extends Controller implements Cacheable
 
         }
 
-        $products = $this->cache($cacheKey, 1, $query, 'paginate', 3);
+        $products = $this->cache($cacheKey, 1, $query, 'paginate', 6);
 
 
         return view('products.index', compact('products'));

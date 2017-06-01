@@ -88,21 +88,34 @@
             <div class="panel-body">
                 <table class="table">
                     <tbody>
+                    <tr>
+                        <td>결제방법</td>
+                        <td>{{ $order->paymethod }}</td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    </tr>
+                    @if(strpos($order->paymethod, '무통장'))
                         <tr>
-                            <td>결제방법</td>
-                            <td>{{ $order->paymethod }}</td>
-                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>결제금액</td>
-                            <td>{{ $order->amount }}</td>
+                            <td>입금은행</td>
+                            <td>이태헌 653-099146-01-015 (기업)</td>
                             <td>&nbsp;</td>
                         </tr>
+
                         <tr>
-                            <td>상태</td>
-                            <td>{{ $order->status }}</td>
+                            <td>입금자명</td>
+                            <td>{{ $order->banker }}</td>
                             <td>&nbsp;</td>
                         </tr>
+                    @endif
+                    <tr>
+                        <td>결제금액</td>
+                        <td>{{ $order->amount }}</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>상태</td>
+                        <td>{{ $order->status }}</td>
+                        <td>&nbsp;</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>

@@ -193,7 +193,7 @@
                                                 <tr>
                                                     <td>이름</td>
                                                     <td>
-                                                        <input type="text" name="name2" class="form-control"
+                                                        <input type="text" id="name2" name="name2" class="form-control"
                                                                placeholder="홍길동"
                                                                value="{{ old('name2', $order->name) }}">
                                                         {!! $errors->first('name2', '<span class="form-error">:message</span>') !!}
@@ -292,6 +292,33 @@
                                                     <input type="radio" name="paymethod" id="inlineRadio3"
                                                            value="신용카드" disabled> 신용카드
                                                 </label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                입금자명
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon" id="basic-addon1">
+                                                        <input type="checkbox" id="cb_banker">
+                                                    </span>
+                                                    <input type="text" class="form-control"
+                                                           id="banker"
+                                                           name="banker"
+                                                           placeholder="입금자명"
+                                                           aria-describedby="basic-addon1" />
+
+                                                </div>
+                                                <span class="form-error">받는 분과 동일하신 경우 체크</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                입금은행
+                                            </td>
+                                            <td>
+                                                <p>이태헌 653-099146-01-015 (기업)</p>
                                             </td>
                                         </tr>
                                         <tr>
@@ -409,6 +436,22 @@
 
                 }
             });
+            $('#cb_banker').change(function () {
+                if ($('#cb_banker').is(":checked")) {
+                    var name = $('#name').val();
+                    if(name.length < 1) {
+                        name = $('#name2').val();
+                    }
+                    $('#banker').prop('disabled', true)
+                        .attr('value', name);
+
+                } else {
+                    $('#banker').val('');
+                    $('#banker').prop('disabled', false)
+                        .attr('placeholder', '입금하시는 분의 성함을 입력하세요');
+
+                }
+            });
             $('.dropdown-menu li a').click(function () {
                 var shipId = $(this).attr('ship-id');
 
@@ -456,14 +499,14 @@
             var address = null;
             var contact = null;
 
-            var i=0;
-            while(contact == null){
-                if(childs[i].nodeName == 'TD'){
-                    if(name == null) {
+            var i = 0;
+            while (contact == null) {
+                if (childs[i].nodeName == 'TD') {
+                    if (name == null) {
                         name = childs[i].textContent;
-                    }else if(address == null) {
+                    } else if (address == null) {
                         address = childs[i].textContent;
-                    }else{
+                    } else {
                         contact = childs[i].textContent;
                         break;
                     }

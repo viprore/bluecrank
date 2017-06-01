@@ -21,7 +21,8 @@ class Order extends Model
         'please',
         'paymethod',
         'shipmethod',
-        'amount'
+        'amount',
+        'banker'
     ];
 
     /**

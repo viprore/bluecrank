@@ -116,6 +116,7 @@ class OrderController extends Controller
             $input_address = $request->input('input_address');
             $contact = $request->input('contact');
             $please = $request->input('please');
+            $banker = $request->input('banker');
 
             if ($request->input('ship_save') == 'on') {
                 Ship::create([
@@ -146,6 +147,7 @@ class OrderController extends Controller
             $input_address = $request->input('input_address2');
             $contact = $request->input('contact2');
             $please = $request->input('please2');
+            $banker = $request->input('banker');
         }
         $paymethod = $request->input('paymethod');
         $amount = $request->input('amount');
@@ -164,6 +166,7 @@ class OrderController extends Controller
             "paymethod" => $paymethod,
             "amount" => $amount,
             "shipmethod" => $shipmethod,
+            "baker" => $banker
         ];
 
         $order = Order::create($payload);

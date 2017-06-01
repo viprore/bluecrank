@@ -64,7 +64,7 @@ class SocialController extends Controller
                         '가입확인해 주세요.'
                     );
 
-                    return redirect('/');
+                    return back()->withInput();
                 }
             }
         } else {
@@ -100,7 +100,7 @@ class SocialController extends Controller
             auth()->user()->name . '님, 환영합니다.'
         );
 
-        return redirect(route('home'));
+        return redirect(route('products.index'));
     }
 
     public function createUser(Request $request)
@@ -123,7 +123,7 @@ class SocialController extends Controller
         event(new \App\Events\UserCreated($user));
 
         flash('가입하신 메일 계정으로 가입 확인 메일을 보내드렸습니다. 가입 확인하시고 로그인해 주세요.');
-        return redirect('/');
+        return redirect(route('sessions.create'));
 
     }
 }

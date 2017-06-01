@@ -1,10 +1,9 @@
 @extends('layouts.app')
 
 @section('style')
-    @parent
     <style>
         .my-6 {
-            margin-top: 2em;
+            margin-top: 0em;
             margin-bottom: 2em;
         }
 
@@ -153,20 +152,23 @@
 
     <div class="row">
         <div class="col-md-3 sidebar__article">
-            <aside>
-                @include('products.partial.search')
+            @include('products.partial.search')
+            <aside id="sidebar">
+
 
                 <p class="lead">
                     <i class="fa fa-list"></i>
                     카테고리
                 </p>
+
+                <div class="list-group">
+                    @foreach($categories as $slug => $locale)
+                        <a href="{{ route('categories.products.index', $slug) }}"
+                           class="list-group-item">{{ $locale['ko'] }}</a>
+                    @endforeach
+                </div>
             </aside>
-            <div class="list-group">
-                @foreach($categories as $slug => $locale)
-                    <a href="{{ route('categories.products.index', $slug) }}"
-                       class="list-group-item">{{ $locale['ko'] }}</a>
-                @endforeach
-            </div>
+
             <div class="media item__banner">
                 <a href="http://www.bikeacademy.co.kr/">
                     <img class="media-object img-thumbnail" src="{{ url('icons/banner01.jpg') }}">
@@ -176,7 +178,7 @@
 
         <div class="col-md-9 list__article">
             @if(!strpos(request()->fullUrl(), 'slug') and !strpos(request()->fullUrl(), 'page') and !strpos(request()->fullUrl(), 'category'))
-                <div class="row">
+                <div class="row my-6">
 
                     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
                         <!-- Indicators -->
@@ -283,6 +285,15 @@
                 </div>
             @endif
         </div>
+
+
+    </div>
+
+    <div id="toggle-category">
+        <a href="#" title="카테고리 여/닫">
+            <i class="fa fa-list"></i>
+            카테고리
+        </a>
     </div>
 
 
@@ -436,5 +447,10 @@
                 results = regex.exec(location.search);
             return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
         }
+
+        $('#toggle-category > a').on('click', function() {
+            $('#sidebar').slideToggle('fact');
+            $('body,html').animate({ scrollTop: 0 }, 'fast');
+        });
     </script>
 @endsection

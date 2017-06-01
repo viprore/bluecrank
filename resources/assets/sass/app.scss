@@ -512,6 +512,19 @@ span.form-error {
   // 이상 데일 리즈의 칼라 스킴에서 복사한 스타일시트
 }
 
+#toggle-category {
+  display: none;
+  z-index: 999;
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  padding: 10px;
+  background-color: rgba(0, 191, 243, 0.8);
+}
+#toggle-category a, #toggle-category a:hover, #toggle-category a:focus {
+  color: #FFF;
+  text-decoration: none; }
+
 // 미디어 쿼리
 @media screen and (max-width: 991px) {
   .action__article {
@@ -534,6 +547,15 @@ span.form-error {
       display: none;
     }
   }
+
+  #sidebar {
+    display: none;
+  }
+
+  #toggle-category {
+    display: block;
+  }
+
 
 
 

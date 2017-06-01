@@ -115,7 +115,7 @@ class User extends Authenticatable
     /* Query Scopes */
     public function scopeSocialUser(\Illuminate\Database\Eloquent\Builder $query, $email)
     {
-        return $query->whereEmail($email)->whereNull('password')->whereActivated(1);
+        return $query->whereEmail($email)->whereNull('password');
     }
 
     /* Helpers */
