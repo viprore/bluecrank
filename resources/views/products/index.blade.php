@@ -92,8 +92,9 @@
         }
 
         .button__slug {
-            font-size: 16px;
-            margin: 4px;
+            font-size: 12px;
+            margin-top: 2px;
+            margin-bottom: 2px;
         }
 
         .item__banner img {
@@ -104,6 +105,29 @@
             padding: 1px;
         }
 
+        .form-control-inline {
+            width: auto;
+            float:left;
+            margin-right: 5px;
+        }
+
+        #search_m {
+            display: none;
+
+        }
+
+        .img-w100 {
+             width: 100%;
+         }
+
+        .img-w80 {
+            width: 80%;
+        }
+
+        .padding-8 {
+            padding: 8px;
+        }
+
 
     </style>
     {{--<link rel="stylesheet" href="{{ mix('css/flexslider.css') }}">--}}
@@ -112,50 +136,73 @@
 @section('content')
     @php $viewName = 'products.index'; @endphp
 
-    <div class="page-header">
-        <h4>
-            <a href="{{ route('products.index') }}">
-                BC몰
-            </a>
-        </h4>
+    {{--<div class="page-header">
 
+    </div>--}}
+    <div class="row my-6 visible-xs-block visible-sm-block">
+        <a href="https://www.youtube.com/watch?v=vhba0ICbeHc" target="_blank">
+            <img class="img-w100" src="{{ url('icons/banner02.png') }}">
+        </a>
     </div>
 
-    <div class="text-right action__market">
-
-
-        @if(($currentUser ? ($currentUser->isAdmin() ? true : false ) : false))
-            <a href="{{ route('products.create') }}" class="btn btn-primary">
-                <i class="fa fa-plus-circle"></i>
-                상품 등록
-            </a>
-    @endif
-
-    <!--정렬 UI-->
-        <div class="btn-group sort__article">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-sort"></i>
-                목록 정렬
-                <span class="caret"></span>
-            </button>
-
-            <ul class="dropdown-menu" role="menu">
-                @foreach(config('project.sorting') as $column => $text)
-                    <li {!! request()->input('sort') == $column ? 'class="active"' : '' !!}>
-                        {!! link_for_sort($column, $text) !!}
-                    </li>
-                @endforeach
-            </ul>
-        </div>
-
+    <div class="row my-6 visible-md-block visible-lg-block text-center">
+        <a href="https://www.youtube.com/watch?v=vhba0ICbeHc" target="_blank">
+            <img class="img-w100" src="{{ url('icons/banner02-pc.png') }}">
+        </a>
     </div>
 
     <div class="row">
+        <div class="col-xs-8 ">
+            <div class="visible-xs-inline-block visible-sm-inline-block">
+                <form method="get" action="{{ route('products.index') }}" role="search" class="form-inline">
+                    <button class="btn btn-default form-control-inline" type="button" id="toggle-category" title="카테고리 여/닫">
+                        <i class="fa fa-list"></i>
+                    </button>
+                    <button class="btn btn-default form-control-inline" type="button" id="toggle-search" title="검색창 여닫">
+                        <i class="fa fa-search"></i>
+                    </button>
+                    <input id="search_m" type="text" name="q" class="form-control form-control-inline" placeholder="마켓 검색"/>
+                </form>
+            </div>
+        </div>
+        <div class="col-xs-4">
+            <div class="text-right action__market">
+                @if(($currentUser ? ($currentUser->isAdmin() ? true : false ) : false))
+                    <a href="{{ route('products.create') }}" class="btn btn-primary">
+                        <i class="fa fa-plus-circle"></i>
+                        상품 등록
+                    </a>
+            @endif
+
+            <!--정렬 UI-->
+                <div class="btn-group sort__article">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-sort"></i>
+                        목록 정렬
+                        <span class="caret"></span>
+                    </button>
+
+                    <ul class="dropdown-menu" role="menu">
+                        @foreach(config('project.sorting') as $column => $text)
+                            <li {!! request()->input('sort') == $column ? 'class="active"' : '' !!}>
+                                {!! link_for_sort($column, $text) !!}
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
         <div class="col-md-3 sidebar__article">
-            @include('products.partial.search')
+            <div class="visible-md-block visible-lg-block">
+                @include('products.partial.search')
+            </div>
             <aside id="sidebar">
-
-
                 <p class="lead">
                     <i class="fa fa-list"></i>
                     카테고리
@@ -178,15 +225,15 @@
 
         <div class="col-md-9 list__article">
             @if(!strpos(request()->fullUrl(), 'slug') and !strpos(request()->fullUrl(), 'page') and !strpos(request()->fullUrl(), 'category'))
-                <div class="row my-6">
+                {{--<div class="row my-6">
 
                     <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
                         <!-- Indicators -->
-                    {{--<ol class="carousel-indicators">--}}
-                    {{--<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>--}}
-                    {{--<li data-target="#carousel-example-generic" data-slide-to="1"></li>--}}
-                    {{--<li data-target="#carousel-example-generic" data-slide-to="2"></li>--}}
-                    {{--</ol>--}}
+                    --}}{{--<ol class="carousel-indicators">--}}{{--
+                    --}}{{--<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>--}}{{--
+                    --}}{{--<li data-target="#carousel-example-generic" data-slide-to="1"></li>--}}{{--
+                    --}}{{--<li data-target="#carousel-example-generic" data-slide-to="2"></li>--}}{{--
+                    --}}{{--</ol>--}}{{--
 
                     <!-- Wrapper for slides -->
                         <div class="carousel-inner" role="listbox">
@@ -199,26 +246,26 @@
                         </div>
 
                         <!-- Controls -->
-                        {{--<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                        --}}{{--<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
                             <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
                             <span class="sr-only">Previous</span>
                         </a>
                         <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
                             <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                             <span class="sr-only">Next</span>
-                        </a>--}}
+                        </a>--}}{{--
                     </div>
 
-                </div>
+                </div>--}}
             @endif
 
             {{--<div class="thumbnail row my-6 inner__padding">--}}
 
-            <div class="row my-6">
+            <div class="row">
                 <div class="col-md-12 no-padding">
                     <div class="panel panel-default">
                         <div class="panel-heading"><b>인기태그</b></div>
-                        <div class="panel-body">
+                        <div class="panel-body padding-8">
                             @foreach($productTags as $tag)
                                 <button type="button" id="{{ $tag->slug }}"
                                         class="button__slug btn btn-sm {{ str_contains(request()->input('slug'), $tag->slug) ? 'btn-info' : 'btn-default' }}">
@@ -289,83 +336,12 @@
 
     </div>
 
-    <div id="toggle-category">
-        <a href="#" title="카테고리 여/닫">
-            <i class="fa fa-list"></i>
-            카테고리
-        </a>
-    </div>
-
-
-    {{--@php $viewName = 'articles.index'; @endphp
-
-    <div class="page-header">
-      <h4>
-        <a href="{{ route('articles.index') }}">
-          {{ trans('markets.title') }}
-        </a>
-        <small>
-          / {{ trans('forum.articles.index') }}
-        </small>
-      </h4>
-    </div>
-
-    <div class="text-right action__article">
-      <a href="{{ route('articles.create') }}" class="btn btn-primary">
-        <i class="fa fa-plus-circle"></i>
-        {{ trans('forum.articles.create') }}
-      </a>
-
-      <!--정렬 UI-->
-      <div class="btn-group sort__article">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-          <i class="fa fa-sort"></i>
-          {{ trans('forum.articles.sort') }}
-          <span class="caret"></span>
-        </button>
-
-        <ul class="dropdown-menu" role="menu">
-          @foreach(config('project.sorting') as $column => $text)
-            <li {!! request()->input('sort') == $column ? 'class="active"' : '' !!}>
-              {!! link_for_sort($column, $text) !!}
-            </li>
-          @endforeach
-        </ul>
-      </div>
-    </div>
-
-    <div class="row container__article">
-      <div class="col-md-3 sidebar__article">
-        <aside>
-          @include('articles.partial.search')
-
-          @include('tags.partial.index')
-        </aside>
-      </div>
-
-      <div class="col-md-9 list__article">
-        <article>
-          @forelse($articles as $article)
-            @include('articles.partial.article', compact('article'))
-          @empty
-            <p class="text-center text-danger">
-              {{ trans('forum.articles.empty') }}
-            </p>
-          @endforelse
-        </article>
-
-        @if($articles->count())
-          <div class="text-center paginator__article">
-            {!! $articles->appends(request()->except('page'))->render() !!}
-          </div>
-        @endif
-      </div>
-    </div>--}}
 @stop
 
 @section('script')
     @parent
     {{--<script src="{{ mix('js/jquery.flexslider.js') }}"></script>--}}
+
     <script>
         $(window).on('load', function () {
 //            $('.flexslider').flexslider({
@@ -412,7 +388,6 @@
 
             })
         });
-
         function removeParam(key, sourceURL) {
             var rtn = sourceURL.split("?")[0],
                 param,
@@ -430,7 +405,6 @@
             }
             return rtn;
         }
-
         function replaceUrlParam(url, paramName, paramValue) {
             if (paramValue == null)
                 paramValue = '';
@@ -440,7 +414,6 @@
             }
             return url + (url.indexOf('?') > 0 ? '&' : '?') + paramName + '=' + paramValue
         }
-
         function getParameterByName(name) {
             name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
             var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -448,9 +421,15 @@
             return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
         }
 
-        $('#toggle-category > a').on('click', function() {
-            $('#sidebar').slideToggle('fact');
-            $('body,html').animate({ scrollTop: 0 }, 'fast');
+        $('#toggle-category').on('click', function () {
+            $('#sidebar').slideToggle('fast');
+            $('body,html').animate({scrollTop: 0}, 'fast');
+        });
+
+        $('#toggle-search').on('click', function () {
+//            $('#search_m').toggle("slide", {direction:"left"}, 1000);
+            $('#search_m').toggle('slide');
+//            $('body,html').animate({scrollTop: 0}, 'fast');
         });
     </script>
 @endsection
