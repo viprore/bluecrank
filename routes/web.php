@@ -164,6 +164,12 @@ Route::resource('carts', 'ItemController', ['except' => ['show', 'create', 'edit
 Route::resource('orders', 'OrderController', ['except' => ['destroy']]);
 Route::resource('ships', 'ShipController');
 
+
+Route::get('phpinfo', [
+    'as' => 'php.info',
+    'uses' => 'WelcomeController@phpinfo'
+]);
+
 Route::post('status/{status}/orders/{order}', [
     'as' => 'orders.status',
     'uses' => 'OrderController@updateStatus'

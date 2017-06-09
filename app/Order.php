@@ -22,7 +22,9 @@ class Order extends Model
         'paymethod',
         'shipmethod',
         'amount',
-        'banker'
+        'banker',
+        'status',
+        'merchant_uid'
     ];
 
     /**

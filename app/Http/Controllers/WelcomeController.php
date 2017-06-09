@@ -21,9 +21,19 @@ class WelcomeController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory
      */
-    public function shop() {
-        $shops = Shop::all();
-        return view('shop.index');
+    public function shop(Request $request) {
+        $states = \DB::table('shops')->distinct()->pluck('state');
+        $select_state = $request->input('state');
+        if (empty($select_state)) {
+            $shops = Shop::all();
+        } else {
+            $shops = Shop::whereState($select_state)->get();
+        }
+        return view('shop.index', compact('shops', 'states'));
+    }
+
+    public function phpinfo() {
+        return view('info');
     }
 
     /**

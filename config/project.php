@@ -135,6 +135,7 @@ return [
     */
     'sorting' => [
         'view_count' => '조회수',
+        'price' => '가격순',
         'created_at' => '작성일',
     ],
 

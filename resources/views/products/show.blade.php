@@ -197,7 +197,7 @@
                             </div>
                             <div class="price">
                                 <h5>가격</h5>
-                                <p>{{ $product->price }}&nbsp;<i class="fa fa-krw"></i></p>
+                                <p>{{ number_format($product->price) }}&nbsp;<i class="fa fa-krw"></i></p>
                             </div>
 
                             <div class="option-quantity">
@@ -260,6 +260,8 @@
 
                 <div class="content__article">
                     {!! markdown($product->description) !!}
+                    <img src="{{ url("/icons/guide.jpg") }}" />
+
                 </div>
 
                 {{--@include('tags.partial.list', ['tags' => $product->tags])--}}

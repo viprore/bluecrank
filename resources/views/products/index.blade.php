@@ -264,7 +264,7 @@
             <div class="row">
                 <div class="col-md-12 no-padding">
                     <div class="panel panel-default">
-                        <div class="panel-heading"><b>인기태그</b></div>
+                        <div class="panel-heading"><b>인기태그 (최대 3개 선택 가능)</b></div>
                         <div class="panel-body padding-8">
                             @foreach($productTags as $tag)
                                 <button type="button" id="{{ $tag->slug }}"

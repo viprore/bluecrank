@@ -1,3 +1,7 @@
+@php
+    include('../../refapp/cfg/site_conf_inc.php');
+@endphp
+
 @extends('layouts.app')
 
 @section('content')
@@ -5,13 +9,13 @@
         $viewName = 'orders.index';
         $total_amount= 0;
         $itemIdList = '';
-        if(old('shipmethod', $order->shipmethod) == 'direct'){
-            $ship_method = 'direct';
-        }else{
-            $ship_method = 'toshop';
-        }
+        $ship_method = 'toshop';
+
 
     @endphp
+
+
+
 
     <div class="page-header">
         <h3>
@@ -22,11 +26,10 @@
 
     <div class="container">
         <div class="row">
-            <form action="{{ route('orders.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="ordrForm" action="{{ route('orders.store') }}" method="POST" enctype="multipart/form-data">
                 {!! csrf_field() !!}
                 <div class="col-md-12">
                     <div class="panel-group" id="panel-754737">
-
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <a class="panel-title" data-toggle="collapse" data-parent="#panel-754737"
@@ -202,7 +205,7 @@
                                                 <tr>
                                                     <td>연락처</td>
                                                     <td>
-                                                        <input type="text" name="contact2" class="form-control"
+                                                        <input type="text" id="contact2" name="contact2" class="form-control"
                                                                placeholder="010-5882-7469"
                                                                value="{{ old('contact2', $order->contact) }}">
                                                         {!! $errors->first('contact2', '<span class="form-error">:message</span>') !!}
@@ -281,20 +284,20 @@
                                             <td>결제수단</td>
                                             <td>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="paymethod" id="inlineRadio1"
-                                                           value="무통장입금" checked> 무통장입금
+                                                    <input type="radio" name="paymethod" id="inlineRadio3"
+                                                           value="신용카드" checked> 신용카드
                                                 </label>
                                                 <label class="radio-inline">
                                                     <input type="radio" name="paymethod" id="inlineRadio2"
                                                            value="계좌이체"> 계좌이체
                                                 </label>
                                                 <label class="radio-inline">
-                                                    <input type="radio" name="paymethod" id="inlineRadio3"
-                                                           value="신용카드" disabled> 신용카드
+                                                    <input type="radio" name="paymethod" id="inlineRadio1"
+                                                           value="무통장입금"> 무통장입금
                                                 </label>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr class="account_form" style="display:none;">
                                             <td>
                                                 입금자명
                                             </td>
@@ -307,13 +310,13 @@
                                                            id="banker"
                                                            name="banker"
                                                            placeholder="입금자명"
-                                                           aria-describedby="basic-addon1" />
+                                                           aria-describedby="basic-addon1"/>
 
                                                 </div>
                                                 <span class="form-error">받는 분과 동일하신 경우 체크</span>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr class="account_form" style="display:none;">
                                             <td>
                                                 입금은행
                                             </td>
@@ -323,60 +326,42 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2">
-                                                <button type="submit" class="btn btn-block btn-primary">
+                                                <button type="submit" class="btn btn-block btn-primary" id="btn_acc"
+                                                        style="display:none;">
                                                     결제하기
+                                                </button>
+                                                <button type="button" class="btn btn-block btn-primary" id="btn_pg">
+                                                    결제하기(PG)
                                                 </button>
                                             </td>
                                         </tr>
                                         </tbody>
                                     </table>
                                     <input type="hidden" name="item_id_list" value="{{ $itemIdList }}">
-                                    <input type="hidden" name="amount" value="{{ $total_amount }}">
+                                    <input type="hidden" id="amount" name="amount" value="{{ $total_amount }}">
+                                    <input type="hidden" id="merchant_uid" name="merchant_uid" value="">
                                 </div>
                             </div>
                         </div>
                     </div>
-
-
-                    <div class="modal fade" id="modal-container-261803" role="dialog" aria-labelledby="myModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                        ×
-                                    </button>
-                                    <h4 class="modal-title" id="myModalLabel">
-                                        주소찾기
-                                    </h4>
-                                </div>
-                                <div class="modal-body">
-                                    네이버 API 이용
-                                </div>
-                                <div class="modal-footer">
-
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                                        Close
-                                    </button>
-                                    <button type="button" class="btn btn-primary">
-                                        Save changes
-                                    </button>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
 
                 </div>
             </form>
+
+            {{-- PG용 --}}
+            @if($items->count() == 1)
+                <input type="hidden" id="good_name" value="{{ $items->first()-> option->product->ad_title }}"/>
+            @else
+                <input type="hidden" id="good_name" value="{{ $items->first()-> option->product->ad_title . " 외 " . ($items->count()-1)  . '건'}}"/>
+            @endif
+            <input type="hidden" id="buyer_email" value="{{ \Auth::user()->email }}"/>
+
 
         </div>
     </div>
 
 
-    <!-- Modal -->
+    <!-- 매장 모달 -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -419,12 +404,90 @@
 
 @section('script')
     @parent
+    {{--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>--}}
     <script src="//d1p7wdleee1q2z.cloudfront.net/post/search.min.js"></script>
+    <script src="https://service.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
     <script>
         $(document).ready(function () {
-            $("#states").select2({
-                placeholder: "시/도"
+            var IMP = window.IMP;
+            IMP.init('imp26813303');
+            $('#btn_pg').click(function () {
+                // 결제방식
+                var pm_origin = $('input[type=radio][name=paymethod]').val();
+                if (pm_origin == '계좌이체') {
+                    var pay_method = 'trans';
+                } else {
+                    var pay_method = 'card';
+                }
+                // 기타 정보
+                var merchant_uid = init_orderid();
+                var name = $('#good_name').val(); // 상품명
+                var amount = $('#amount').val();
+                var buyer_email = $('#buyer_email').val();
+
+                var buyer_name = ''; // 입력창에서
+                var buyer_tel = ''; // 입력창에서
+                var buyer_addr = ''; // 입력창에서
+
+                if($('#shipmethod').val() == 'direct'){
+                    buyer_name = $('#name').val();
+                    buyer_tel = $('#contact').val();
+                    buyer_addr = $('#find_address').val() + $('#input_address').val();
+                }else {
+                    buyer_name = $('#name2').val();
+                    buyer_tel = $('#contact2').val();
+                    buyer_addr = $('#find_address2').val() + $('#input_address2').val();
+                }
+
+                IMP.request_pay({
+                    pg: 'html5_inicis',
+                    pay_method: pay_method,
+                    merchant_uid: merchant_uid,
+                    name: name,
+                    amount: amount,
+                    buyer_email: buyer_email,
+                    buyer_name: buyer_name,
+                    buyer_tel: buyer_tel,
+                    buyer_addr: buyer_addr,
+                }, function (rsp) {
+                    if (rsp.success) {
+                        if(rsp.paid_amount == amount) {
+                            $('#merchant_uid').val(rsp.merchant_uid);
+                            $('#ordrForm').submit();
+                        }else{
+                            var msg = '결제금액과 상품금액이 일치하지 않습니다.'
+                            alert(msg);
+                        }
+
+                    } else {
+                        var msg = '결제에 실패하였습니다.';
+                        msg += '\n에러내용 : ' + rsp.error_msg;
+                        alert(msg);
+                    }
+                });
+
             });
+
+            $('input[type=radio][name=paymethod]').change(function () {
+                if (this.value == '무통장입금') {
+                    $('.account_form').show();
+                    $('#btn_acc').show();
+                    $('#btn_pg').hide();
+                } else if (this.value == '계좌이체') {
+                    $('.account_form').hide();
+                    $('#btn_acc').hide();
+                    $('#btn_pg').show();
+                } else if (this.value == '신용카드') {
+                    $('.account_form').hide();
+                    $('#btn_acc').hide();
+                    $('#btn_pg').show();
+                }
+            });
+
+            /*$("#states").select2({
+                placeholder: "시/도"
+            });*/
+
             $('#cb_save').change(function () {
                 if ($('#cb_save').is(":checked")) {
                     $('#alias').prop('disabled', false)
@@ -436,10 +499,11 @@
 
                 }
             });
+
             $('#cb_banker').change(function () {
                 if ($('#cb_banker').is(":checked")) {
                     var name = $('#name').val();
-                    if(name.length < 1) {
+                    if (name.length < 1) {
                         name = $('#name2').val();
                     }
                     $('#banker').prop('disabled', true)
@@ -452,6 +516,7 @@
 
                 }
             });
+
             $('.dropdown-menu li a').click(function () {
                 var shipId = $(this).attr('ship-id');
 
@@ -466,6 +531,8 @@
                     $('#contact').val(data.contact);
                 });
             });
+
+
         });
 
         $(function () {
@@ -523,6 +590,28 @@
             $('#myModal').modal('toggle');
 
         }
+
+        /* 주문번호 생성 예제 */
+        function init_orderid() {
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = today.getMonth() + 1;
+            var date = today.getDate();
+            var time = today.getTime();
+
+            if (parseInt(month) < 10) {
+                month = "0" + month;
+            }
+
+            if (parseInt(date) < 10) {
+                date = "0" + date;
+            }
+
+            var order_idxx = "BC" + year + "" + month + "" + date + "" + time;
+
+            return order_idxx;
+        }
+
 
     </script>
 @stop

@@ -10,6 +10,8 @@ use App\Shop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+//require_once('../../src/iamport.php');
+
 class OrderController extends Controller
 {
     /**
@@ -93,7 +95,6 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-
         $user = \Auth::user();
 
         // request 데이터 유효성검사 및 페이로드 생성
@@ -168,6 +169,15 @@ class OrderController extends Controller
             "shipmethod" => $shipmethod,
             "baker" => $banker
         ];
+
+        if (strpos($paymethod, '무통장') === false) {
+            $payload = array_merge($payload, [
+                "status" => '입금완료',
+                "merchant_uid" => $request->input('merchant_uid')
+            ]);
+        }
+
+//        dd($payload);
 
         $order = Order::create($payload);
 
@@ -277,4 +287,14 @@ class OrderController extends Controller
         return response()->json('', 200, [], JSON_PRETTY_PRINT);
 
     }
+
+
+
+    public function getByMerchangUid($id)
+    {
+        $iamport = new \Iamport(ENV('IMP_REST_API_KEY'), ENV('YOUR_IMP_REST_API_SECRET'));
+
+        $result = $iamport->findByMerchantUID($id);
+    }
+
 }
