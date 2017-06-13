@@ -23,7 +23,7 @@ class ArticleEventListener
                 compact('article'),
                 function ($message) {
                     $message->to(config('mail.from.address'));
-                    $message->subject(sprintf('[%s] %s', config('app.name'), '새로운 포럼 글이 등록되었습니다.: :title'));
+                    $message->subject(sprintf('[%s] %s', config('app.name'), '커뮤니티에 새로운 글이 등록되었습니다.'));
                 }
             );
         }

@@ -1,7 +1,3 @@
-@php
-    include('../../refapp/cfg/site_conf_inc.php');
-@endphp
-
 @extends('layouts.app')
 
 @section('content')

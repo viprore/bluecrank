@@ -3,7 +3,7 @@
 @section('content')
   <div class="page-header">
     <h4>
-      <a href="{{ route('products.index') }}">
+      <a href="{{ route('olds.index') }}">
         BC몰
       </a>
       <small>
@@ -13,6 +13,6 @@
     </h4>
   </div>
 
-  @include('products.partial.option')
+  @include('olds.partial.option')
 
 @stop

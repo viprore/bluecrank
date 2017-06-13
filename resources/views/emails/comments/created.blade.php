@@ -1,5 +1,5 @@
 <h1>
-  {{ $comment->commentable->title }}
+  {{ $comment->commentable->title }}<br />
   <small>{{ $comment->user->name }}님이 작성하신 댓글입니다.</small>
 </h1>
 

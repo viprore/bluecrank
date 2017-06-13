@@ -1,3 +1,5 @@
+
+
 <div class="form-group {{ $errors->has('ad_title') ? 'has-error' : '' }}">
     <label for="ad_title">상품 제목</label>
     <input type="text" name="ad_title" id="ad_title" value="{{ old('ad_title', $product->ad_title) }}"
@@ -7,8 +9,7 @@
 
 <div class="form-group {{ $errors->has('ad_short_description') ? 'has-error' : '' }}">
     <label for="ad_short_description">간략 소개</label>
-    <textarea name="ad_short_description" id="ad_short_description" rows="3"
-              class="form-control">{{ old('ad_short_description', $product->ad_short_description) }}</textarea>
+    <textarea name="ad_short_description" id="ad_short_description" rows="3" class="form-control">{{ old('ad_short_description', $product->ad_short_description) }}</textarea>
     {!! $errors->first('ad_short_description', '<span class="form-error">:message</span>') !!}
 </div>
 
@@ -45,7 +46,7 @@
     <label for="tags">태그</label>
     <select name="tags[]" id="tags" multiple="multiple" class="form-control">
 
-        @foreach($productTags as $tag)
+        @foreach($oldTags as $tag)
             <option value="{{ $tag->id }}" {{ $product->tags->contains($tag->id) ? 'selected="selected"' : '' }}>
                 {{ $tag->name }}
             </option>
@@ -76,7 +77,7 @@
                     @endif
                 </td>
                 <td>
-                    <button type="button" class="btn btn-danger btn__del" onclick="deleteAttachment({{ $attachment->id }})"><i class="fa fa-trash"></i></button>
+                    <button type="button" class="btn btn-danger" onclick="deleteAttachment({{ $attachment->id }})"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
         @empty

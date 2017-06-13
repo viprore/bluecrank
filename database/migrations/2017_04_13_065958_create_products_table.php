@@ -21,7 +21,7 @@ class CreateProductsTable extends Migration
                 'road', 'mtb', 'fixed', 'hybrid', 'mini',
                 'bacc', 'racc', 'part'
             ]);
-            $table->tinyInteger('view_count')->default(0);
+            $table->unsignedInteger('view_count')->default(0);
             $table->string('ad_title');
             $table->enum('ad_status', ['준비중', '판매', '매진']);
             $table->string('ad_short_description')->nullable();

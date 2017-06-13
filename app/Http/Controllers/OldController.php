@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Product;
 use Illuminate\Http\Request;
-use League\HTMLToMarkdown\HtmlConverter;
 
-class ProductController extends Controller implements Cacheable
+class OldController extends Controller implements Cacheable
 {
     /**
      * MarketController constructor.
@@ -25,7 +24,7 @@ class ProductController extends Controller implements Cacheable
      */
     public function cacheTags()
     {
-        return 'products';
+        return 'olds';
     }
 
     /**
@@ -39,13 +38,8 @@ class ProductController extends Controller implements Cacheable
         $query = $category ? Product::whereCategory($category)
             : new Product();
 
-        if (str_contains($request->url(), 'products')) {
-            $query = $query->where('is_old', false);
-        }else{
-            $query = $query->where('is_old', true);
-        }
-
-
+        dd($request->url());
+        $query = $query->where('is_old', true);
 
         // 정렬 옵션
         $query = $query->orderBy(
@@ -59,7 +53,7 @@ class ProductController extends Controller implements Cacheable
         }
 
         // 검색 관련 쿼리 및 캐싱
-        $cacheKey = cache_key('products.index');
+        $cacheKey = cache_key('olds.index');
 
         if ($keyword = request()->input('q')) {
             $raw = 'MATCH(ad_title, ad_short_description) AGAINST(? IN BOOLEAN MODE)';
@@ -67,6 +61,7 @@ class ProductController extends Controller implements Cacheable
         }
 
         $products = $query->get();
+
 
 
         // 태그 활용
@@ -92,11 +87,8 @@ class ProductController extends Controller implements Cacheable
 
         $products = $this->cache($cacheKey, 1, $query, 'paginate', 6);
 
-        if (str_contains($request->url(), 'products')) {
-            return view('products.index', compact('products'));
-        }else{
-            return view('olds.index', compact('products'));
-        }
+
+        return view('olds.index', compact('products'));
     }
 
     /**
@@ -104,21 +96,17 @@ class ProductController extends Controller implements Cacheable
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
         $product = new Product;
 
-        if (str_contains($request->url(), 'products')) {
-            return view('products.create', compact('product'));
-        }else{
-            return view('olds.create', compact('product'));
-        }
+        return view('olds.create', compact('product'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\ProductRequest $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(ProductRequest $request)
@@ -155,23 +143,22 @@ class ProductController extends Controller implements Cacheable
             '상품 등록에 성공하였습니다.'
         );
 
-        if (str_contains($request->url(), 'olds')) {
-            $product->is_old = true;
-            $product->save();
-            return redirect(route('olds.index'));
-        }else{
-            return redirect(route('products.index'));
-        }
+        $product->is_old = true;
+        $product->save();
+
+        return redirect(route('olds.index'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Product $product
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, Product $product)
+    public function show($id)
     {
+        $product = Product::find($id);
+
         $product->view_count += 1;
         $product->save();
 
@@ -183,13 +170,22 @@ class ProductController extends Controller implements Cacheable
             ->whereNull('parent_id')
             ->latest()->get();
 
-        if (str_contains($request->url(), 'products')) {
-            return view('products.show', compact('product', 'comments'));
-        }else{
-            return view('olds.show', compact('product', 'comments'));
-        }
+        return view('olds.show', compact('product', 'comments'));
+    }
 
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $product = Product::find($id);
 
+        $this->authorize('update', $product);
+
+        return view('olds.edit', compact('product'));
     }
 
     /**
@@ -198,86 +194,11 @@ class ProductController extends Controller implements Cacheable
      * @param  \App\Product $product
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, Product $product)
+    public function optionEdit(Product $product)
     {
         $this->authorize('update', $product);
 
-        if (str_contains($request->url(), 'products')) {
-            return view('products.edit', compact('product'));
-        }else{
-            return view('olds.edit', compact('product'));
-        }
+        return view('olds.option', compact('product'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Product $product
-     * @return \Illuminate\Http\Response
-     */
-    public function optionEdit(Request $request, Product $product)
-    {
-        $this->authorize('update', $product);
-
-
-        if (str_contains($request->url(), 'products')) {
-            return view('products.option', compact('product'));
-        }else{
-            return view('olds.option', compact('product'));
-        }
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\Product $product
-     * @return \Illuminate\Http\Response
-     */
-    public function update(ProductRequest $request, Product $product)
-    {
-        $this->authorize('update', $product);
-
-        $payload = [
-            "_token" => $request->input('_token'),
-            "ad_title" => $request->input('ad_title'),
-            "ad_status" => $request->input('ad_status'),
-            "ad_short_description" => $request->input('ad_short_description'),
-            "category" => $request->input('category'),
-            "price" => $request->input('price'),
-            "description" => $request->input('description'),
-        ];
-
-        $product->update($payload);
-        $product->tags()->sync($request->input('tags'));
-
-        event(new \App\Events\ModelChanged(['products']));
-        flash()->success('수정 완료');
-
-        if (str_contains($request->url(), 'products')) {
-            return redirect(route('products.show', $product->id));
-        }else{
-            return redirect(route('olds.show', $product->id));
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Product $product
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Product $product)
-    {
-        $this->authorize('delete', $product);
-        $product->delete();
-
-        event(new \App\Events\ModelChanged(['products']));
-
-        return response()->json([], 204, [], JSON_PRETTY_PRINT);
-    }
-
-
 
 }

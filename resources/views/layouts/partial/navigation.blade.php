@@ -29,11 +29,11 @@
                         BC몰
                     </a>
                 </li>
-                {{--<li {!! str_contains(request()->path(), ['themes', 'categories', 'markets']) ? 'class="active"' : '' !!}>
-                    <a href="{{ route('markets.index') }}">
-                        중고장터
+                <li {!! str_contains(request()->path(), 'olds') ? 'class="active"' : '' !!}>
+                    <a href="{{ route('olds.index') }}">
+                        중고
                     </a>
-                </li>--}}
+                </li>
                 <li {!! str_contains(request()->path(), ['tags', 'articles']) ? 'class="active"' : '' !!}>
                     <a href="{{ route('articles.index') }}">
                         커뮤니티

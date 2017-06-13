@@ -29,6 +29,14 @@
     <meta name="twitter:image" content="">
     <meta name="twitter:domain" content="{{ config('project.url') }}">
 
+    <!-- Naver Meta-->
+    <meta name="naver-site-verification" content="cae6940f319e1dccf8b9a2161ed27eeb4ef340cd"/>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="블루크랭크">
+    <meta property="og:description" content="온라인으로 구매하고 집 근처 패밀리 매장에서 받자">
+    <meta property="og:image" content="https://ko.gravatar.com/userimage/120319295/945d5d59dd434917810352ecfe7a4312.jpg">
+    <meta property="og:url" content="http://www.bluecrank.com">
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 

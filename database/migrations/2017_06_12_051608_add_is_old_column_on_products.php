@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColumnOnProductsTable extends Migration
+class AddIsOldColumnOnProducts extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddColumnOnProductsTable extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->unsignedInteger('cafe_id')->nullable();
+            $table->boolean('is_old')->default(false);
         });
     }
 
@@ -26,7 +26,7 @@ class AddColumnOnProductsTable extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('cafe_id');
+            $table->dropColumn('is_old');
         });
     }
 }

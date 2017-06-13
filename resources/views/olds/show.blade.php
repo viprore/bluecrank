@@ -122,20 +122,11 @@
     </style>
 @stop
 @section('content')
-    @php
-        if(str_contains(request()->url(), 'product')){
-            $viewName = 'products.show';
-            $prefix = 'products.';
-        }else{
-            $viewName = 'olds.show';
-            $prefix = 'olds.';
-        }
-
-    @endphp
+    @php $viewName = 'olds.show'; @endphp
 
     <div class="page-header">
         <h4>
-            <a href="{{ route($prefix . 'index') }}">
+            <a href="{{ route('olds.index') }}">
                 상품
             </a>
             <small>
@@ -265,7 +256,7 @@
 
             <article data-id="{{ $product->id }}" id="item__article">
                 <hr/>
-                @include('products.partial.article', compact('product'))
+                {{--@include('olds.partial.article', compact('product'))--}}
 
                 <div class="content__article">
                     {!! markdown($product->description) !!}
@@ -278,13 +269,13 @@
 
             <div class="text-center action__article">
                 @can('update', $product)
-                    <a href="{{ route('products.edit.option', $product->id) }}" class="btn btn-info">
+                    <a href="{{ route('olds.edit.option', $product->id) }}" class="btn btn-info">
                         <i class="fa fa-plus"></i>
                         옵션
                     </a>
                 @endcan
                 @can('update', $product)
-                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-info">
+                    <a href="{{ route('olds.edit', $product->id) }}" class="btn btn-info">
                         <i class="fa fa-pencil"></i>
                         수정
                     </a>
@@ -299,7 +290,7 @@
                     <i class="fa fa-pencil-square-o"></i>
                     리뷰 작성
                 </a>
-                <a href="{{ route('products.index') }}" class="btn btn-default">
+                <a href="{{ route('olds.index') }}" class="btn btn-default">
                     <i class="fa fa-list"></i>
                     목록
                 </a>
@@ -383,7 +374,7 @@
                     type: 'DELETE',
                     url: '/products/' + productId
                 }).then(function () {
-                    window.location.href = '/products';
+                    window.location.href = '/olds';
                 });
             }
         });
@@ -396,7 +387,7 @@
                 type: 'POST',
                 url: '/wants/' + productId
             }).then(function () {
-                window.location.href = '/products/' + productId;
+                window.location.href = '/olds/' + productId;
             });
 
         });
@@ -418,7 +409,7 @@
                         count: count
                     }
                 }).then(function () {
-                    window.location.href = '/products/' + productId;
+                    window.location.href = '/olds/' + productId;
                 });
             }
         });

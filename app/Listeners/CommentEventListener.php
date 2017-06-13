@@ -30,7 +30,7 @@ class CommentEventListener
             compact('comment'),
             function ($message) use($to) {
                 $message->to($to);
-                $message->subject(trans('emails.comments.created'));
+                $message->subject('작성한 글에 댓글이 달렸습니다!');
             }
         );
     }

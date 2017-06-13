@@ -1,73 +1,5 @@
 @extends('layouts.app')
 
-{{--@section('style')
-<style>
-    .ad_inform {
-        padding : 10px;
-    }
-
-    .ad_inform p {
-        color : #bec6d5;
-        margin: 0;
-    }
-
-    .caption {
-        height: 150px;
-        overflow: hidden;
-    }
-
-    .caption h4 {
-        white-space: nowrap;
-    }
-
-    .thumbnail img {
-        width: 100%;
-    }
-
-    .ratings {
-        padding-right: 10px;
-        padding-left: 10px;
-        color : #0E2231;
-    }
-
-    .glyphicon-time {
-        padding-right: 3px;
-    }
-
-    .glyphicon-heart {
-        color: #d17581;
-    }
-
-    .glyphicon-comment {
-        color: #2a88bd;
-    }
-
-    .thumbnail {
-        padding: 0;
-    }
-
-    .thumbnail .caption-full {
-        padding: 9px;
-        color: #333;
-    }
-
-    .action__market {
-        padding-bottom: 1em;
-    }
-
-    .img-thumbnail2 {
-        padding: 1px;
-        line-height: 1.6;
-        background-color: #f5f8fa;
-        border: 1px solid #ddd;
-        border-radius: 12px;
-    }
-
-
-
-</style>
-@stop--}}
-
 @section('content')
     @php $viewName = 'admin.index'; @endphp
 
@@ -143,8 +75,8 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
+
             <div class="row">
                 <table class="table">
                     <thead>

@@ -32,6 +32,6 @@
 
     @if ($viewName === 'products.show')
       @include('attachments.partial.list', ['attachments' => $product->attachments])
-    @endif--}}
-  </div>
+    @endif
+  </div>--}}
 </div>

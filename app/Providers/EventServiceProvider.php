@@ -20,11 +20,11 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\ArticleEvent::class => [
             \App\Listeners\ArticleEventListener::class,
         ],
-        \App\Events\MarketEvent::class => [
-            \App\Listeners\MarketEventListener::class,
-        ],
         \App\Events\ProductEvent::class => [
             \App\Listeners\ProductEventListener::class,
+        ],
+        \App\Events\OrderEvent::class => [
+            \App\Listeners\OrderEventListener::class,
         ],
         \App\Events\CommentEvent::class => [
             \App\Listeners\CommentEventListener::class,
@@ -32,9 +32,6 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\ModelChanged::class => [
             \App\Listeners\CacheHandler::class,
         ],
-//        \App\Events\CommentsEvent::class => [
-//            \App\Listeners\CommentsEventListener::class,
-//        ],
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
             'SocialiteProviders\Naver\NaverExtendSocialite@handle',
             'SocialiteProviders\Kakao\KakaoExtendSocialite@handle',

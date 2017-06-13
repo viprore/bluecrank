@@ -154,7 +154,7 @@
     <div class="row">
         <div class="col-xs-8 ">
             <div class="visible-xs-inline-block visible-sm-inline-block">
-                <form method="get" action="{{ route('products.index') }}" role="search" class="form-inline">
+                <form method="get" action="{{ route('olds.index') }}" role="search" class="form-inline">
                     <button class="btn btn-default form-control-inline" type="button" id="toggle-category"
                             title="카테고리 여/닫">
                         <i class="fa fa-list"></i>
@@ -170,7 +170,7 @@
         <div class="col-xs-4">
             <div class="text-right action__market">
                 @if(($currentUser ? ($currentUser->isAdmin() ? true : false ) : false))
-                    <a href="{{ route('products.create') }}" class="btn btn-primary">
+                    <a href="{{ route('olds.create') }}" class="btn btn-primary">
                         <i class="fa fa-plus-circle"></i>
                         상품 등록
                     </a>
@@ -212,7 +212,7 @@
 
                 <div class="list-group">
                     @foreach($categories as $slug => $locale)
-                        <a href="{{ route('categories.products.index', $slug) }}"
+                        <a href="{{ route('categories.olds.index', $slug) }}"
                            class="list-group-item">{{ $locale['ko'] }}</a>
                     @endforeach
                 </div>
@@ -286,7 +286,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading"><b>인기태그 (최대 3개 선택 가능)</b></div>
                         <div class="panel-body padding-8">
-                            @foreach($productTags as $tag)
+                            @foreach($oldTags as $tag)
                                 <button type="button" id="{{ $tag->slug }}"
                                         class="button__slug btn btn-sm {{ str_contains(request()->input('slug'), $tag->slug) ? 'btn-info' : 'btn-default' }}">
                                     # {{ $tag->name }}
@@ -313,14 +313,14 @@
                                 </p>--}}
                             </div>
                             <div class="embed-responsive embed-responsive-4by3">
-                                <a href="{{ route('products.show', $product->id) }}">
+                                <a href="{{ route('olds.show', $product->id) }}">
                                     <img class="img-product embed-responsive-item"
                                          src="{{ $product->attachments->count() > 0 ? $product->attachments->first()->url : 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQlzvW0rg_vTZkwz20Ot15G_zcKgx2L5DTtgUNPOrArVnPjpRoJiK8hJZc' }}"
                                          alt="">
                                 </a>
                             </div>
                             <div class="caption">
-                                <h4><a href="{{ route('products.show', $product->id) }}">{{ $product->ad_title }}</a>
+                                <h4><a href="{{ route('olds.show', $product->id) }}">{{ $product->ad_title }}</a>
                                 </h4>
                                 <p>{!! $product->ad_short_description !!}</p>
                             </div>

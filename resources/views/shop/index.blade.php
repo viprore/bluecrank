@@ -19,7 +19,7 @@
 
     <div class="row container__article">
         <div class="col-md-12 list__article">
-            <ul class="nav nav-tabs">
+            <ul class="nav nav-pills">
 
                 <li role="presentation" {!! !strpos(request()->fullUrl(), 'state') ? 'class="active"' : '' !!}><a href="{{ route('shops.index') }}">전국</a></li>
                 @foreach($states as $state)
@@ -40,20 +40,4 @@
     </div>
 @stop
 
-@section('style')
-    @parent
-    <style>
-        .table01 td {
-            padding: 5px;
-        }
-
-        .odd > td {
-            background: #EFEFEF;
-        }
-
-        .even {
-            background: #FFFFFF;
-        }
-    </style>
-@stop
 

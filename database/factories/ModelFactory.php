@@ -100,7 +100,6 @@ $factory->define(App\Market::class, function () {
         'ad_title' => $faker->realText(20),
         'ad_status' => $faker->randomElement(['판매', '인증', '완료']),
         'product_status' => $faker->randomElement(['S', 'A', 'B', 'C', 'D']),
-
         'price' => $faker->numberBetween(0, 1000) * 10000,
         'brand' => $faker->randomElement(config('project.brands')),
         'model' => $faker->realText(10),
@@ -113,6 +112,7 @@ $factory->define(App\Market::class, function () {
         'description' => $faker->realText(500),
         'created_at' => $faker->dateTimeBetween('-1 month', $date),
         'updated_at' => $date,
+
     ];
 });
 
@@ -132,6 +132,7 @@ $factory->define(App\Product::class, function () {
         'description' => $faker->realText(500),
         'created_at' => $faker->dateTimeBetween('-1 month', $date),
         'updated_at' => $date,
+        'is_old' => $faker->randomElement([true, false]),
     ];
 });
 

@@ -20,6 +20,7 @@ class Product extends Model
         'brand',
         'model',
         'description',
+        'is_old'
     ];
 
     /**

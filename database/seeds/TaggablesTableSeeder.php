@@ -13,8 +13,8 @@ class TaggablesTableSeeder extends Seeder
     {
         $faker = app(Faker\Generator::class);
         $articles = App\Article::all();
-        $markets = App\Market::all();
-        $products = App\Product::all();
+        $olds = App\Product::where('is_old', true)->get();
+        $products = App\Product::where('is_old', false)->get();
         $tags = App\Tag::all();
 
         foreach ($articles as $article) {
@@ -28,10 +28,10 @@ class TaggablesTableSeeder extends Seeder
             );
         }
 
-        foreach ($markets as $market) {
-            $market->tags()->sync(
+        foreach ($olds as $old) {
+            $old->tags()->sync(
                 $faker->randomElements(
-                    $tags->where('type', 'markets')
+                    $tags->where('type', 'olds')
                         ->pluck('id')
                         ->toArray(),
                     rand(1,3)

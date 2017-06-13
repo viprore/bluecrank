@@ -18,7 +18,7 @@ class AttachmentController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -28,8 +28,8 @@ class AttachmentController extends Controller
         if ($request->hasFile('files')) {
             $files = $request->file('files');
 
-            foreach($files as $file) {
-                $filename = str_random().filter_var($file->getClientOriginalName(), FILTER_SANITIZE_URL);
+            foreach ($files as $file) {
+                $filename = str_random() . filter_var($file->getClientOriginalName(), FILTER_SANITIZE_URL);
 
                 $payload = [
                     'filename' => $filename,
@@ -41,7 +41,7 @@ class AttachmentController extends Controller
 
                 if ($request->input('article_id')) {
                     $attachments[] = \App\Article::findOrFail($request->input('article_id'))->attachments()->create($payload);
-                 }else if ($request->input('product_id')) {
+                } else if ($request->input('product_id')) {
                     $attachments[] = \App\Product::findOrFail($request->input('product_id'))->attachments()->create($payload);
                 } else if ($request->input('market_id')) {
                     $attachments[] = \App\Market::findOrFail($request->input('market_id'))->attachments()->create($payload);
@@ -59,9 +59,41 @@ class AttachmentController extends Controller
     }
 
     /**
+     * Update Attachment to main image
+     *
+     * @param  \App\Attachment $attachment
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Attachment $attachment)
+    {
+        $product = $attachment->attachable;
+        $main = $product->attachments->first();
+
+        if ($main == $attachment) {
+            return response()->json($attachment, 200, [], JSON_PRETTY_PRINT);
+        }
+
+        $temp = $attachment->id;
+
+        $attachment->id = $main->id;
+        $main->id = PHP_INT_MAX;
+        $main->save();
+        $attachment->save();
+
+        $main->id = $temp;
+        $main->save();
+
+        $product->ad_img_id = $attachment->id;
+        $product->save();
+
+        return response()->json($attachment, 200, [], JSON_PRETTY_PRINT);
+    }
+
+
+    /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Attachment  $attachment
+     * @param  \App\Attachment $attachment
      * @return \Illuminate\Http\Response
      */
     public function destroy(Attachment $attachment)
@@ -72,9 +104,11 @@ class AttachmentController extends Controller
             \File::delete($path);
         }
 
+
         $attachment->delete();
 
-        return response()->json($attachment, 200, [], JSON_PRETTY_PRINT);
+        return response()->json([
+        ], 200, [], JSON_PRETTY_PRINT);
     }
 
     /**
@@ -87,7 +121,7 @@ class AttachmentController extends Controller
     {
         $path = attachments_path($file);
 
-        if (! \File::exists($path)) {
+        if (!\File::exists($path)) {
             abort(404);
         }
 

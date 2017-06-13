@@ -42,7 +42,7 @@ return [
             'highend' => '하이엔드',
             'sale' => '특가할인',
         ],
-        'markets' =>[
+        'olds' =>[
             'goodprice' => '가성비甲',
             'commute' => '출퇴근용',
             'forrider' => '라이더전용',

@@ -186,6 +186,11 @@ class OrderController extends Controller
             $item->save();
         }
 
+        event(new \App\Events\OrderEvent($order));
+        flash()->success(
+            '주문이 완료되었습니다.'
+        );
+
         return redirect(route('orders.show', $order->id));
     }
 

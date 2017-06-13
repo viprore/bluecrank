@@ -19,8 +19,8 @@ class AppServiceProvider extends ServiceProvider
             $articleTags = \Cache::rememberForever('tags.list.articles', function() {
                 return \App\Tag::whereType('articles')->get();
             });
-            $marketTags = \Cache::rememberForever('tags.list.markets', function() {
-                return \App\Tag::whereType('markets')->get();
+            $oldTags = \Cache::rememberForever('tags.list.olds', function() {
+                return \App\Tag::whereType('olds')->get();
             });
             $productTags = \Cache::rememberForever('tags.list.products', function() {
                 return \App\Tag::whereType('products')->get();
@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
             $currentLocale = app()->getLocale();
             $currentUrl = current_url();
 
-            $view->with(compact('articleTags', 'marketTags', 'productTags', 'currentUser', 'currentRouteName', 'currentLocale', 'currentUrl', 'categories', 'statusList'));
+            $view->with(compact('articleTags', 'oldTags', 'productTags', 'currentUser', 'currentRouteName', 'currentLocale', 'currentUrl', 'categories', 'statusList'));
         });
     }
 

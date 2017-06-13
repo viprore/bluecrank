@@ -23,7 +23,7 @@ class ProductEventListener
                 compact('product'),
                 function ($message) {
                     $message->to(config('mail.from.address'));
-                    $message->subject(sprintf('[%s] %s', config('app.name'), 'BC몰에 새 글을 등록하였습니다.: :title'));
+                    $message->subject(sprintf('[%s] %s', config('app.name'), 'BC몰에 새 상품이 등록되었습니다.'));
                 }
             );
         }
