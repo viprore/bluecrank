@@ -239,8 +239,8 @@
 
         /* select2 */
         $('#tags').select2({
-            placeholder: '태그를 선택하세요 (최대 3개)',
-            maximumSelectionLength: 3
+            placeholder: '태그를 선택하세요',
+            maximumSelectionLength: 1
         });
 
         /* 이메일 알림 체크박스 조작 */

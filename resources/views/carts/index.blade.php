@@ -15,6 +15,35 @@
         .w-100 {
             width: 100%;
         }
+
+        .btn-secondary {
+            background: #FFFFFF;
+            border-color: #fff;
+            line-height: 1.2;
+        }
+        .btn-danger {
+            background: #c9333b;
+            border-color: #c90919;
+            line-height: 1.2;
+
+        }
+        .btn-warning {
+            background: #049292;
+            border-color: #047575;
+            line-height: 1.2;
+        }
+        .btn-info2 {
+            background: #f57336;
+            border-color: #f56b24;
+            line-height: 1.2;
+        }
+
+        .btn-counter {
+            background: #ebebeb;
+            border-color: #ebebeb;
+            line-height: 1.2;
+        }
+
     </style>
 @stop
 
@@ -25,26 +54,25 @@
         <h3>
             장바구니
         </h3>
-        <hr/>
     </div>
 
     <div class="container">
         @forelse($items as $item)
             <div class="item__group my-3">
-                <div class="row">
-                    <div class="col-md-4 align-self-center"><label><input id="{{ $item->id }}" type="checkbox"
+                <div class="row my-3">
+                    <div class="col-xs-4 align-self-center"><label><input id="{{ $item->id }}" type="checkbox"
                                                                           value="on" class="item__checkbox">
                             상품선택</label></div>
-                    <div class="col-md-8 text-right">
-                        <button type="button" class="btn btn-danger">삭제</button>
-                        <button type="button" class="btn btn-warning">관심상품</button>
-                        <button type="button" class="btn btn-info">주문하기</button>
+                    <div class="col-xs-8 text-right">
+                        <button type="button" class="btn btn-danger btn-sm">삭제</button>
+                        <button type="button" class="btn btn-warning btn-sm">관심상품</button>
+                        <button type="button" class="btn btn-info btn-info2 btn-sm">주문하기</button>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-3"><img src="{{ $item->option->product->attachments->first()->url }}"
-                                               class="img-thumbnail w-100"></div>
-                    <div class="col-xs-9">
+                    <div class="col-xs-5"><img src="{{ $item->option->product->attachments->first()->url }}"
+                                               class="w-100"></div>
+                    <div class="col-xs-7">
                         <dl>
                             <dt>{{ $item->option->product->ad_title }}</dt>
                             <dd>색상 : {{ $item->option->color }} // 사이즈 : {{ $item->option->size }}</dd>
@@ -54,17 +82,18 @@
                     </div>
                 </div>
                 <div class="row py-3">
-                    <div class="col-md-3 text-center">
+                    <div class="col-md-5 text-center">
                         <div class="btn-group" role="group" aria-label="수량">
-                            <button type="button" class="btn">-</button>
+                            <button type="button" class="btn btn-counter">-</button>
                             <button type="button" class="btn btn-secondary">{{ $item->count }}</button>
-                            <button type="button" class="btn">+</button>
+                            <button type="button" class="btn btn-counter">+</button>
                         </div>
                     </div>
-                    <div class="col-md-9 text-right"> 합계 : <b>{{ ($item->option->product->price * $item->count) }}</b> 원
+                    <div class="col-md-7 text-right"> 합계 : <b>{{ ($item->option->product->price * $item->count) }}</b> 원
                     </div>
                 </div>
             </div>
+            <hr />
         @empty
             <p class="text-center text-danger">
                 카트에 담긴 상품이 존재하지 않습니다
@@ -73,7 +102,7 @@
         <div class="row my-3">
             <div class="col-md-12">
                 <button type="button" class="btn btn-warning btn__select__all">전체선택</button>
-                <button type="button" class="btn btn-info btn__delete">선택삭제</button>
+                <button type="button" class="btn btn-info btn-info2 btn__delete">선택삭제</button>
             </div>
         </div>
         <div class="row py-3">

@@ -16,10 +16,11 @@
     <meta property="og:author" content="">
 
     <!-- Google Meta -->
-    <meta itemprop="name" content="">
+    <meta name="google-site-verification" content="JCCALmOzY_6xdmWrBKTNOd1JCqPYn1m50cH1hv1llHQ" />
+    <meta itemprop="name" content="블루크랭크">
     <meta itemprop="description" content="{{ config('project.description') }}">
     <meta itemprop="image" content="">
-    <meta itemprop="author" content=""/>
+    <meta itemprop="author" content="BlueCrank"/>
 
     <!-- Twitter Meta-->
     <meta name="twitter:card" content="summary">

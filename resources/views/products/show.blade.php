@@ -94,6 +94,16 @@
             position: absolute;
         }
 
+        .btn-danger {
+            background: #225378;
+            border-color: #124d78;
+        }
+
+        .btn-success {
+            background: #1695a3;
+            border-color: #0694a3;
+        }
+
         .value, .value1 {
             cursor: default;
             width: 40px;
@@ -102,7 +112,7 @@
             color: #fff;
             line-height: 24px;
             border: 1px solid #E5E5E5;
-            background-color: #685555;
+            background-color: #eb7f00;
             text-align: center;
             display: inline-block;
             margin-right: 3px;
@@ -116,6 +126,20 @@
 
         .quantity-select .entry.value-minus, .quantity-select .entry.value-minus1 {
             margin-left: 0;
+        }
+
+        .btn-danger {
+            background: #225378;
+            border-color: #124d78;
+        }
+        .btn-success {
+            background: #1695a3;
+            border-color: #0694a3;
+        }
+
+        .my-6 {
+            margin-top : 1em;
+            margin-bottom : 1em;
         }
 
         /*-- quantity-end --*/
@@ -206,7 +230,7 @@
                             </div>
                             <div class="price">
                                 <h5>가격</h5>
-                                <p>{{ number_format($product->price) }}&nbsp;<i class="fa fa-krw"></i></p>
+                                <p>{{ number_format($product->price) }}&nbsp;원</p>
                             </div>
 
                             <div class="option-quantity">
@@ -240,7 +264,7 @@
                         </div>
 
                     </div>
-                    <div class="form-group text-center">
+                    <div class="form-group text-center my-6">
                         @if(Auth::check())
                             <button type="button" class="btn btn-danger btn__want">
                                 @if(empty(Auth::user()->wantProducts->where('id', '=', $product->id)->first()))

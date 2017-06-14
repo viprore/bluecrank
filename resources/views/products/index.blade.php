@@ -113,7 +113,6 @@
 
         #search_m {
             display: none;
-
         }
 
         .img-w100 {
@@ -174,7 +173,7 @@
                         <i class="fa fa-plus-circle"></i>
                         상품 등록
                     </a>
-            @endif
+                @endif
 
             <!--정렬 UI-->
                 <div class="btn-group sort__article">

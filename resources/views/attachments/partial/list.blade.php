@@ -1,3 +1,4 @@
+{{--
 @if ($attachments->count())
     <ul class="attachments__article">
         <li>
@@ -11,4 +12,4 @@
             </li>
         @endforeach
     </ul>
-@endif
+@endif--}}

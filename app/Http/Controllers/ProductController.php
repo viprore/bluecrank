@@ -48,6 +48,7 @@ class ProductController extends Controller implements Cacheable
 
 
         // 정렬 옵션
+        $query = $query->orderBy('category', 'asc');
         $query = $query->orderBy(
             $request->input('sort', 'created_at'),
             $request->input('order', 'desc')
