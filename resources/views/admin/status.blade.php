@@ -7,7 +7,7 @@
 
     <div class="page-header">
         <h4>
-            <a href="{{ route('markets.index') }}">
+            <a href="{{ route('admin.index') }}">
                 관리자
             </a>
             <small>

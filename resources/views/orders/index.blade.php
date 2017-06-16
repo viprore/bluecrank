@@ -11,6 +11,10 @@
         .w-100 {
             width: 100%;
         }
+
+        .btn-secondary {
+            background: #eeeeee;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.min.css">
 
@@ -36,37 +40,37 @@
             </ul>
         </div>
 
-        <form class="form-horizontal form-inline" role="form" method="GET" action="{{ route('orders.index') }}">
-            <div class="row py-3">
-                <div class="btn-group" role="group" aria-label="term">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="scopeTerm('-1')">오늘</button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="scopeTerm('-7')">1주일</button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="scopeTerm('-30')">1개월</button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="scopeTerm('-90')">3개월</button>
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="scopeTerm('-180')">6개월</button>
-                </div>
-                <div class="input-group date" id="start_date">
+        <form class="form-inline py-3 align-right" role="form" method="GET" action="{{ route('orders.index') }}">
+            {{--<div class="row py-3">--}}
+                <div class="form-group btn-group py-3" role="group" aria-label="term">
+                    <button type="button" class="btn btn-sm {{ date("Y-m-d",strtotime ("+1 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-1')">오늘</button>
+                    <button type="button" class="btn btn-sm {{ date("Y-m-d",strtotime ("+7 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-7')">1주일</button>
+                    <button type="button" class="btn btn-sm {{ date("Y-m-d",strtotime ("+30 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-30')">1개월</button>
+                    <button type="button" class="btn btn-sm {{ date("Y-m-d",strtotime ("+90 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-90')">3개월</button>
+                    <button type="button" class="btn btn-sm {{ date("Y-m-d",strtotime ("+180 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-180')">6개월</button>
+                </div>&nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="form-group input-group date py-3" id="start_date">
                     <input type="text" class="form-control" name="start_date"/>
                     <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar"></span>
                         </span>
                 </div>
-                ~
-                <div class="input-group date" id="end_date">
+                <div class="form-group visible-lg-inline visible-md-inline visible-sm-inline">~</div>
+                <div class="form-group input-group date py-3" id="end_date">
                     <input type="text" class="form-control" name="end_date"/>
                     <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar"></span>
                         </span>
-                </div>
+                </div>&nbsp;&nbsp;&nbsp;&nbsp;
                 <button type="submit" class="btn btn-primary">조회</button>
-            </div>
+            {{--</div>--}}
         </form>
 
 
         @forelse($orders as $order)
             <div class="row item-info">
                 <div class="col-xs-3">
-                    <img class="img-thumbnail w-100"
+                    <img class="w-100"
                          src="{{ $order->items->first()->option->product->attachments->first()->url }}"/>
                 </div>
                 <div class="col-xs-9">
@@ -74,7 +78,7 @@
                         <h4>{{ $order->items->first()->option->product->ad_title . "외 " . $order->items->count() . "건" }}</h4>
                     </a>
 
-                    <p><b>주문일자</b> : {{ $order->created_at->format('Y-m-d') }}&nbsp;&nbsp;<b>가격</b> : {{ $order->amount . "원"  }}</p>
+                    <p><b>주문일자</b> : {{ $order->created_at->format('Y-m-d') }}&nbsp;&nbsp;<b>가격</b> : {{ number_format($order->amount) . "원"  }}</p>
                     <div class="btn-group" role="group" aria-label="status">
                         <button type="button" class="btn btn-link btn-sm">{{ $order->status }}</button>
                         {!! $order->status == '입금전' ? '<button type="button" class="btn btn-danger btn-sm btn__cancel" value="'. $order->id .'">취소</button>' : '' !!}
@@ -86,6 +90,7 @@
                     </div>
                 </div>
             </div>
+            <hr />
 
         @empty
             <p class="text-center text-danger">
@@ -111,10 +116,10 @@
 @section('script')
     @parent
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    {{--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>--}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment-with-locales.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>
+    {{--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>--}}
     <script type="text/javascript">
 
 

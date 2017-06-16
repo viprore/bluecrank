@@ -111,8 +111,8 @@
             padding: 8px 0px;
             color: #fff;
             line-height: 24px;
-            border: 1px solid #E5E5E5;
-            background-color: #eb7f00;
+            border: 1px solid #ccd0d2;
+            background-color: #ffffff;
             text-align: center;
             display: inline-block;
             margin-right: 3px;
@@ -140,6 +140,12 @@
         .my-6 {
             margin-top : 1em;
             margin-bottom : 1em;
+        }
+
+
+
+        .quantity-count {
+            color: #555555;
         }
 
         /*-- quantity-end --*/
@@ -249,9 +255,9 @@
                                     <h5>Quantity :</h5>
                                     <div class="quantity">
                                         <div class="quantity-select">
-                                            <div class="entry value-minus1">&nbsp;</div>
-                                            <div class="entry value1"><span>1</span></div>
-                                            <div class="entry value-plus1 active">&nbsp;</div>
+                                            <div class="entry quantity-ctrl value-minus1">&nbsp;</div>
+                                            <div class="entry quantity-count value1"><span>1</span></div>
+                                            <div class="entry quantity-ctrl value-plus1 active">&nbsp;</div>
                                         </div>
                                     </div>
                                     <!--quantity-->

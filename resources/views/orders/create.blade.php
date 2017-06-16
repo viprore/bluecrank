@@ -163,15 +163,19 @@
                                                 <tr>
                                                     <td>매장선택</td>
                                                     <td>
-                                                        <select id="states" class="form-control" onchange="makeModal()">
-                                                            @foreach($states as $state)
-                                                                <option value="{{ $state }}">{{ $state }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <button type="button" class="btn btn-primary btn-sm"
-                                                                data-toggle="modal" data-target="#myModal">
-                                                            매장선택
-                                                        </button>
+                                                        <div class="form-inline">
+                                                            <select id="states" class="form-control form-inline" onchange="makeModal()">
+                                                                @foreach($states as $state)
+                                                                    <option value="{{ $state }}">{{ $state }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="button" class="btn btn-primary btn-sm form-inline"
+                                                                    data-toggle="modal" data-target="#myModal">
+                                                                매장선택
+                                                            </button>
+                                                        </div>
+
+
                                                     {{--<a class="btn btn-primary" href="#">검색 </a></td>--}}
 
                                                 </tr>
@@ -391,7 +395,7 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default close" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -400,7 +404,7 @@
 
 @section('script')
     @parent
-    {{--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>--}}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="//d1p7wdleee1q2z.cloudfront.net/post/search.min.js"></script>
     <script src="https://service.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
     <script>
@@ -416,8 +420,21 @@
                     var pay_method = 'card';
                 }
                 // 기타 정보
-                var merchant_uid = init_orderid();
-                var name = $('#good_name').val(); // 상품명
+                $('#merchant_uid').val(init_orderid());
+                var formData = $("#ordrForm").serialize();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/orders",
+                    cache: false,
+                    data: formData,
+                    success: onSuccess,
+                    error: onError
+                });
+
+
+
+                /*var name = $('#good_name').val(); // 상품명
                 var amount = $('#amount').val();
                 var buyer_email = $('#buyer_email').val();
 
@@ -434,6 +451,8 @@
                     buyer_tel = $('#contact2').val();
                     buyer_addr = $('#find_address2').val() + $('#input_address2').val();
                 }
+
+
 
                 IMP.request_pay({
                     pg: 'html5_inicis',
@@ -460,7 +479,7 @@
                         msg += '\n에러내용 : ' + rsp.error_msg;
                         alert(msg);
                     }
-                });
+                });*/
 
             });
 
@@ -583,7 +602,7 @@
             $('#find_address2').val(address);
             $('#input_address2').val(contact);
 
-            $('#myModal').modal('toggle');
+            $('#myModal .close').click();
 
         }
 
@@ -606,6 +625,32 @@
             var order_idxx = "BC" + year + "" + month + "" + date + "" + time;
 
             return order_idxx;
+        }
+
+        function onSuccess(order) {
+            IMP.request_pay({
+                pg: 'html5_inicis',
+                pay_method: order.paymethod,
+                merchant_uid: order.merchant_uid,
+                name: $('#good_name').val(),
+                amount: order.amount,
+                buyer_email: $('#buyer_email').val(),
+                buyer_name: order.name,
+                buyer_tel: order.contact,
+                buyer_addr: order.find_address + ' ' + order.input_address,
+                m_redirect_url : '/payments/complete'
+            }, function (rsp) {
+                if (rsp.success) {
+                    var url = '/payments/complete?imp_uid='+ rsp.imp_uid +'&merchant_uid=' + rsp.merchant_uid;
+                    $.get(url);
+                } else {
+                    alert('PG사 결제 에러');
+                }
+            });
+        }
+
+        function onError(data) {
+            alert("서버 내부 에러입니다. 다시 시도해주세요.");
         }
 
 

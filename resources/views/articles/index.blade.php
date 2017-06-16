@@ -38,6 +38,10 @@
             border-color: #3097d0;
             color:#FFFFFF;
         }
+
+        .text-article-title {
+            color: #333333;
+        }
     </style>
 @endsection
 
@@ -129,9 +133,9 @@
 
             @forelse($articles as $article)
                 <div class="row side-padding">
-                    <h5 class="mb-split"><b><a class="text-muted" href="{{ route('articles.show', $article->id) }}">
+                    <h5 class="mb-split"><a class="text-article-title" href="{{ route('articles.show', $article->id) }}">
                                 {{ $article->title }}
-                            </a></b></h5>
+                            </a></h5>
                 </div>
                 <div class="row side-padding">
                     <div class="vcenter">

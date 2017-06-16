@@ -7,7 +7,7 @@
     <li {!! !str_contains(request()->path(), 'tags') ? 'class="active"' : '' !!}>
         <a href="{{ route('articles.index') }}">
             모아보기
-            @if(App\Article::latest()->first()->created_at->between(\Carbon\Carbon::now(), \Carbon\Carbon::now()->addDays(-7)))
+            @if(!empty(App\Article::latest()->first()) and App\Article::latest()->first()->created_at->between(\Carbon\Carbon::now(), \Carbon\Carbon::now()->addDays(-7)))
                 <span class="badge badge-default" style="color:#ffffff; background-color:#fda203">
                     N
                 </span>
@@ -19,7 +19,7 @@
         <li {!! str_contains(request()->path(), $tag->slug) ? 'class="active"' : '' !!}>
             <a href="{{ route('tags.articles.index', $tag->slug) }}">
                 {{ $tag->name }}
-                @if ($tag->articles->max('created_at')->between(\Carbon\Carbon::now(), \Carbon\Carbon::now()->addDays(-7)))
+                @if ($tag->articles->count() > 0 && $tag->articles->max('created_at')->between(\Carbon\Carbon::now(), \Carbon\Carbon::now()->addDays(-7)))
                     <span class="badge badge-default" style="color:#ffffff; background-color:#fda203">
               N
           </span>

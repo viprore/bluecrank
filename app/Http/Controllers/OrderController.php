@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\OrderRequest;
 use App\Item;
 use App\Order;
+use App\Payment;
 use App\Ship;
 use App\Shop;
 use Carbon\Carbon;
@@ -22,6 +23,16 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $user = \Auth::user();
+
+        // 주문하다 실패한 주문서들 삭제
+        $orders = $user->orders;
+
+        foreach ($orders as $order) {
+            if ($order->items->count() == 0) {
+                $order->delete();
+            }
+        }
+
 
         // 종료일 설정
         if (!empty($request->get('end_date'))) {
@@ -172,12 +183,9 @@ class OrderController extends Controller
 
         if (strpos($paymethod, '무통장') === false) {
             $payload = array_merge($payload, [
-                "status" => '입금완료',
                 "merchant_uid" => $request->input('merchant_uid')
             ]);
         }
-
-//        dd($payload);
 
         $order = Order::create($payload);
 
@@ -186,12 +194,20 @@ class OrderController extends Controller
             $item->save();
         }
 
-        event(new \App\Events\OrderEvent($order));
-        flash()->success(
-            '주문이 완료되었습니다.'
-        );
 
-        return redirect(route('orders.show', $order->id));
+
+        if (strpos($paymethod, '무통장') === true) {
+            event(new \App\Events\OrderEvent($order));
+
+            flash()->success(
+                '주문이 완료되었습니다.'
+            );
+
+            return redirect(route('orders.show', $order->id));
+        } else {
+            return response()->json($order, 200, [], JSON_PRETTY_PRINT);
+        }
+
     }
 
     /**
@@ -294,12 +310,63 @@ class OrderController extends Controller
     }
 
 
-
-    public function getByMerchangUid($id)
+    public function checkPayment(Request $request)
     {
-        $iamport = new \Iamport(ENV('IMP_REST_API_KEY'), ENV('YOUR_IMP_REST_API_SECRET'));
+        $iamport = new \Iamport(ENV('IMP_REST_API_KEY'), ENV('IMP_REST_API_SECRET'));
+        $merchant_uid = $request->get('merchant_uid');
 
-        $result = $iamport->findByMerchantUID($id);
+        $order = Order::where('merchant_uid', $merchant_uid)->first();
+
+        if (empty($order)) {
+            return response()->json("가맹점 내 해당 결제 정보가 없습니다.", 400, [], JSON_PRETTY_PRINT);
+        } else {
+            $result = $iamport->findByMerchantUID($merchant_uid);
+
+            if ($result->success) {
+                $payment_data = $result->data;
+
+                if ($payment_data->status === "paid" && $payment_data->amount === $order->amount) {
+                    $payload = [
+                        'amount' => $payment_data->amount,
+                        'apply_num' => $payment_data->apply_num,
+                        'buyer_addr' => $payment_data->buyer_addr,
+                        'buyer_email' => $payment_data->buyer_email,
+                        'buyer_name' => $payment_data->buyer_name,
+                        'buyer_tel' => $payment_data->buyer_tel,
+                        'imp_uid' => $payment_data->imp_uid,
+                        'merchant_uid' => $payment_data->merchant_uid,
+                        'name' => $payment_data->name,
+                        'paid_at' => date('Y-m-d H:i:s',$payment_data->paid_at),
+                        'pay_method' => $payment_data->pay_method,
+                        'receipt_url' => $payment_data->receipt_url,
+                        'status' => $payment_data->status,
+                    ];
+
+                    $payment = Payment::create($payload);
+
+                    $order = $payment->getOrder();
+
+                    $order->status = "입금완료";
+                    $order->save();
+
+                    event(new \App\Events\OrderEvent($order));
+
+                    return redirect(route('orders.show', $payment->getOrder()->id));
+                } else {
+                    foreach ($order->items as $item) {
+                        $item->order_id = null;
+                        $item->save();
+                    }
+                    $order->delete();
+
+                    return response()->json("결제실패 또는 결제 금액 불일치 입니다.", 400, [], JSON_PRETTY_PRINT);
+                }
+            }
+
+
+        }
+
+
     }
 
 }

@@ -43,7 +43,7 @@
             <p class="ft-body"><br/>상담 가능 시간 : 10:00~19:00 (토,일, 공휴일 휴무)<br/>
                 (01849) 서울 노원구 동일로 174길 27 305호<br/>
                 Tel : 0507-1453-7457 E-mail : bt.biketrade@gmail.com<br/>
-                KAKAO : @블루크랭크</p>
+                KAKAO : <a href="http://pf.kakao.com/_DxnLmu">@블루크랭크</a></p>
         </div>
         <div class="col-sm-3 ft-div">
             <b class="ft-title">BANK INFO</b>

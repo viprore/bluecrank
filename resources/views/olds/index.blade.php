@@ -128,6 +128,10 @@
             padding: 8px;
         }
 
+        .category-active {
+            background: #eee;
+        }
+
 
     </style>
     {{--<link rel="stylesheet" href="{{ mix('css/flexslider.css') }}">--}}
@@ -140,15 +144,47 @@
 
     </div>--}}
     <div class="row my-6 visible-xs-block visible-sm-block">
-        <a href="https://www.youtube.com/watch?v=vhba0ICbeHc" target="_blank">
-            <img class="img-w100" src="{{ url('icons/banner02.png') }}">
-        </a>
+        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+        {{--<ol class="carousel-indicators">
+            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+        </ol>--}}
+
+        <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                    <a href="https://www.youtube.com/watch?v=vhba0ICbeHc" target="_blank">
+                        <img class="img-w100" src="{{ url('icons/banner02.png') }}">
+                    </a>
+                </div>
+                <div class="item">
+                    <img class="img-w100" src="{{ url('icons/banner04.jpg') }}">
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row my-6 visible-md-block visible-lg-block text-center">
-        <a href="https://www.youtube.com/watch?v=vhba0ICbeHc" target="_blank">
-            <img class="img-w100" src="{{ url('icons/banner02-pc.png') }}">
-        </a>
+        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+        {{--<ol class="carousel-indicators">
+            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+        </ol>--}}
+
+        <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                    <a href="https://www.youtube.com/watch?v=vhba0ICbeHc" target="_blank">
+                        <img class="img-w100" src="{{ url('icons/banner02-pc.png') }}">
+                    </a>
+                </div>
+                <div class="item">
+                    <img class="img-w100" src="{{ url('icons/banner04-pc.jpg') }}">
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -213,7 +249,7 @@
                 <div class="list-group">
                     @foreach($categories as $slug => $locale)
                         <a href="{{ route('categories.olds.index', $slug) }}"
-                           class="list-group-item">{{ $locale['ko'] }}</a>
+                           class="list-group-item {{ str_contains(request()->path(), $slug) ? 'category-active' : '' }}">{{ $locale['ko'] }}</a>
                     @endforeach
                 </div>
             </aside>
@@ -284,7 +320,7 @@
             <div class="row">
                 <div class="col-md-12 no-padding">
                     <div class="panel panel-default">
-                        <div class="panel-heading"><b>인기태그 (최대 3개 선택 가능)</b></div>
+                        <div class="panel-heading"><b>인기태그</b> <small>(최대 3개 선택 가능)</small></div>
                         <div class="panel-body padding-8">
                             @foreach($oldTags as $tag)
                                 <button type="button" id="{{ $tag->slug }}"

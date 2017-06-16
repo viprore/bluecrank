@@ -77,7 +77,7 @@
                             <dt>{{ $item->option->product->ad_title }}</dt>
                             <dd>색상 : {{ $item->option->color }} // 사이즈 : {{ $item->option->size }}</dd>
                             <dt>가격</dt>
-                            <dd>{{ $item->option->product->price }}원</dd>
+                            <dd>{{ number_format($item->option->product->price) }}원</dd>
                         </dl>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
                             <button type="button" class="btn btn-counter">+</button>
                         </div>
                     </div>
-                    <div class="col-md-7 text-right"> 합계 : <b>{{ ($item->option->product->price * $item->count) }}</b> 원
+                    <div class="col-md-7 text-right"> 합계 : <b>{{ number_format($item->option->product->price * $item->count) }}</b> 원
                     </div>
                 </div>
             </div>
@@ -114,7 +114,7 @@
                 }
 
             @endphp
-            <div class="col-md-9 text-right"><b>{{ $result }}</b>원</div>
+            <div class="col-md-9 text-right"><b>{{ number_format($result) }}</b>원</div>
         </div>
         <div class="row my-3 text-center">
             <div class="col-md-12">

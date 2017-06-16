@@ -272,6 +272,11 @@ Route::get('cancel/orders', [
     'as' => 'orders.index.cancel',
     'uses' => 'OrderController@index'
 ]);
+// 모바일용 주문 완료
+Route::get('payments/complete', [
+    'as' => 'payment.check',
+    'uses' => 'OrderController@checkPayment'
+]);
 
 
 

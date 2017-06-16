@@ -34,7 +34,8 @@
             "App\\": "app/"
         },
         "files": [
-            "app/helpers.php"
+            "app/helpers.php",
+            "app/src/iamport.php"
         ]
     },
     "autoload-dev": {
