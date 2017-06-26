@@ -30,9 +30,75 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function want(\App\Product $product)
+    public function wantIndex(Request $request)
     {
         $user = \Auth::user();
+
+        if (!$user) {
+            return redirect(route('sessions.create'));
+        }
+
+        $tab = $request->input('tab');
+        if (isset($tab)) {
+            switch ($tab) {
+                case 'products':
+                    $items = $user->wantProducts->where('is_old', false);
+                    break;
+                case 'olds':
+                    $items = $user->wantProducts->where('is_old', true);
+                    break;
+                case 'articles':
+                    $items = $user->wantArticles;
+                    break;
+            }
+        }else{
+            $items = $user->wantProducts;
+            $items2 = $user->wantArticles;
+
+            $items = $items->merge($items2);
+        }
+
+
+
+        return view('wants.index', compact('items'));
+    }
+
+    public function wantProduct(\App\Product $product)
+    {
+        $user = \Auth::user();
+
+        if ($user->wantProducts()->find($product->id)) {
+            $user->wantProducts()->detach($product->id);
+            flash('해제');
+        } else {
+            $user->wantProducts()->attach($product->id);
+            flash('등록');
+        }
+
+        return response()->json([], 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function wantArticle($article)
+    {
+        $user = \Auth::user();
+
+        if (is_null($user->wantArticles()->find($article->id))) {
+            $user->wantArticles()->attach($article->id);
+            flash('좋아요 등록'. $article->id);
+
+        } else {
+            $user->wantArticles()->detach($article->id);
+            flash('좋아요 해제');
+        }
+
+        return response()->json([], 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function wantByItem(\App\Item $item)
+    {
+        $user = \Auth::user();
+
+        $product = $item->option->product;
 
         if ($user->wantProducts()->find($product->id)) {
             $user->wantProducts()->detach($product->id);

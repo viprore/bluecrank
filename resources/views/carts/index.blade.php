@@ -21,17 +21,20 @@
             border-color: #fff;
             line-height: 1.2;
         }
+
         .btn-danger {
             background: #c9333b;
             border-color: #c90919;
             line-height: 1.2;
 
         }
+
         .btn-warning {
             background: #049292;
             border-color: #047575;
             line-height: 1.2;
         }
+
         .btn-info2 {
             background: #f57336;
             border-color: #f56b24;
@@ -60,13 +63,18 @@
         @forelse($items as $item)
             <div class="item__group my-3">
                 <div class="row my-3">
-                    <div class="col-xs-4 align-self-center"><label><input id="{{ $item->id }}" type="checkbox"
+                    <div class="col-xs-4 align-self-center"><label><input item_id="{{ $item->id }}" type="checkbox"
                                                                           value="on" class="item__checkbox">
                             상품선택</label></div>
                     <div class="col-xs-8 text-right">
-                        <button type="button" class="btn btn-danger btn-sm">삭제</button>
-                        <button type="button" class="btn btn-warning btn-sm">관심상품</button>
-                        <button type="button" class="btn btn-info btn-info2 btn-sm">주문하기</button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="deleteCart({{ $item->id }})">삭제
+                        </button>
+                        <button type="button" class="btn btn-warning btn-sm" onclick="toggleWants({{ $item->id }})">
+                            관심상품
+                        </button>
+                        <button type="button" class="btn btn-info btn-info2 btn-sm"
+                                onclick="buyDirectly({{ $item->id }})">주문하기
+                        </button>
                     </div>
                 </div>
                 <div class="row">
@@ -84,16 +92,18 @@
                 <div class="row py-3">
                     <div class="col-md-5 text-center">
                         <div class="btn-group" role="group" aria-label="수량">
-                            <button type="button" class="btn btn-counter">-</button>
-                            <button type="button" class="btn btn-secondary">{{ $item->count }}</button>
-                            <button type="button" class="btn btn-counter">+</button>
+                            <button type="button" class="btn btn-counter value-minus1">-</button>
+                            <button type="button" class="btn btn-secondary value1"
+                                    id="item_{{ $item->id }}_count">{{ $item->count }}</button>
+                            <button type="button" class="btn btn-counter value-plus1">+</button>
                         </div>
                     </div>
-                    <div class="col-md-7 text-right"> 합계 : <b>{{ number_format($item->option->product->price * $item->count) }}</b> 원
+                    <div class="col-md-7 text-right"> 합계 :
+                        <b>{{ number_format($item->option->product->price * $item->count) }}</b> 원
                     </div>
                 </div>
             </div>
-            <hr />
+            <hr/>
         @empty
             <p class="text-center text-danger">
                 카트에 담긴 상품이 존재하지 않습니다
@@ -102,7 +112,7 @@
         <div class="row my-3">
             <div class="col-md-12">
                 <button type="button" class="btn btn-warning btn__select__all">전체선택</button>
-                <button type="button" class="btn btn-info btn-info2 btn__delete">선택삭제</button>
+                <button type="button" class="btn btn-info btn-info2 btn__delete__all">선택삭제</button>
             </div>
         </div>
         <div class="row py-3">
@@ -132,27 +142,123 @@
 @stop
 @section('script')
     <script>
-        $(document).ready(function(){
-            $(".item__checkbox").change(function(){
-                var item_id = this.getAttribute("id");
+        $(document).ready(function () {
+            var checked_all = false;
+            $(".item__checkbox").change(function () {
+                var item_id = this.getAttribute("item_id");
                 var form = $('form').first();
-                if($(".item__checkbox").is(":checked")){
+                if ($(this).is(":checked")) {
                     $('<input>', {
                         type: 'hidden',
                         name: 'items[]',
                         value: item_id
                     }).appendTo(form);
-                }else{
+                } else {
                     $('input[name="items[]"][value="' + item_id + '"]').remove();
                 }
             });
-            $(".btn__select__all").click(function (){
-                $(".item__checkbox").attr('checked', true);
+            $(".btn__select__all").click(function () {
+                var form = $('form').first();
+                checked_all = !checked_all;
+                $('.item__checkbox').each(function (i, e) {
+                    var item_id = e.getAttribute("item_id");
+                    if (checked_all) {
+                        $('<input>', {
+                            type: 'hidden',
+                            name: 'items[]',
+                            value: item_id
+                        }).appendTo(form);
+                    } else {
+                        $('input[name="items[]"][value="' + item_id + '"]').remove();
+                    }
+
+                    e.checked = checked_all;
+                });
+
             });
 
-            $(".btn__delete__all").click(function (){
-                // TODO :: 아약스 카트 삭제 이벤트
+            $(".btn__delete__all").click(function () {
+                var items = '';
+                $('input[name="items[]"]').each(function (i, e) {
+                    if (items == '') {
+                        items += e.getAttribute('value');
+                    } else {
+                        items += ',' + e.getAttribute('value');
+                    }
+
+                });
+
+                if (items != '') {
+                    post_to_url('/items/destroy/list', {
+                        '_token': $('meta[name="csrf-token"]').attr('content'),
+                        'items': items
+                    });
+                }
             });
+
         });
+
+        function deleteCart(id) {
+            var item_id = id;
+
+            $.ajax({
+                type: 'DELETE',
+                url: 'carts/' + item_id
+            }).then(function () {
+                location.reload();
+            })
+        }
+
+        function toggleWants(id) {
+            $.ajax({
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                type: 'POST',
+                url: 'item/wants/' + id
+            }).then(function () {
+                location.reload();
+            })
+        }
+
+        function buyDirectly(id) {
+            var count = $('#item_' + id + '_count').text();
+
+            post_to_url('/direct/item', {
+                '_token': $('meta[name="csrf-token"]').attr('content'),
+                'item_id': id,
+                'count': count
+            });
+        }
+
+        $('.value-plus1').on('click', function () {
+            var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10) + 1;
+            divUpd.text(newVal);
+        });
+
+        $('.value-minus1').on('click', function () {
+            var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10) - 1;
+            if (newVal >= 1) divUpd.text(newVal);
+        });
+
+        function post_to_url(path, params, method) {
+            method = method || "post"; // 전송 방식 기본값을 POST로
+
+
+            var form = document.createElement("form");
+            form.setAttribute("method", method);
+            form.setAttribute("action", path);
+
+            //히든으로 값을 주입시킨다.
+            for (var key in params) {
+                var hiddenField = document.createElement("input");
+                hiddenField.setAttribute("type", "hidden");
+                hiddenField.setAttribute("name", key);
+                hiddenField.setAttribute("value", params[key]);
+
+                form.appendChild(hiddenField);
+            }
+
+            document.body.appendChild(form);
+            form.submit();
+        }
     </script>
 @stop

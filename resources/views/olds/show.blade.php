@@ -420,7 +420,7 @@
             var count = parseInt($('.value1').text(), 10);
 
             if (confirm(optionTxt + " " + count + "개를 바로 구매합니다.")) {
-                post_to_url('/buyone', {
+                post_to_url('/direct/option', {
                     '_token': $('meta[name="csrf-token"]').attr('content'),
                     'option_id': optionId,
                     'count': count

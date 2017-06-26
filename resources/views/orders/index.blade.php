@@ -69,11 +69,11 @@
 
         @forelse($orders as $order)
             <div class="row item-info">
-                <div class="col-xs-3">
+                <div class="col-xs-5">
                     <img class="w-100"
                          src="{{ $order->items->first()->option->product->attachments->first()->url }}"/>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-xs-7">
                     <a href="/orders/{{ $order->id }}">
                         <h4>{{ $order->items->first()->option->product->ad_title . "외 " . $order->items->count() . "건" }}</h4>
                     </a>

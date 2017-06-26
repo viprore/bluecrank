@@ -53,6 +53,27 @@ class ItemController extends Controller
 
     }
 
+    public function directByItem(Request $request)
+    {
+        $item_id = $request->input('item_id');
+        $count = $request->input('count');
+
+        $item = Item::find($item_id);
+
+        $option = $item->option;
+
+        if ($option->inventory < $count) {
+            flash('죄송합니다. 재고량이 부족합니다.', 'warning');
+            return response()->json([], 204, [], JSON_PRETTY_PRINT);
+        }
+
+        $item->count = $count;
+        $item->save();
+
+        $items = [$item->id];
+        return redirect(route('orders.create', compact('items')));
+    }
+
     public function direct(Request $request)
     {
         $option_id = $request->input('option_id');
@@ -112,14 +133,29 @@ class ItemController extends Controller
      * @param  @param  Item  $item
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Item $item)
+    public function destroy($id)
     {
+        $item = Item::find($id);
         $this->authorize('delete', $item);
         $item->delete();
 
-        flash('해당 상품이 삭제되었습니다');
+        flash($item->id. ' 해당 상품이 삭제되었습니다');
 
-        return response()->json([], 205, [], JSON_PRETTY_PRINT);
+        return response()->json($item, 200, [], JSON_PRETTY_PRINT);
+    }
+
+    public function destroyAll(Request $request)
+    {
+        $item_id_list = $request->input('items', []);
+        $items_temp = explode(',', $item_id_list);
+
+        $items = Item::whereIn('id', $items_temp)->get();
+
+        foreach ($items as $item) {
+            $item->delete();
+        }
+
+        return redirect(route('carts.index'));
     }
 
     public function checkInventory(Option $option, int $count)

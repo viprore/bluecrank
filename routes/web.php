@@ -115,12 +115,29 @@ Route::get('auth/carts', [
 ]);
 Route::post('wants/{product}', [
     'as' => 'users.want',
-    'uses' => 'HomeController@want'
+    'uses' => 'HomeController@wantProduct'
 ]);
-Route::post('buyone', [
-    'as' => 'users.direct',
+Route::post('article/wants/{product}', [
+    'as' => 'users.want.article',
+    'uses' => 'HomeController@wantArticle'
+]);
+Route::post('item/wants/{item}', [
+    'as' => 'users.want',
+    'uses' => 'HomeController@wantByItem'
+]);
+Route::post('direct/option', [
+    'as' => 'users.direct.option',
     'uses' => 'ItemController@direct'
 ]);
+Route::post('direct/item', [
+    'as' => 'users.direct.item',
+    'uses' => 'ItemController@directByItem'
+]);
+Route::post('items/destroy/list', [
+    'as' => 'users.destroy.item.list',
+    'uses' => 'ItemController@destroyAll'
+]);
+
 // 리뷰
 Route::resource('reviews', 'ReviewController');
 Route::get('reviews/create/{id}', [
@@ -231,6 +248,11 @@ Route::post('auth/reset', [
 ]);
 
 
+// 관심목록(좋아요)
+Route::get('wants', [
+    'as' => 'wants.index',
+    'uses' => 'HomeController@wantIndex'
+]);
 // 주문내역
 Route::get('auth/orders', [
     'as' => 'users.order',

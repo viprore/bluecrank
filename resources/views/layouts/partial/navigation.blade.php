@@ -101,6 +101,12 @@
                                 </a>
                             </li>--}}
                             <li>
+                                <a href="{{ route('wants.index') }}">
+                                    관심목록
+                                </a>
+                            </li>
+
+                            <li>
                                 <a href="{{ route('sessions.destroy') }}">
                                     로그아웃
                                 </a>

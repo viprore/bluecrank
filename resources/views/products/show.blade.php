@@ -2,6 +2,7 @@
 
 @section('style')
     @parent
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.min.css">
     <style>
         .item_info h3 {
             font-size: 1.5em;
@@ -162,6 +163,8 @@
         }
 
     @endphp
+
+
 
     <div class="page-header">
         <h4>
@@ -388,6 +391,7 @@
 
 @section('script')
     @parent
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>
     <script>
         $(window).on('load', function () {
             $('.flexslider').flexslider({
@@ -433,10 +437,38 @@
 
         $('.btn__cart').on('click', function (e) {
             var productId = $('article').data('id');
+            var product_title = $(".page-header small").text().replace(' /', '');
             var optionId = $('#select_option option:selected').val();
             var optionTxt = $('#select_option option:selected').text();
             var count = parseInt($('.value1').text(), 10);
 
+            BootstrapDialog.show({
+                title: '카트에 담기',
+                message: '상품명 : <b>' + product_title.replace('\n', '') + "</b>옵션 : <b>" + optionTxt.replace('\n', '') + "</b> " + count + "개를 장바구니에 추가합니다.",
+                buttons: [{
+                    label: '담기',
+                    action: function(dialog) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/carts',
+                            data: {
+                                option_id: optionId,
+                                count: count
+                            }
+                        }).then(function () {
+                            location.reload();
+                        });
+                    }
+                }, {
+                    label: '취소',
+                    action: function(dialog) {
+                        dialog.close();
+                    }
+                }]
+            });
+
+
+            /*
             if (confirm(optionTxt + " " + count + "개를 장바구니에 추가합니다.")) {
                 $.ajax({
 //                    type: 'POST',
@@ -450,21 +482,35 @@
                 }).then(function () {
                     window.location.href = '/products/' + productId;
                 });
-            }
+            }*/
         });
 
         $('.btn__buy').on('click', function (e) {
+            var product_title = $(".page-header small").text().replace(' /', '');
             var optionId = $('#select_option option:selected').val();
             var optionTxt = $('#select_option option:selected').text();
             var count = parseInt($('.value1').text(), 10);
 
-            if (confirm(optionTxt + " " + count + "개를 바로 구매합니다.")) {
-                post_to_url('/buyone', {
-                    '_token': $('meta[name="csrf-token"]').attr('content'),
-                    'option_id': optionId,
-                    'count': count
-                });
-            }
+            BootstrapDialog.show({
+                title: '바로 구매',
+                message: '상품명 : <b>' + product_title.replace('\n', '') + "</b>옵션 : <b>" + optionTxt.replace('\n', '') + "</b> " + count + "개를 바로 구매합니다.",
+                buttons: [{
+                    label: '구매',
+                    action: function(dialog) {
+                        post_to_url('/direct/option', {
+                            '_token': $('meta[name="csrf-token"]').attr('content'),
+                            'option_id': optionId,
+                            'count': count
+                        });
+                    }
+                }, {
+                    label: '취소',
+                    action: function(dialog) {
+                        dialog.close();
+                    }
+                }]
+            });
+
         });
 
         function post_to_url(path, params, method) {

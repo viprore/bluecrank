@@ -1,5 +1,16 @@
 @extends('layouts.app')
 
+{{--@section('style')
+    @parent
+    <style>
+        .padding-side {
+            padding-left: 1em;
+            padding-right: 1em;
+            padding-bottom: 2em;
+        }
+    </style>
+@endsection--}}
+
 @section('content')
     @php
         $viewName = 'orders.index';
@@ -164,12 +175,14 @@
                                                     <td>매장선택</td>
                                                     <td>
                                                         <div class="form-inline">
-                                                            <select id="states" class="form-control form-inline" onchange="makeModal()">
+                                                            <select id="states" class="form-control form-inline"
+                                                                    onchange="makeModal()">
                                                                 @foreach($states as $state)
                                                                     <option value="{{ $state }}">{{ $state }}</option>
                                                                 @endforeach
                                                             </select>
-                                                            <button type="button" class="btn btn-primary btn-sm form-inline"
+                                                            <button type="button"
+                                                                    class="btn btn-primary btn-sm form-inline"
                                                                     data-toggle="modal" data-target="#myModal">
                                                                 매장선택
                                                             </button>
@@ -205,7 +218,8 @@
                                                 <tr>
                                                     <td>연락처</td>
                                                     <td>
-                                                        <input type="text" id="contact2" name="contact2" class="form-control"
+                                                        <input type="text" id="contact2" name="contact2"
+                                                               class="form-control"
                                                                placeholder="010-5882-7469"
                                                                value="{{ old('contact2', $order->contact) }}">
                                                         {!! $errors->first('contact2', '<span class="form-error">:message</span>') !!}
@@ -221,13 +235,17 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                        <div class="padding-side text-right">
+                                            <div><p class="text-danger" id="validation-error"></p></div>
+                                            <button type="button" class="btn btn-primary" onclick="formValidation()">다음</button>
+                                        </div>
                                     </div>
 
 
                                 </div>
                             </div>
                         </div>
-                        <div class="panel panel-default">
+                        <div class="panel panel-default" >
                             <div class="panel-heading">
                                 <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-754737"
                                    href="#panel-element-644507">구매상품 확인</a>
@@ -260,6 +278,11 @@
                                         @endphp
                                     @empty
                                     @endforelse
+                                        <div class="padding-side text-right">
+                                            <div><p class="text-danger" id="validation-error"></p></div>
+                                            <button type="button" class="btn btn-primary" data-toggle="collapse"
+                                                    data-parent="#panel-754737" data-target="#panel-element-15432">다음</button>
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -352,7 +375,8 @@
             @if($items->count() == 1)
                 <input type="hidden" id="good_name" value="{{ $items->first()-> option->product->ad_title }}"/>
             @else
-                <input type="hidden" id="good_name" value="{{ $items->first()-> option->product->ad_title . " 외 " . ($items->count()-1)  . '건'}}"/>
+                <input type="hidden" id="good_name"
+                       value="{{ $items->first()-> option->product->ad_title . " 외 " . ($items->count()-1)  . '건'}}"/>
             @endif
             <input type="hidden" id="buyer_email" value="{{ \Auth::user()->email }}"/>
 
@@ -404,21 +428,16 @@
 
 @section('script')
     @parent
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="//d1p7wdleee1q2z.cloudfront.net/post/search.min.js"></script>
     <script src="https://service.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
             var IMP = window.IMP;
             IMP.init('imp26813303');
             $('#btn_pg').click(function () {
-                // 결제방식
-                var pm_origin = $('input[type=radio][name=paymethod]').val();
-                if (pm_origin == '계좌이체') {
-                    var pay_method = 'trans';
-                } else {
-                    var pay_method = 'card';
-                }
+
                 // 기타 정보
                 $('#merchant_uid').val(init_orderid());
                 var formData = $("#ordrForm").serialize();
@@ -431,55 +450,6 @@
                     success: onSuccess,
                     error: onError
                 });
-
-
-
-                /*var name = $('#good_name').val(); // 상품명
-                var amount = $('#amount').val();
-                var buyer_email = $('#buyer_email').val();
-
-                var buyer_name = ''; // 입력창에서
-                var buyer_tel = ''; // 입력창에서
-                var buyer_addr = ''; // 입력창에서
-
-                if($('#shipmethod').val() == 'direct'){
-                    buyer_name = $('#name').val();
-                    buyer_tel = $('#contact').val();
-                    buyer_addr = $('#find_address').val() + $('#input_address').val();
-                }else {
-                    buyer_name = $('#name2').val();
-                    buyer_tel = $('#contact2').val();
-                    buyer_addr = $('#find_address2').val() + $('#input_address2').val();
-                }
-
-
-
-                IMP.request_pay({
-                    pg: 'html5_inicis',
-                    pay_method: pay_method,
-                    merchant_uid: merchant_uid,
-                    name: name,
-                    amount: amount,
-                    buyer_email: buyer_email,
-                    buyer_name: buyer_name,
-                    buyer_tel: buyer_tel,
-                    buyer_addr: buyer_addr,
-                }, function (rsp) {
-                    if (rsp.success) {
-                        if(rsp.paid_amount == amount) {
-                            $('#merchant_uid').val(rsp.merchant_uid);
-                            $('#ordrForm').submit();
-                        }else{
-                            var msg = '결제금액과 상품금액이 일치하지 않습니다.'
-                            alert(msg);
-                        }
-
-                    } else {
-                        var msg = '결제에 실패하였습니다.';
-                        msg += '\n에러내용 : ' + rsp.error_msg;
-                        alert(msg);
-                    }
-                });*/
 
             });
 
@@ -500,8 +470,8 @@
             });
 
             /*$("#states").select2({
-                placeholder: "시/도"
-            });*/
+             placeholder: "시/도"
+             });*/
 
             $('#cb_save').change(function () {
                 if ($('#cb_save').is(":checked")) {
@@ -628,9 +598,21 @@
         }
 
         function onSuccess(order) {
+            // 결제방식
+
+
+
+            if (order.paymethod == '계좌이체') {
+                var pay_method = 'trans';
+            } else {
+                var pay_method = 'card';
+            }
+
+//            alert(pay_method);
+
             IMP.request_pay({
                 pg: 'html5_inicis',
-                pay_method: order.paymethod,
+                pay_method: pay_method,
                 merchant_uid: order.merchant_uid,
                 name: $('#good_name').val(),
                 amount: order.amount,
@@ -638,11 +620,11 @@
                 buyer_name: order.name,
                 buyer_tel: order.contact,
                 buyer_addr: order.find_address + ' ' + order.input_address,
-                m_redirect_url : '/payments/complete'
+                m_redirect_url: 'http://bluecrank.kr/payments/complete'
             }, function (rsp) {
                 if (rsp.success) {
-                    var url = '/payments/complete?imp_uid='+ rsp.imp_uid +'&merchant_uid=' + rsp.merchant_uid;
-                    $.get(url);
+                    var url = 'http://bluecrank.kr/payments/complete?imp_uid=' + rsp.imp_uid + '&merchant_uid=' + rsp.merchant_uid;
+                    $(location).attr('href', url);
                 } else {
                     alert('PG사 결제 에러');
                 }
@@ -651,6 +633,53 @@
 
         function onError(data) {
             alert("서버 내부 에러입니다. 다시 시도해주세요.");
+        }
+
+        function formValidation() {
+            if($('#shipmethod').val() == 'direct') {
+                var name = $('#name').val();
+                var postcode = $('#postcode').val();
+                var find_address = $('#find_address').val();
+                var input_address = $('#input_address').val();
+                var contact = $('#contact').val();
+            }else {
+                var name = $('#name2').val();
+                var postcode = $('#postcode2').val();
+                var find_address = $('#find_address2').val();
+                var input_address = $('#input_address2').val();
+                var contact = $('#contact2').val();
+            }
+
+            var errors = '';
+
+
+
+            if(name == '') {
+                if(errors == '')    errors += '이름';
+                else                errors += ', 이름';
+            }
+            if(postcode == '' || find_address == '' || input_address == '') {
+                if(errors == '')    errors += '주소정보';
+                else                errors += ', 주소정보';
+            }
+            if(contact == '') {
+                if(errors == '')    errors += '연락처';
+                else                errors += ', 연락처';
+            }
+
+            if(errors == '') {
+                $('#panel-element-43672')
+                 .collapse('hide');
+                 $('#panel-element-644507')
+                 .collapse('show');
+
+                $('#validation-error').text('');
+            } else {
+                $('#validation-error').text(errors + '란을 확인해주세요.');
+            }
+
+
+
         }
 
 

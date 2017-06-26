@@ -35,6 +35,16 @@
             </article>
 
             <div class="text-center action__article">
+                @if(Auth::check())
+                    <button type="button" class="btn btn-danger btn__want">
+                        @if(empty(Auth::user()->wantArticles->where('id', '=', $article->id)->first()))
+                            <i class="fa fa-heart"></i>
+                        @else
+                            <i class="fa fa-heart-o"></i>
+                        @endif
+                    </button>
+                @endif
+
                 @can('update', $article)
                     <a href="{{ route('articles.edit', $article->id) }}" class="btn btn-info">
                         <i class="fa fa-pencil"></i>
@@ -73,6 +83,19 @@
                     window.location.href = '/articles';
                 });
             }
+        });
+
+        $('.btn__want').on('click', function (e) {
+            var articleId = $('article').data('id');
+
+
+            $.ajax({
+                type: 'POST',
+                url: '/article/wants/' + articleId
+            }).then(function () {
+                location.reload();
+            });
+
         });
     </script>
 @stop
