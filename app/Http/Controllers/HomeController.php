@@ -84,7 +84,7 @@ class HomeController extends Controller
 
         if (is_null($user->wantArticles()->find($article->id))) {
             $user->wantArticles()->attach($article->id);
-            flash('좋아요 등록'. $article->id);
+            flash('좋아요 등록');
 
         } else {
             $user->wantArticles()->detach($article->id);

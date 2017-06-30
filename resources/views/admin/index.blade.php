@@ -1,5 +1,17 @@
 @extends('layouts.app')
 
+@section('style')
+    <style>
+        .no-padding {
+            padding : 0;
+        }
+        .side-padding {
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+    </style>
+@endsection
+
 @section('content')
     @php $viewName = 'admin.index'; @endphp
 
@@ -32,9 +44,9 @@
         </div>
 
         <div class="col-md-9 list__article">
-            <div class="row">
-                <div class="col-md-6">
-                    <table class="table">
+            <div class="row side-padding">
+                <div class="col-md-6 no-padding">
+                    <table class="table table-striped table-bordered">
                         <thead>
                         <tr>
                             <th>입금전</th>
@@ -55,8 +67,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col-md-6">
-                    <table class="table">
+                <div class="col-md-6 no-padding">
+                    <table class="table table-striped table-bordered">
                         <thead>
                         <tr>
                             <th>취소</th>
@@ -78,7 +90,7 @@
             </div>
 
             <div class="row">
-                <table class="table">
+                <table class="table table-striped table-bordered table-condensed">
                     <thead>
                     <tr>
                         <th>날짜</th>

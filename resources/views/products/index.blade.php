@@ -2,25 +2,6 @@
 
 @section('style')
     <style>
-        .my-6 {
-            margin-top: 0em;
-            margin-bottom: 2em;
-        }
-
-        .ad_inform {
-            padding: 10px;
-        }
-
-        .ad_inform p {
-            color: #bec6d5;
-            margin: 0;
-        }
-
-        .caption {
-            height: 100px;
-            overflow: hidden;
-        }
-
         .caption h4 {
             display: block;
             /*width: 200px; */
@@ -29,66 +10,6 @@
             text-overflow: ellipsis;
             font-size: 16px;
             font-weight: bold;
-        }
-
-        .img-product {
-            object-fit: cover;
-        }
-
-        .ratings {
-            padding-right: 10px;
-            padding-left: 10px;
-            color: #0E2231;
-        }
-
-        .ratings h5 {
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .glyphicon-time {
-            padding-right: 3px;
-        }
-
-        .glyphicon-heart {
-            padding-right: 3px;
-            color: #ff514d;
-        }
-
-        .glyphicon-comment {
-            padding-left: 10px;
-            padding-right: 3px;
-            color: #6f80bd;
-        }
-
-        .thumbnail {
-            padding: 0
-        }
-
-        .padding-option {
-            padding: 3px;
-        }
-
-        .thumbnail .caption-full {
-            padding: 9px;
-            color: #333;
-        }
-
-        .action__market {
-            padding-bottom: 1em;
-        }
-
-        .img-thumbnail2 {
-            padding: 1px;
-            line-height: 1.6;
-            background-color: #f5f8fa;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-        }
-
-        .inner__padding {
-            font-size: 16px;
-            padding: 10px;
         }
 
         .button__slug {
@@ -105,140 +26,75 @@
             padding: 1px;
         }
 
-        .form-control-inline {
-            width: auto;
-            float: left;
-            margin-right: 5px;
-        }
-
         #search_m {
             display: none;
-        }
-
-        .img-w100 {
-            width: 100%;
-        }
-
-        .img-w80 {
-            width: 80%;
         }
 
         .padding-8 {
             padding: 8px;
         }
-        
+
+        .padding-12 {
+            padding-top: 8px;
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
         .category-active {
             background: #eee;
-        } 
+        }
+
+        .lead {
+            margin-bottom: 10px;
+        }
+
+        .no-margin {
+            margin: 0;
+        }
+
+        #sidebar {
+            padding-top: 1em;
+        }
 
 
     </style>
-    {{--<link rel="stylesheet" href="{{ mix('css/flexslider.css') }}">--}}
-@stop
+@endsection
 
 @section('content')
     @php $viewName = 'products.index'; @endphp
 
-    {{--<div class="page-header">
+    @include('products.partial.banner')
 
-    </div>--}}
-    <div class="row my-6 visible-xs-block visible-sm-block">
-        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-            <!-- Indicators -->
-            {{--<ol class="carousel-indicators">
-                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-            </ol>--}}
-
-            <!-- Wrapper for slides -->
-            <div class="carousel-inner" role="listbox">
-                <div class="item active">
-                    <a href="https://www.youtube.com/watch?v=vhba0ICbeHc" target="_blank">
-                        <img class="img-w100" src="{{ url('icons/banner02.png') }}">
-                    </a>
-                </div>
-                <div class="item">
-                    <img class="img-w100" src="{{ url('icons/banner04.jpg') }}">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row my-6 visible-md-block visible-lg-block text-center">
-        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-            <!-- Indicators -->
-            {{--<ol class="carousel-indicators">
-                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-            </ol>--}}
-
-            <!-- Wrapper for slides -->
-            <div class="carousel-inner" role="listbox">
-                <div class="item active">
-                    <a href="https://www.youtube.com/watch?v=vhba0ICbeHc" target="_blank">
-                        <img class="img-w100" src="{{ url('icons/banner02-pc.png') }}">
-                    </a>
-                </div>
-                <div class="item">
-                    <img class="img-w100" src="{{ url('icons/banner04-pc.jpg') }}">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-xs-8 ">
-            <div class="visible-xs-inline-block visible-sm-inline-block">
-                <form method="get" action="{{ route('products.index') }}" role="search" class="form-inline">
-                    <button class="btn btn-default form-control-inline" type="button" id="toggle-category"
+    {{-- 태블릿 디바이스부터 카테고리를 숨기고 버튼으로 토글 --}}
+    <div class="row visible-xs visible-sm">
+        <div class="col-xs-12">
+            <form method="get" action="{{ route('products.index') }}" role="search" class="form-inline">
+                <div class="form-group no-margin">
+                    <button class="btn btn-default" type="button" id="toggle-category"
                             title="카테고리 여/닫">
                         <i class="fa fa-list"></i>
                     </button>
-                    <button class="btn btn-default form-control-inline" type="button" id="toggle-search" title="검색창 여닫">
+                    <button class="btn btn-default" type="button" id="toggle-search" title="검색창 여닫">
                         <i class="fa fa-search"></i>
                     </button>
-                    <input id="search_m" type="text" name="q" class="form-control form-control-inline"
-                           placeholder="마켓 검색"/>
-                </form>
-            </div>
-        </div>
-        <div class="col-xs-4">
-            <div class="text-right action__market">
-                @if(($currentUser ? ($currentUser->isAdmin() ? true : false ) : false))
-                    <a href="{{ route('products.create') }}" class="btn btn-primary">
-                        <i class="fa fa-plus-circle"></i>
-                        상품 등록
-                    </a>
-                @endif
-
-            <!--정렬 UI-->
-                <div class="btn-group sort__article">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-sort"></i>
-                        목록 정렬
-                        <span class="caret"></span>
-                    </button>
-
-                    <ul class="dropdown-menu" role="menu">
-                        @foreach(config('project.sorting') as $column => $text)
-                            <li {!! request()->input('sort') == $column ? 'class="active"' : '' !!}>
-                                {!! link_for_sort($column, $text) !!}
-                            </li>
-                        @endforeach
-                    </ul>
+                    <label class="sr-only" for="search_m">검색</label>
+                    <input id="search_m" type="text" name="q" class="form-control" style="width:auto"
+                           placeholder="BC몰 검색"/>
                 </div>
-
-            </div>
+            </form>
         </div>
+
     </div>
 
-
-
     <div class="row">
+        {{-- 좌측 검색(데스크탑), 카테고리, 배너 --}}
         <div class="col-md-3 sidebar__article">
-            <div class="visible-md-block visible-lg-block">
+            {{-- 검색바(데스크탑) --}}
+            <div class="visible-md visible-lg">
                 @include('products.partial.search')
             </div>
+
+            {{-- 카테고리 --}}
             <aside id="sidebar">
                 <p class="lead">
                     <i class="fa fa-list"></i>
@@ -246,15 +102,14 @@
                 </p>
 
                 <div class="list-group">
-
                     @foreach($categories as $slug => $locale)
-
                         <a href="{{ route('categories.products.index', $slug) }}"
                            class="list-group-item {{ str_contains(request()->path(), $slug) ? 'category-active' : '' }}">{{ $locale['ko'] }}</a>
                     @endforeach
                 </div>
             </aside>
 
+            {{-- 사이드 배너 --}}
             <div class="media item__banner">
                 <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
                     <!-- Indicators -->
@@ -275,53 +130,18 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
 
+        {{-- 우측 아이템 리스트, 인기 태그, 등록/정렬 --}}
         <div class="col-md-9 list__article">
-            @if(!strpos(request()->fullUrl(), 'slug') and !strpos(request()->fullUrl(), 'page') and !strpos(request()->fullUrl(), 'category'))
-                {{--<div class="row my-6">
-
-                    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-                        <!-- Indicators -->
-                    --}}{{--<ol class="carousel-indicators">--}}{{--
-                    --}}{{--<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>--}}{{--
-                    --}}{{--<li data-target="#carousel-example-generic" data-slide-to="1"></li>--}}{{--
-                    --}}{{--<li data-target="#carousel-example-generic" data-slide-to="2"></li>--}}{{--
-                    --}}{{--</ol>--}}{{--
-
-                    <!-- Wrapper for slides -->
-                        <div class="carousel-inner" role="listbox">
-                            <div class="item active">
-                                <img src="http://bluecrank.net/web/upload/homi/main_img/main_img3.jpg"/>
-                                <div class="carousel-caption">
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Controls -->
-                        --}}{{--<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>--}}{{--
-                    </div>
-
-                </div>--}}
-            @endif
-
-            {{--<div class="thumbnail row my-6 inner__padding">--}}
-
+            <!-- 태그 -->
             <div class="row">
-                <div class="col-md-12 no-padding">
+                <div class="col-md-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading"><b>인기태그</b> <small>(최대 3개 선택 가능)</small></div>
+                        <div class="panel-heading"><b>인기태그</b>
+                            <small>(최대 3개 선택 가능)</small>
+                        </div>
                         <div class="panel-body padding-8">
                             @foreach($productTags as $tag)
                                 <button type="button" id="{{ $tag->slug }}"
@@ -333,52 +153,49 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 글 등록, 정렬 -->
             <div class="row">
+                <div class="col-xs-12">
+                    <div class="text-right">
+                        @if(($currentUser ? ($currentUser->isAdmin() ? true : false ) : false))
+                            <a href="{{ route('products.create') }}" class="btn btn-primary">
+                                <i class="fa fa-plus-circle"></i>
+                                등록
+                            </a>
+                        @endif
 
-                @forelse($products as $product)
-                    <div class="col-sm-6 col-md-6 col-lg-4 padding-option">
-                        <div class="thumbnail">
-                            <div class="ad_inform">
-                                <a class="pull-left" href="{{ gravatar_profile_url('info@bluecrank.net') }}">
-                                    <img class="media-object img-thumbnail2"
-                                         src="{{ gravatar_url('info@bluecrank.net', 18) }}" alt="블루크랭크">
-                                </a>
-                                &nbsp;블루크랭크
-                                {{--<p class="pull-right">
-                                    <span class="glyphicon glyphicon-time"></span>
-                                    {{ $product->created_at->diffForHumans() }}
-                                </p>--}}
-                            </div>
-                            <div class="embed-responsive embed-responsive-4by3">
-                                <a href="{{ route('products.show', $product->id) }}">
-                                    <img class="img-product embed-responsive-item"
-                                         src="{{ $product->attachments->count() > 0 ? $product->attachments->first()->url : 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQlzvW0rg_vTZkwz20Ot15G_zcKgx2L5DTtgUNPOrArVnPjpRoJiK8hJZc' }}"
-                                         alt="">
-                                </a>
-                            </div>
-                            <div class="caption">
-                                <h4><a href="{{ route('products.show', $product->id) }}">{{ $product->ad_title }}</a>
-                                </h4>
-                                <p>{!! $product->ad_short_description !!}</p>
-                            </div>
-                            <div class="ratings">
-                                <h5 class="pull-right">&#8361;{{ number_format($product->price) }}</h5>
-                                <p>
-                                    <span class="glyphicon glyphicon-heart"></span>
-                                    {{ $product->getWantsCountAttribute() }}
-                                    {{--<span class="glyphicon glyphicon-star">11</span>--}}
-                                    <span class="glyphicon glyphicon-comment"></span>
-                                    {{ $product->getCommentsCountAttribute() }}
-                                </p>
+                        <!--정렬 UI-->
+                        <div class="btn-group sort__article">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-sort"></i>
+                                정렬
+                                <span class="caret"></span>
+                            </button>
 
-                            </div>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach(config('project.sorting') as $column => $text)
+                                    <li {!! request()->input('sort') == $column ? 'class="active"' : '' !!}>
+                                        {!! link_for_sort($column, $text) !!}
+                                    </li>
+                                @endforeach
+                            </ul>
                         </div>
+
                     </div>
+                </div>
+            </div>
+
+            <!-- 아이템 리스트 -->
+            <div class="row padding-12">
+                @forelse($products as $product)
+                    @include('products.partial.item', $product)
                 @empty
-                    <p>글이 없습니다.</p>
+                    <p class="text-center">해당 물품이 없습니다.</p>
                 @endforelse
             </div>
 
+            <!-- 페이지네이션 -->
             @if($products->count())
                 <div class="text-center">
                     {!! $products->appends([
@@ -396,55 +213,50 @@
 @stop
 
 @section('script')
-    @parent
-    {{--<script src="{{ mix('js/jquery.flexslider.js') }}"></script>--}}
-
     <script>
-        $(window).on('load', function () {
-//            $('.flexslider').flexslider({
-//                animation: "slide"
-//            });
-            $('.button__slug').click(function () {
-                var slug = $(this).attr('id');
-                var slugs = getParameterByName('slug');
+        /* 인기태그 클릭시 이벤트 */
+        $('.button__slug').click(function () {
+            var slug = $(this).attr('id');
+            var slugs = getParameterByName('slug');
 
-                if (slugs.length < 1) {
-                    var slugsArr = new Array();
-                    slugsArr.push(slug);
-                } else {
-                    var slugsArr = slugs.split(' ');
-                    if ($.inArray(slug, slugsArr) != -1) {
-                        slugsArr = jQuery.grep(slugsArr, function (value) {
-                            return value != slug;
-                        });
-                    } else {
-                        slugsArr.push(slug);
-                    }
-                }
-
-                /* slug 후처리 완료, 컨트롤로러 쿼리 매핑해서 보내기 */
-                if (slugsArr.length > 3) {
-                    alert('3개 이상의 태그를 선택하실 수 없습니다.');
-                } else {
-                    slugParam = '';
-                    slugsArr.forEach(function (slug) {
-                        if (slugParam == '') {
-                            slugParam += slug;
-                        } else {
-                            slugParam += '+' + slug;
-                        }
+            if (slugs.length < 1) {
+                var slugsArr = new Array();
+                slugsArr.push(slug);
+            } else {
+                var slugsArr = slugs.split(' ');
+                if ($.inArray(slug, slugsArr) != -1) {
+                    slugsArr = jQuery.grep(slugsArr, function (value) {
+                        return value != slug;
                     });
-
-                    if (slugParam.length < 1) {
-                        location.href = removeParam('page', removeParam('slug', $(location).attr('href')));
-                    } else {
-                        location.href = removeParam('page', replaceUrlParam($(location).attr('href'), 'slug', slugParam));
-                    }
+                } else {
+                    slugsArr.push(slug);
                 }
+            }
+
+            /* slug 후처리 완료, 컨트롤로러 쿼리 매핑해서 보내기 */
+            if (slugsArr.length > 3) {
+                alert('3개 이상의 태그를 선택하실 수 없습니다.');
+            } else {
+                slugParam = '';
+                slugsArr.forEach(function (slug) {
+                    if (slugParam == '') {
+                        slugParam += slug;
+                    } else {
+                        slugParam += '+' + slug;
+                    }
+                });
+
+                if (slugParam.length < 1) {
+                    location.href = removeParam('page', removeParam('slug', $(location).attr('href')));
+                } else {
+                    location.href = removeParam('page', replaceUrlParam($(location).attr('href'), 'slug', slugParam));
+                }
+            }
 
 
-            })
-        });
+        })
+
+        /* url에서 해당 key 삭제 함수 */
         function removeParam(key, sourceURL) {
             var rtn = sourceURL.split("?")[0],
                 param,
@@ -462,6 +274,8 @@
             }
             return rtn;
         }
+
+        /* param 교체 함수 */
         function replaceUrlParam(url, paramName, paramValue) {
             if (paramValue == null)
                 paramValue = '';
@@ -471,6 +285,8 @@
             }
             return url + (url.indexOf('?') > 0 ? '&' : '?') + paramName + '=' + paramValue
         }
+
+        /* name에 해당하는 param값 리턴 from url */
         function getParameterByName(name) {
             name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
             var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
@@ -478,15 +294,15 @@
             return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
         }
 
+        /* 카테고리 버튼 클릭시 펼침 */
         $('#toggle-category').on('click', function () {
             $('#sidebar').slideToggle('fast');
             $('body,html').animate({scrollTop: 0}, 'fast');
         });
 
+        /* 검색버튼 누르면 검색 폼 토글(태블릿 이하 디바이스) */
         $('#toggle-search').on('click', function () {
-//            $('#search_m').toggle("slide", {direction:"left"}, 1000);
             $('#search_m').toggle('slide');
-//            $('body,html').animate({scrollTop: 0}, 'fast');
         });
     </script>
 @endsection

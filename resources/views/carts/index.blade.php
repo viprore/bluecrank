@@ -92,17 +92,22 @@
                 <div class="row py-3">
                     <div class="col-md-5 text-center">
                         <div class="btn-group" role="group" aria-label="수량">
-                            <button type="button" class="btn btn-counter value-minus1">-</button>
-                            <button type="button" class="btn btn-secondary value1"
-                                    id="item_{{ $item->id }}_count">{{ $item->count }}</button>
-                            <button type="button" class="btn btn-counter value-plus1">+</button>
+                            <button type="button" class="btn btn-counter value-minus1" item-target="{{ $item->id }}">-
+                            </button>
+                            <button type="button" class="btn btn-secondary value1">{{ $item->count }}</button>
+                            <button type="button" class="btn btn-counter value-plus1" item-target="{{ $item->id }}">+
+                            </button>
                         </div>
                     </div>
                     <div class="col-md-7 text-right"> 합계 :
-                        <b>{{ number_format($item->option->product->price * $item->count) }}</b> 원
+                        <b id="item_{{ $item->id }}_total">{{ number_format($item->option->product->price * $item->count) }}</b>
+                        원
                     </div>
                 </div>
             </div>
+            <input type="hidden" class="prices" id="item_{{$item->id}}_price"
+                   value="{{ $item->option->product->price }}"/>
+            <input type="hidden" class="counts" id="item_{{$item->id}}_count" value="{{ $item->count }}"/>
             <hr/>
         @empty
             <p class="text-center text-danger">
@@ -124,16 +129,14 @@
                 }
 
             @endphp
-            <div class="col-md-9 text-right"><b>{{ number_format($result) }}</b>원</div>
+            <div class="col-md-9 text-right"><b id="total_price">{{ number_format($result) }}</b>원</div>
         </div>
         <div class="row my-3 text-center">
             <div class="col-md-12">
                 <form action="{{ route('orders.create') }}" method="GET" enctype="multipart/form-data">
                     <button type="submit" class="btn btn-secondary select__submit">선택상품주문</button>
                 </form>
-                <form action="{{ route('orders.create') }}" method="GET" enctype="multipart/form-data">
-                    <button type="submit" class="btn btn-primary">전체상품주문</button>
-                </form>
+                <button type="button" class="btn btn-primary" onclick="buyAll()">전체상품주문</button>
 
             </div>
         </div>
@@ -146,6 +149,7 @@
             var checked_all = false;
             $(".item__checkbox").change(function () {
                 var item_id = this.getAttribute("item_id");
+                var item_count = $('#item_' + item_id + '_count').val();
                 var form = $('form').first();
                 if ($(this).is(":checked")) {
                     $('<input>', {
@@ -153,8 +157,15 @@
                         name: 'items[]',
                         value: item_id
                     }).appendTo(form);
+                    $('<input>', {
+                        type: 'hidden',
+                        name: 'items_count[]',
+                        itemId: item_id,
+                        value: item_count
+                    }).appendTo(form);
                 } else {
                     $('input[name="items[]"][value="' + item_id + '"]').remove();
+                    $('input[name="items_count[]"][itemId="' + item_id + '"]').remove();
                 }
             });
             $(".btn__select__all").click(function () {
@@ -162,14 +173,22 @@
                 checked_all = !checked_all;
                 $('.item__checkbox').each(function (i, e) {
                     var item_id = e.getAttribute("item_id");
+                    var item_count = $('#item_' + item_id + '_count').val();
                     if (checked_all) {
                         $('<input>', {
                             type: 'hidden',
                             name: 'items[]',
                             value: item_id
                         }).appendTo(form);
+                        $('<input>', {
+                            type: 'hidden',
+                            name: 'items_count[]',
+                            itemId: item_id,
+                            value: item_count
+                        }).appendTo(form);
                     } else {
                         $('input[name="items[]"][value="' + item_id + '"]').remove();
+                        $('input[name="items_count[]"][itemId="' + item_id + '"]').remove();
                     }
 
                     e.checked = checked_all;
@@ -232,11 +251,33 @@
         $('.value-plus1').on('click', function () {
             var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10) + 1;
             divUpd.text(newVal);
+
+            var itemId = $(this).attr('item-target');
+            $("#item_" + itemId + "_count").val(newVal);
+
+            var itemPrice = $("#item_" + itemId + "_price").val();
+            var itemCount = $("#item_" + itemId + "_count").val();
+
+            $("#item_" + itemId + "_total").text(number_format(itemPrice * itemCount));
+
+            calTotalPrice();
         });
 
         $('.value-minus1').on('click', function () {
             var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10) - 1;
-            if (newVal >= 1) divUpd.text(newVal);
+            if (newVal >= 1) {
+                divUpd.text(newVal);
+
+                var itemId = $(this).attr('item-target');
+                $("#item_" + itemId + "_count").val(newVal);
+
+                var itemPrice = $("#item_" + itemId + "_price").val();
+                var itemCount = $("#item_" + itemId + "_count").val();
+
+                $("#item_" + itemId + "_total").text(number_format(itemPrice * itemCount));
+
+                calTotalPrice();
+            }
         });
 
         function post_to_url(path, params, method) {
@@ -259,6 +300,51 @@
 
             document.body.appendChild(form);
             form.submit();
+        }
+
+        function number_format(num, decimals, dec_point, thousands_sep) {
+            num = parseFloat(num);
+            if (isNaN(num)) return '0';
+
+            if (typeof(decimals) == 'undefined') decimals = 0;
+            if (typeof(dec_point) == 'undefined') dec_point = '.';
+            if (typeof(thousands_sep) == 'undefined') thousands_sep = ',';
+            decimals = Math.pow(10, decimals);
+
+            num = num * decimals;
+            num = Math.round(num);
+            num = num / decimals;
+
+            num = String(num);
+            var reg = /(^[+-]?\d+)(\d{3})/;
+            var tmp = num.split('.');
+            var n = tmp[0];
+            var d = tmp[1] ? dec_point + tmp[1] : '';
+
+            while (reg.test(n)) n = n.replace(reg, "$1" + thousands_sep + "$2");
+
+            return n + d;
+        }
+
+        function calTotalPrice() {
+            var total_price = 0;
+            $('.prices').each(function (i, e) {
+                var item_price = e.getAttribute("value");
+                var item_count = e.nextSibling.nextSibling.getAttribute("value");
+
+                total_price += item_price * item_count;
+            });
+            $('#total_price').text(number_format(total_price));
+
+        }
+        function buyAll() {
+            var form = $('form').first();
+            $('.item__checkbox').checked = false;
+            $('input[name="items[]"]').remove();
+            $('input[name="items_count[]"]').remove();
+
+            $('.btn__select__all').click();
+            $('.select__submit').click();
         }
     </script>
 @stop

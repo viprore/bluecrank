@@ -54,36 +54,41 @@
     {!! $errors->first('tags', '<span class="form-error">:message</span>') !!}
 </div>
 
-<div class="form-group">
-    <label for="description">첨부된 이미지들</label>
-    <table class="table text-center">
-        <thead>
-        <tr>
-            <th class="text-center">파일명</th>
-            <th class="text-center">대표</th>
-            <th class="text-center">삭제</th>
-        </tr>
-        </thead>
-        <tbody>
-        @forelse($product->attachments as $attachment)
+@if($viewName == 'products.edit')
+    <div class="form-group">
+        <label for="description">첨부된 이미지들</label>
+        <table class="table text-center">
+            <thead>
             <tr>
-                <td><a href="{{ $attachment->url }}">{{ $attachment->filename }}</a></td>
-                <td>
-                    @if($product->attachments->first() == $attachment)
-                        <button type="button" class="btn btn-success"><i class="fa fa-check"></i></button>
-                    @else
-                        <button type="button" class="btn btn-default" onclick="setMainImage({{ $attachment->id }})"><i class="fa fa-check"></i></button>
-                    @endif
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger btn__del" onclick="deleteAttachment({{ $attachment->id }})"><i class="fa fa-trash"></i></button>
-                </td>
+                <th class="text-center">파일명</th>
+                <th class="text-center">대표</th>
+                <th class="text-center">삭제</th>
             </tr>
-        @empty
-        @endforelse
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+            @forelse($product->attachments as $attachment)
+                <tr>
+                    <td><a href="{{ $attachment->url }}">{{ $attachment->filename }}</a></td>
+                    <td>
+                        @if($product->attachments->first() == $attachment)
+                            <button type="button" class="btn btn-success"><i class="fa fa-check"></i></button>
+                        @else
+                            <button type="button" class="btn btn-default" onclick="setMainImage({{ $attachment->id }})">
+                                <i class="fa fa-check"></i></button>
+                        @endif
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn__del"
+                                onclick="deleteAttachment({{ $attachment->id }})"><i class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
+            @empty
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+@endif
+
 
 <div class="form-group {{ $errors->has('description') ? 'has-error' : '' }}">
     <label for="description">본문</label>

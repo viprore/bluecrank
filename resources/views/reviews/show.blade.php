@@ -41,7 +41,7 @@
                         글 삭제
                     </button>
                 @endcan
-                <a href="{{ route('reviews.index') }}" class="btn btn-default">
+                <a href="{{ route('products.show', $review->product->id) }}" class="btn btn-default">
                     <i class="fa fa-list"></i>
                     상품으로
                 </a>

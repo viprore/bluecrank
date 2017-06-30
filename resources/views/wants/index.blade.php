@@ -202,7 +202,7 @@
                 </div>
             </div>
         @empty
-            empty
+            <p class="text-center">관심 목록이 없습니다.</p>
         @endforelse
     </div>
 

@@ -85,6 +85,18 @@ class OrderController extends Controller
                 'id',
                 $request->input('items', [])
             )->get();
+            $counts = $request->input('items_count', []);
+
+            $key = 0;
+            foreach ($items as $item) {
+                if ($item->count != $counts[$key]) {
+                    $item->count = $counts[$key];
+                    $item->save();
+                }
+                $key++;
+
+                flash("상품 수량이 변경되었습니다.");
+            }
         }
 
         $order = new Order;

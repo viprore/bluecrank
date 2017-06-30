@@ -139,7 +139,7 @@ class ItemController extends Controller
         $this->authorize('delete', $item);
         $item->delete();
 
-        flash($item->id. ' 해당 상품이 삭제되었습니다');
+        flash(' 해당 상품이 삭제되었습니다');
 
         return response()->json($item, 200, [], JSON_PRETTY_PRINT);
     }

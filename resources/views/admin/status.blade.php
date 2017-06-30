@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 
-
 @section('content')
     @php $viewName = 'admin.index'; @endphp
 
@@ -35,7 +34,7 @@
 
         <div class="col-md-9 list__article">
             <div class="row">
-                <table class="table table-bordered">
+                <table class="table table-bordered table-striped">
                     <thead>
                     <tr>
                         <th class="text-center">#</th>

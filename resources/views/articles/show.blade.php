@@ -1,5 +1,15 @@
 @extends('layouts.app')
 
+@section('style')
+    <style>
+        .btn-danger2 {
+            color: #c90919;
+            border-color: #ccc;
+            background-color: #fff;
+        }
+    </style>
+@endsection
+
 @section('content')
     @php $viewName = 'articles.show'; @endphp
 
@@ -36,11 +46,11 @@
 
             <div class="text-center action__article">
                 @if(Auth::check())
-                    <button type="button" class="btn btn-danger btn__want">
+                    <button type="button" class="btn btn-danger btn-danger2 btn__want">
                         @if(empty(Auth::user()->wantArticles->where('id', '=', $article->id)->first()))
-                            <i class="fa fa-heart"></i>
-                        @else
                             <i class="fa fa-heart-o"></i>
+                        @else
+                            <i class="fa fa-heart"></i>
                         @endif
                     </button>
                 @endif

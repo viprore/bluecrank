@@ -3,7 +3,6 @@
         <div class="navbar-header">
 
             <!-- Collapsed Hamburger -->
-
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
                     data-target="#app-navbar-collapse">
                 &nbsp;<i class="fa fa-chevron-down" aria-hidden="true"></i>&nbsp;
@@ -15,7 +14,7 @@
 
             <!-- Branding Image -->
             <a class="navbar-brand" href="{{ auth()->check() ? route('products.index') : route('root') }}">
-                {{ config('app.name', 'Laravel') }}
+                {{ config('project.name', 'Laravel') }}
             </a>
         </div>
 

@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+  @php $viewName = 'products.create'; @endphp
+
   <div class="page-header">
     <h4>
       <a href="{{ route('products.index') }}">

@@ -15,6 +15,10 @@
         .btn-secondary {
             background: #eeeeee;
         }
+
+        .btn-pick {
+            border-color: #eee;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.min.css">
 
@@ -43,11 +47,11 @@
         <form class="form-inline py-3 align-right" role="form" method="GET" action="{{ route('orders.index') }}">
             {{--<div class="row py-3">--}}
                 <div class="form-group btn-group py-3" role="group" aria-label="term">
-                    <button type="button" class="btn btn-sm {{ date("Y-m-d",strtotime ("+1 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-1')">오늘</button>
-                    <button type="button" class="btn btn-sm {{ date("Y-m-d",strtotime ("+7 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-7')">1주일</button>
-                    <button type="button" class="btn btn-sm {{ date("Y-m-d",strtotime ("+30 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-30')">1개월</button>
-                    <button type="button" class="btn btn-sm {{ date("Y-m-d",strtotime ("+90 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-90')">3개월</button>
-                    <button type="button" class="btn btn-sm {{ date("Y-m-d",strtotime ("+180 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-180')">6개월</button>
+                    <button type="button" class="btn-pick btn btn-sm {{ date("Y-m-d",strtotime ("+1 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-1')">오늘</button>
+                    <button type="button" class="btn-pick btn btn-sm {{ date("Y-m-d",strtotime ("+7 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-7')">1주일</button>
+                    <button type="button" class="btn-pick btn btn-sm {{ date("Y-m-d",strtotime ("+30 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-30')">1개월</button>
+                    <button type="button" class="btn-pick btn btn-sm {{ date("Y-m-d",strtotime ("+90 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-90')">3개월</button>
+                    <button type="button" class="btn-pick btn btn-sm {{ date("Y-m-d",strtotime ("+180 days", strtotime(request()->input('start_date')))) == date('Y-m-d') ? 'btn-default':'btn-secondary' }}" onclick="scopeTerm('-180')">6개월</button>
                 </div>&nbsp;&nbsp;&nbsp;&nbsp;
                 <div class="form-group input-group date py-3" id="start_date">
                     <input type="text" class="form-control" name="start_date"/>
@@ -94,7 +98,7 @@
 
         @empty
             <p class="text-center text-danger">
-                없다
+                조회된 내역이 없습니다.
             </p>
             <div class="row summary">
                 <div class="text-right">
@@ -115,12 +119,12 @@
 
 @section('script')
     @parent
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    {{--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>--}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment-with-locales.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
-    {{--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>--}}
-    <script type="text/javascript">
+    {{--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>--}}
+    <script>
 
 
         $(function () {
@@ -139,143 +143,145 @@
             $("#end_date").on("dp.change", function (e) {
                 $('#start_date').data("DateTimePicker").maxDate(e.date);
             });
-            $(".btn__cancel").click(function (){
-                var id = $(this).val();
-                BootstrapDialog.show({
-                    title: '주문을 취소합니다',
-                    message: '<labe>이유가 뭡니까<textarea class="form-control" rows="3" id="message"></textarea></label>',
-                    buttons: [{
-                        label: '취소',
-                        cssClass: 'btn-primary',
-                        action: function(dialog) {
-                            // TODO : 취소 아약스 이벤트
-                            var url = '/status/cancel/orders/'+id;
-                            var message = $("#message").val();
 
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data: {
-                                    _token: $('meta[name="csrf-token"]').attr('content'),
-                                    message: message
-                                },
-                                success: function (){
-                                    location.href='/orders'
-                                }
-                            });
+        });
 
-                            dialog.close();
-                        }
-                    }, {
-                        label: '닫기',
-                        action: function(dialog) {
-                            dialog.close()
-                        }
-                    }]
-                });
-            });
-            $(".btn__where").click(function (){
-                var id = $(this).val();
+        $(".btn__cancel").click(function (){
+            var id = $(this).val();
+            BootstrapDialog.show({
+                title: '주문을 취소합니다',
+                message: '<labe>이유가 뭡니까<textarea class="form-control" rows="3" id="message"></textarea></label>',
+                buttons: [{
+                    label: '취소',
+                    cssClass: 'btn-primary',
+                    action: function(dialog) {
+                        // TODO : 취소 아약스 이벤트
+                        var url = '/status/cancel/orders/'+id;
+                        var message = $("#message").val();
 
-                BootstrapDialog.show({
-                    title: '운송장 번호를 알려드리죠',
-                    message: $(".order_" + id).val(),
-                    buttons: [{
-                        label: '닫기',
-                        action: function(dialog) {
-                            dialog.close()
-                        }
-                    }]
-                });
-            });
-            $(".btn__takit").click(function (){
-                var url = '/status/confirm/orders/' + $(this).val();
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr('content'),
-                    },
-                    success: function (){
-                        location.href='/orders'
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                message: message
+                            },
+                            success: function (){
+                                location.href='/orders'
+                            }
+                        });
+
+                        dialog.close();
                     }
-                });
+                }, {
+                    label: '닫기',
+                    action: function(dialog) {
+                        dialog.close()
+                    }
+                }]
             });
-            $(".btn__return").click(function (){
-                var id = $(this).val();
-                BootstrapDialog.show({
-                    title: '반품요청',
-                    message: '<labe>이유가 뭡니까<textarea class="form-control" rows="3" id="message"></textarea></label>',
-                    buttons: [{
-                        label: '반품',
-                        cssClass: 'btn-primary',
-                        action: function(dialog) {
-                            // TODO : 취소 아약스 이벤트
-                            var url = '/status/return/orders/'+id;
-                            var message = $("#message").val();
+        });
+        $(".btn__where").click(function (){
+            var id = $(this).val();
 
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data: {
-                                    _token: $('meta[name="csrf-token"]').attr('content'),
-                                    message: message
-                                },
-                                success: function (){
-                                    location.href='/orders'
-                                }
-                            });
-
-                            dialog.close();
-                        }
-                    }, {
-                        label: '닫기',
-                        action: function(dialog) {
-                            dialog.close()
-                        }
-                    }]
-                });
+            BootstrapDialog.show({
+                title: '운송장 번호를 알려드리죠',
+                message: $(".order_" + id).val(),
+                buttons: [{
+                    label: '닫기',
+                    action: function(dialog) {
+                        dialog.close()
+                    }
+                }]
             });
-            $(".btn__exchange").click(function (){
-                var id = $(this).val();
-                BootstrapDialog.show({
-                    title: '교환요청',
-                    message: '<labe>이유가 뭡니까<textarea class="form-control" rows="3" id="message"></textarea></label>',
-                    buttons: [{
-                        label: '취소',
-                        cssClass: 'btn-primary',
-                        action: function(dialog) {
-                            // TODO : 취소 아약스 이벤트
-                            var url = '/status/exchange/orders/'+id;
-                            var message = $("#message").val();
-
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data: {
-                                    _token: $('meta[name="csrf-token"]').attr('content'),
-                                    message: message
-                                },
-                                success: function (){
-                                    location.href='/orders'
-                                }
-                            });
-
-                            dialog.close();
-                        }
-                    }, {
-                        label: '닫기',
-                        action: function(dialog) {
-                            dialog.close()
-                        }
-                    }]
-                });
+        });
+        $(".btn__takit").click(function (){
+            var url = '/status/confirm/orders/' + $(this).val();
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                },
+                success: function (){
+                    location.href='/orders'
+                }
             });
-            $(".btn__review").click(function (){
-                var id = $(this).val();
-                alert("기능 : 리뷰\n" + "해당 주문 ID : " + id );
+        });
+        $(".btn__return").click(function (){
+            var id = $(this).val();
+            BootstrapDialog.show({
+                title: '반품요청',
+                message: '<labe>이유가 뭡니까<textarea class="form-control" rows="3" id="message"></textarea></label>',
+                buttons: [{
+                    label: '반품',
+                    cssClass: 'btn-primary',
+                    action: function(dialog) {
+                        // TODO : 취소 아약스 이벤트
+                        var url = '/status/return/orders/'+id;
+                        var message = $("#message").val();
 
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                message: message
+                            },
+                            success: function (){
+                                location.href='/orders'
+                            }
+                        });
+
+                        dialog.close();
+                    }
+                }, {
+                    label: '닫기',
+                    action: function(dialog) {
+                        dialog.close()
+                    }
+                }]
             });
+        });
+        $(".btn__exchange").click(function (){
+            var id = $(this).val();
+            BootstrapDialog.show({
+                title: '교환요청',
+                message: '<labe>이유가 뭡니까<textarea class="form-control" rows="3" id="message"></textarea></label>',
+                buttons: [{
+                    label: '취소',
+                    cssClass: 'btn-primary',
+                    action: function(dialog) {
+                        // TODO : 취소 아약스 이벤트
+                        var url = '/status/exchange/orders/'+id;
+                        var message = $("#message").val();
+
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                message: message
+                            },
+                            success: function (){
+                                location.href='/orders'
+                            }
+                        });
+
+                        dialog.close();
+                    }
+                }, {
+                    label: '닫기',
+                    action: function(dialog) {
+                        dialog.close()
+                    }
+                }]
+            });
+        });
+        $(".btn__review").click(function (){
+            var id = $(this).val();
+            alert("기능 : 리뷰\n" + "해당 주문 ID : " + id );
+
         });
 
         function scopeTerm(days) {

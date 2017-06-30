@@ -300,7 +300,7 @@
                                                 결제예정금액
                                             </td>
                                             <td>
-                                                {{ $total_amount }} 원
+                                                {{ number_format($total_amount) }} 원
                                             </td>
                                         </tr>
                                         <tr>
@@ -344,7 +344,7 @@
                                                 입금은행
                                             </td>
                                             <td>
-                                                <p>이태헌 653-099146-01-015 (기업)</p>
+                                                <p>바이크아카데미학원(이상훈) 110-274-824505 (신한)</p>
                                             </td>
                                         </tr>
                                         <tr>
@@ -616,6 +616,7 @@
                 merchant_uid: order.merchant_uid,
                 name: $('#good_name').val(),
                 amount: order.amount,
+                escrow: true,
                 buyer_email: $('#buyer_email').val(),
                 buyer_name: order.name,
                 buyer_tel: order.contact,

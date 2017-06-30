@@ -4,13 +4,26 @@
     {!! $errors->first('title', '<span class="form-error">:message</span>') !!}
 </div>
 
+
+<style>
+    .rating-div {
+        color: #fda203;
+    }
+    .rating-div .label-default {
+        background-color: #ffffff;
+        color: #555555;
+    }
+</style>
 <div class="form-group {{ $errors->has('tags') ? 'has-error' : '' }}">
     <label for="rating">평점</label>
-    <input type="text" name="rating" id="rating" value="{{ old('rating', $review->rating) }}"
-           onkeydown='return onlyNumber(event)' onkeyup='removeChar(event)' style='ime-mode:disabled;'
-           class="form-control"/>
+    <div class="rating-div">
+        <input type="hidden" class="rating" id="rating" name="rating" value="{{ old('rating', $review->rating) }}"
+               data-filled="fa fa-star fa-3x" data-empty="fa fa-star-o fa-3x" />
+    </div>
     {!! $errors->first('rating', '<span class="form-error">:message</span>') !!}
 </div>
+
+
 
 <div class="form-group {{ $errors->has('content') ? 'has-error' : '' }}">
     <label for="content">본문</label>
@@ -46,7 +59,18 @@
     @parent
 
     <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap-rating.js"></script>
     <script>
+        $(function () {
+            $('.rating').each(function () {
+                $('<span class="label label-default"></span>')
+                    .text($(this).val() || ' ')
+                    .insertAfter(this);
+            });
+            $('.rating').on('change', function () {
+                $(this).next('.label').text($(this).val());
+            });
+        });
         var simplemde = new SimpleMDE({
             element: document.getElementById("content"),
             forceSync: true,
