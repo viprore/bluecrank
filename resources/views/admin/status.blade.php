@@ -53,13 +53,19 @@
                         <tr>
                             <td class="text-center">{{ $data->id }}</td>
                             <td class="text-center">{{ $data->created_at }}</td>
-                            <td>{{ $data->items->first()->option->product->ad_title . "외 " . $data->items->count() . "건" }}</td>
+                            <td><a href="{{ route('orders.show', $data->id) }}">
+                                    {{ $data->items->count() > 0 ? $data->items->first()->option->product->ad_title . "외 " . $data->items->count() . "건" : '' }}
+                                </a></td>
                             <td class="text-center">{{ $data->status }}</td>
                             @if(str_contains(request()->path(), 'shipping'))
                                 <th class="text-center">{{ $data->ship_code }}</th>
                             @endif
                             <td class="text-center">
                                 @include('admin.partial.manager', ['status' => $data->status, 'target' => $data->id])
+
+                                @if($data->status == '입금전' || $data->status == '입금완료' || $data->status == '배송준비')
+                                    <button type="button" class="btn btn-danger btn-xs btn__cancel" value="{{ $data->id }}">취소</button>
+                                @endif
                             </td>
                         </tr>
 

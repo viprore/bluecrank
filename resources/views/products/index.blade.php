@@ -163,9 +163,9 @@
                                 <i class="fa fa-plus-circle"></i>
                                 등록
                             </a>
-                        @endif
+                    @endif
 
-                        <!--정렬 UI-->
+                    <!--정렬 UI-->
                         <div class="btn-group sort__article">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-sort"></i>
@@ -198,11 +198,7 @@
             <!-- 페이지네이션 -->
             @if($products->count())
                 <div class="text-center">
-                    {!! $products->appends([
-                        'slug' => request()->input('slug'),
-                        'sort' => request()->input('sort'),
-                        'order' => request()->input('order'),
-                    ])->links() !!}
+                    {!! $products->appends(request()->except('page'))->render() !!}
                 </div>
             @endif
         </div>

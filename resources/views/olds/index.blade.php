@@ -122,7 +122,9 @@
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner" role="listbox">
                         <div class="item active">
-                            <img class="media-object" src="{{ url('icons/banner03.gif') }}">
+                            <a href="{{ route('products.show', 82) }}">
+                                <img class="media-object" src="{{ url('icons/banner03.gif') }}">
+                            </a>
                         </div>
                         <div class="item">
                             <a href="http://www.bikeacademy.co.kr/">
@@ -163,11 +165,11 @@
                         @if(($currentUser ? ($currentUser->isAdmin() ? true : false ) : false))
                             <a href="{{ route('olds.create') }}" class="btn btn-primary">
                                 <i class="fa fa-plus-circle"></i>
-                                상품 등록
+                                등록
                             </a>
-                        @endif
+                    @endif
 
-                        <!--정렬 UI-->
+                    <!--정렬 UI-->
                         <div class="btn-group sort__article">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-sort"></i>
@@ -201,11 +203,7 @@
             <!-- 페이지네이션 -->
             @if($products->count())
                 <div class="text-center">
-                    {!! $products->appends([
-                        'slug' => request()->input('slug'),
-                        'sort' => request()->input('sort'),
-                        'order' => request()->input('order'),
-                    ])->links() !!}
+                    {!! $products->appends(request()->except('page'))->render() !!}
                 </div>
             @endif
         </div>

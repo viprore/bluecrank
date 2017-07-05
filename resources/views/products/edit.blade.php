@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+  @php $viewName = 'products.edit' @endphp
   <div class="page-header">
     <h4>
       <a href="{{ route('products.index') }}">

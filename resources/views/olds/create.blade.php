@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+  @php $viewName = 'olds.create' @endphp
   <div class="page-header">
     <h4>
       <a href="{{ route('olds.index') }}">

@@ -159,9 +159,9 @@ class ProductController extends Controller implements Cacheable
         if (str_contains($request->url(), 'olds')) {
             $product->is_old = true;
             $product->save();
-            return redirect(route('olds.index'));
+            return redirect(route('olds.edit.option', $product->id));
         }else{
-            return redirect(route('products.index'));
+            return redirect(route('products.edit.option', $product->id));
         }
     }
 
@@ -257,9 +257,10 @@ class ProductController extends Controller implements Cacheable
         flash()->success('수정 완료');
 
         if (str_contains($request->url(), 'products')) {
-            return redirect(route('products.show', $product->id));
+            return redirect(route('products.edit.option', $product->id));
         }else{
-            return redirect(route('olds.show', $product->id));
+
+            return redirect(route('olds.edit.option', $product->id));
         }
     }
 

@@ -105,11 +105,12 @@ class OldController extends Controller implements Cacheable
 
     /**
      * Store a newly created resource in storage.
+     * 2017-07-05 ProductController와 거의 동일하여 거기에서 처리
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProductRequest $request)
+    /*public function store(ProductRequest $request)
     {
         $payload = [
             "_token" => $request->input('_token'),
@@ -146,8 +147,8 @@ class OldController extends Controller implements Cacheable
         $product->is_old = true;
         $product->save();
 
-        return redirect(route('olds.index'));
-    }
+        return redirect(route('olds.edit.option', $product));
+    }*/
 
     /**
      * Display the specified resource.

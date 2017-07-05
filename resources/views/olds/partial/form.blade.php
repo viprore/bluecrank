@@ -1,5 +1,3 @@
-
-
 <div class="form-group {{ $errors->has('ad_title') ? 'has-error' : '' }}">
     <label for="ad_title">상품 제목</label>
     <input type="text" name="ad_title" id="ad_title" value="{{ old('ad_title', $product->ad_title) }}"
@@ -9,7 +7,8 @@
 
 <div class="form-group {{ $errors->has('ad_short_description') ? 'has-error' : '' }}">
     <label for="ad_short_description">간략 소개</label>
-    <textarea name="ad_short_description" id="ad_short_description" rows="3" class="form-control">{{ old('ad_short_description', $product->ad_short_description) }}</textarea>
+    <textarea name="ad_short_description" id="ad_short_description" rows="3"
+              class="form-control">{{ old('ad_short_description', $product->ad_short_description) }}</textarea>
     {!! $errors->first('ad_short_description', '<span class="form-error">:message</span>') !!}
 </div>
 
@@ -55,36 +54,44 @@
     {!! $errors->first('tags', '<span class="form-error">:message</span>') !!}
 </div>
 
-<div class="form-group">
-    <label for="description">첨부된 이미지들</label>
-    <table class="table text-center">
-        <thead>
-        <tr>
-            <th class="text-center">파일명</th>
-            <th class="text-center">대표</th>
-            <th class="text-center">삭제</th>
-        </tr>
-        </thead>
-        <tbody>
-        @forelse($product->attachments as $attachment)
+@if($viewName == 'olds.edit')
+    <div class="form-group">
+        <label for="description">첨부된 이미지들</label>
+        <table class="table text-center">
+            <thead>
             <tr>
-                <td><a href="{{ $attachment->url }}">{{ $attachment->filename }}</a></td>
-                <td>
-                    @if($product->attachments->first() == $attachment)
-                        <button type="button" class="btn btn-success"><i class="fa fa-check"></i></button>
-                    @else
-                        <button type="button" class="btn btn-default" onclick="setMainImage({{ $attachment->id }})"><i class="fa fa-check"></i></button>
-                    @endif
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger" onclick="deleteAttachment({{ $attachment->id }})"><i class="fa fa-trash"></i></button>
-                </td>
+                <th class="text-center">파일명</th>
+                <th class="text-center">대표</th>
+                <th class="text-center">삭제</th>
             </tr>
-        @empty
-        @endforelse
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+
+            @forelse($product->attachments as $attachment)
+                <tr>
+                    <td><a href="{{ $attachment->url }}">{{ $attachment->filename }}</a></td>
+                    <td>
+                        @if($product->attachments->first() == $attachment)
+                            <button type="button" class="btn btn-success"><i class="fa fa-check"></i></button>
+                        @else
+                            <button type="button" class="btn btn-default" onclick="setMainImage({{ $attachment->id }})">
+                                <i
+                                        class="fa fa-check"></i></button>
+                        @endif
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger" onclick="deleteAttachment({{ $attachment->id }})">
+                            <i
+                                    class="fa fa-trash"></i></button>
+                    </td>
+                </tr>
+            @empty
+            @endforelse
+            </tbody>
+        </table>
+    </div>
+@endif
+
 
 <div class="form-group {{ $errors->has('description') ? 'has-error' : '' }}">
     <label for="description">본문</label>
@@ -111,6 +118,14 @@
     </label>
 
     <div id="my-dropzone" class="dropzone"></div>
+
+    @if(!empty(old('attachments')))
+        @php $files = old('attachments'); @endphp
+
+        @foreach($files as $id)
+            <input type="hidden" name="attachments[]" value="{{ $id }}"/>
+        @endforeach
+    @endif
 </div>
 @section('style')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">

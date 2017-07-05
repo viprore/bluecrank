@@ -123,6 +123,8 @@
 
     <ul class="nav nav-pills nav-justified">
 
+        <li role="presentation" {!! empty(request()->input('tab')) ? 'class="active"': '' !!}>
+            <a href="{{ route('wants.index') }}">전체</a></li>
         <li role="presentation" {!! request()->input('tab') == 'products' ? 'class="active"': '' !!}>
             <a href="/wants?tab=products">BC몰</a></li>
         <li role="presentation" {!! request()->input('tab') == 'olds' ? 'class="active"': '' !!}><a

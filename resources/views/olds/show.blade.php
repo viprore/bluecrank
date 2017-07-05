@@ -258,9 +258,11 @@
                 <hr/>
                 {{--@include('olds.partial.article', compact('product'))--}}
 
+                @include('tags.partial.list', ['tags' => $product->tags])
+
                 <div class="content__article">
                     {!! markdown($product->description) !!}
-                    <img src="{{ url("/icons/guide.jpg") }}" />
+                    {{--<img src="{{ url("/icons/guide.jpg") }}" />--}}
 
                 </div>
 

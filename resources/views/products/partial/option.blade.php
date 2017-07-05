@@ -1,4 +1,75 @@
-<div class="product__id" data-id="{{ $product->id }}"></div>
+<div class="row product__id" data-id="{{ $product->id }}">
+    <div class="col-md-4">
+        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            @if($product->attachments->count() > 1)
+                <ol class="carousel-indicators">
+                    @foreach($product->attachments as $attachment)
+                        <li data-target="#carousel-example-generic"
+                            data-slide-to="{{ $loop->index }}"
+                                {!! $loop->index == 0 ? 'class="active"' : '' !!}></li>
+                    @endforeach
+                </ol>
+            @endif
+
+
+        <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox">
+                @forelse($product->attachments as $attachment)
+                    <div class="item {{ $loop->index == 0 ? 'active' : '' }}">
+                        <img class="img-thumbnail" src="{{ $attachment->url }}" alt="">
+                        <div class="carousel-caption"></div>
+                    </div>
+                @empty
+                @endforelse
+
+            </div>
+
+            <!-- Controls -->
+            {{--<a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>--}}
+        </div>
+    </div>
+
+    <div class="col-md-8 item_info">
+        <h3>{{ '상품명 : ' . $product->ad_title }}</h3>
+        <table class="table table-striped">
+            <tr>
+                <th>간략설명</th>
+                <td>{!! $product->ad_short_description !!}</td>
+            </tr>
+            <tr>
+                <th>카테고리</th>
+                <td>{{ $product->category }}</td>
+            </tr>
+            <tr>
+                <th>판매상태</th>
+                <td>{{ $product->ad_status }}</td>
+            </tr>
+            <tr>
+                <th>가격</th>
+                <td>{{ number_format($product->price) }}&nbsp;원</td>
+            </tr>
+            <tr>
+                <th>중고상품인가</th>
+                <td>
+                    @if($product->is_old)
+                        그렇습네다
+                    @else
+                        아니라우
+                    @endif
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</div>
 
 <div class="form-group">
     <table class="table">
@@ -14,7 +85,7 @@
         <tbody>
         @forelse($product->options as $option)
             <tr class="item__option" name="options[{{ $loop->index }}]" data-id="{{ $option->id }}"
-                     id="option_{{ $option->id }}">
+                id="option_{{ $option->id }}">
                 <td name="id" class="text-center">{{ $option->id }}</td>
                 <td class="text-center">{{ $option->color }}</td>
                 <td class="text-center">{{ $option->size }}</td>
@@ -30,15 +101,19 @@
             </tr>
 
             <tr class="option__edit" hidden>
-                <td class="text-center"><input type="hidden" name="id" id="id" class="form-control" value="{{ $option->id }}" />{{ $option->id }}</td>
+                <td class="text-center"><input type="hidden" name="id" id="id" class="form-control"
+                                               value="{{ $option->id }}"/>{{ $option->id }}</td>
                 <td>
-                    <input type="text" name="color" id="color" class="form-control" placeholder="색상" value="{{ $option->color }}"/>
+                    <input type="text" name="color" id="color" class="form-control" placeholder="색상"
+                           value="{{ $option->color }}"/>
                 </td>
                 <td>
-                    <input type="text" name="size" id="size" class="form-control" placeholder="사이즈" value="{{ $option->size }}"/>
+                    <input type="text" name="size" id="size" class="form-control" placeholder="사이즈"
+                           value="{{ $option->size }}"/>
                 </td>
                 <td>
-                    <input type="number" name="inventory" id="inventory" class="form-control" placeholder="재고량" value="{{ $option->inventory }}"/>
+                    <input type="number" name="inventory" id="inventory" class="form-control" placeholder="재고량"
+                           value="{{ $option->inventory }}"/>
                 </td>
                 <td align="center">
                     <button type="button" class="btn btn-info button__option__update">
@@ -110,7 +185,7 @@
                     type: 'POST',
                     url: "/products/" + productId + "/options",
                     data: params,
-                    success: function() {
+                    success: function () {
                         location.reload();
                     }
 
@@ -152,7 +227,7 @@
                     type: 'PUT',
                     url: "/options/" + optionId,
                     data: params,
-                    success: function() {
+                    success: function () {
                         location.reload();
                     }
 

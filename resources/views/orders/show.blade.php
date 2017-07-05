@@ -12,33 +12,6 @@
     <div class="inform">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">상품 정보</h3>
-            </div>
-            <div class="panel-body">
-                @forelse($order->items as $item)
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <img src="{{ $item->option->product->attachments->first()->url }}"
-                                 class="img-thumbnail w-100">
-                        </div>
-                        <div class="col-xs-9">
-                            <dl>
-                                <dt>{{ $item->option->product->ad_title }}</dt>
-                                <dd>색상 : {{ $item->option->color }} // 사이즈
-                                    : {{ $item->option->size }}</dd>
-                                <dt>가격(수량 {{ $item->count }}개)</dt>
-                                <dd>{{ $item->option->product->price * $item->count }}원</dd>
-                            </dl>
-                        </div>
-                    </div>
-
-                @empty
-                @endforelse
-            </div>
-        </div>
-
-        <div class="panel panel-default">
-            <div class="panel-heading">
                 <h3 class="panel-title">배송 정보
                     @if($order->shipmethod == 'direct')
                         (직접배송)
@@ -50,6 +23,15 @@
             <div class="panel-body">
 
                 <table class="table">
+                    @if(!empty($order->ship_code))
+                        <thead>
+                        <tr>
+                            <th>운송장번호</th>
+                            <th>{{ $order->ship_code }}</th>
+                        </tr>
+                        </thead>
+                    @endif
+
                     <tbody>
                     <tr>
                         <td>받으시는분</td>
@@ -83,6 +65,36 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
+                <h3 class="panel-title">상품 정보</h3>
+            </div>
+            <div class="panel-body">
+                @forelse($order->items as $item)
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <img src="{{ $item->option->product->attachments->first()->url }}"
+                                 class="img-thumbnail w-100">
+                        </div>
+                        <div class="col-xs-9">
+                            <dl>
+                                <dt>{{ $item->option->product->ad_title }}</dt>
+                                <dd>색상 : {{ $item->option->color }} // 사이즈
+                                    : {{ $item->option->size }}</dd>
+                                <dt>가격(수량 {{ $item->count }}개)</dt>
+                                <dd>{{ $item->option->product->price * $item->count }}원</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    @if(!$loop->last)
+                        <hr>
+                    @endif
+
+                @empty
+                @endforelse
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
                 <h3 class="panel-title">결제 정보</h3>
             </div>
             <div class="panel-body">
@@ -96,7 +108,7 @@
                     @if(strpos($order->paymethod, '무통장'))
                         <tr>
                             <td>입금은행</td>
-                            <td>이태헌 653-099146-01-015 (기업)</td>
+                            <td>바이크아카데미학원(이상훈) 110-274-824505 (신한)</td>
                             <td>&nbsp;</td>
                         </tr>
 
@@ -116,6 +128,13 @@
                         <td>{{ $order->status }}</td>
                         <td>&nbsp;</td>
                     </tr>
+                    @if(!empty($order->message))
+                        <tr>
+                            <td>사유</td>
+                            <td>{{ $order->message }}</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    @endif
                     </tbody>
                 </table>
             </div>

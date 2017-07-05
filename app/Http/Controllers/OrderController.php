@@ -88,14 +88,16 @@ class OrderController extends Controller
             $counts = $request->input('items_count', []);
 
             $key = 0;
-            foreach ($items as $item) {
-                if ($item->count != $counts[$key]) {
-                    $item->count = $counts[$key];
-                    $item->save();
-                }
-                $key++;
+            if (!empty($counts)) {
+                foreach ($items as $item) {
+                    if ($item->count != $counts[$key]) {
+                        $item->count = $counts[$key];
+                        $item->save();
+                    }
+                    $key++;
 
-                flash("상품 수량이 변경되었습니다.");
+                    flash("상품 수량이 변경되었습니다.");
+                }
             }
         }
 
@@ -217,7 +219,8 @@ class OrderController extends Controller
 
             return redirect(route('orders.show', $order->id));
         } else {
-            return response()->json($order, 200, [], JSON_PRETTY_PRINT);
+            return redirect(route('orders.show', $order->id));
+            /*return response()->json($order, 200, [], JSON_PRETTY_PRINT);*/
         }
 
     }

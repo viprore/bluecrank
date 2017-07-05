@@ -53,6 +53,13 @@
     </label>
 
     <div id="my-dropzone" class="dropzone"></div>
+    @if(!empty(old('attachments')))
+        @php $files = old('attachments'); @endphp
+
+        @foreach($files as $id)
+            <input type="hidden" name="attachments[]" value="{{ $id }}"/>
+        @endforeach
+    @endif
 </div>
 
 @section('style')
