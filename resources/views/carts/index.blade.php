@@ -239,7 +239,7 @@
         }
 
         function buyDirectly(id) {
-            var count = $('#item_' + id + '_count').text();
+            var count = $('#item_' + id + '_count').val();
 
             post_to_url('/direct/item', {
                 '_token': $('meta[name="csrf-token"]').attr('content'),

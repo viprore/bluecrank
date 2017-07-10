@@ -76,7 +76,8 @@ class AttachmentController extends Controller
         $temp = $attachment->id;
 
         $attachment->id = $main->id;
-        $main->id = PHP_INT_MAX;
+
+        $main->id = Attachment::max('id') + 10;
         $main->save();
         $attachment->save();
 

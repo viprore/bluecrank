@@ -26,7 +26,7 @@
                     @if(!empty($order->ship_code))
                         <thead>
                         <tr>
-                            <th>운송장번호</th>
+                            <th style="width:25%">운송장번호</th>
                             <th>{{ $order->ship_code }}</th>
                         </tr>
                         </thead>
@@ -34,7 +34,7 @@
 
                     <tbody>
                     <tr>
-                        <td>받으시는분</td>
+                        <td style="width:25%">받으시는분</td>
                         <td>{{ $order->name }}</td>
                     </tr>
 
@@ -80,7 +80,7 @@
                                 <dd>색상 : {{ $item->option->color }} // 사이즈
                                     : {{ $item->option->size }}</dd>
                                 <dt>가격(수량 {{ $item->count }}개)</dt>
-                                <dd>{{ $item->option->product->price * $item->count }}원</dd>
+                                <dd>{{ number_format($item->option->product->price * $item->count) }}원</dd>
                             </dl>
                         </div>
                     </div>
@@ -101,38 +101,41 @@
                 <table class="table">
                     <tbody>
                     <tr>
-                        <td>결제방법</td>
+                        <td style="width:25%">결제방법</td>
                         <td>{{ $order->paymethod }}</td>
-                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                     </tr>
-                    @if(strpos($order->paymethod, '무통장'))
+                    @if(str_contains($order->paymethod, '무통장'))
                         <tr>
                             <td>입금은행</td>
                             <td>바이크아카데미학원(이상훈) 110-274-824505 (신한)</td>
-                            <td>&nbsp;</td>
                         </tr>
 
                         <tr>
                             <td>입금자명</td>
                             <td>{{ $order->banker }}</td>
-                            <td>&nbsp;</td>
                         </tr>
                     @endif
+
+                    <tr style="margin-top:10px;">
+                        <td>상품금액</td>
+                        <td>{{ number_format($order->ship_fee=='포함' ? $order->amount - 2500 : $order->amount) }} 원</td>
+                    </tr>
+                    <tr>
+                        <td>배송비</td>
+                        <td>{{ $order->ship_fee=='포함' ? '2,500 원' : '0 원' }}({{ $order->ship_fee }})</td>
+                    </tr>
                     <tr>
                         <td>결제금액</td>
-                        <td>{{ $order->amount }}</td>
-                        <td>&nbsp;</td>
+                        <td>{{ number_format($order->amount) }} 원</td>
                     </tr>
                     <tr>
                         <td>상태</td>
                         <td>{{ $order->status }}</td>
-                        <td>&nbsp;</td>
                     </tr>
                     @if(!empty($order->message))
                         <tr>
                             <td>사유</td>
                             <td>{{ $order->message }}</td>
-                            <td>&nbsp;</td>
                         </tr>
                     @endif
                     </tbody>

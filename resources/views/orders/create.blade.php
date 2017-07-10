@@ -64,10 +64,9 @@
                                             <table class="table">
                                                 <thead>
                                                 <tr>
-                                                    <th>주소록</th>
+                                                    <th style="width:25%;padding-left:2em;">주소록</th>
                                                     <th>
-                                                        <div class="form-inline">
-                                                            <div class="btn-group">
+                                                            <div class="btn-group" style="display:inline">
                                                                 <button type="button"
                                                                         class="btn btn-default dropdown-toggle"
                                                                         data-toggle="dropdown" aria-expanded="false">
@@ -84,24 +83,23 @@
                                                                     @endforelse
                                                                 </ul>
                                                             </div>
-                                                            <div class="input-group">
-                                            <span class="input-group-addon" id="basic-addon1">
-                                                <input type="checkbox" id="cb_save" name="ship_save">
-                                            </span>
+                                                            <div class="input-group col-xs-6 col-md-4">
+                                                                <span class="input-group-addon" id="basic-addon1">
+                                                                    <input type="checkbox" id="cb_save" name="ship_save">
+                                                                </span>
                                                                 <input type="text" class="form-control" disabled
                                                                        id="alias"
                                                                        name="alias"
                                                                        placeholder="주소록을 저장합니다"
                                                                        aria-describedby="basic-addon1">
                                                             </div>
-                                                        </div>
                                                     </th>
 
                                                 </tr>
                                                 </thead>
                                                 <tbody>
                                                 <tr>
-                                                    <td>이름</td>
+                                                    <td style="width:25%;padding-left:2em;">이름</td>
                                                     <td>
                                                         <input type="text" class="form-control" name="name" id="name"
                                                                value="{{ old('name', $order->name) }}">
@@ -111,11 +109,11 @@
                                                 </tr>
 
                                                 <tr>
-                                                    <td rowspan="3">주소</td>
+                                                    <td rowspan="3" style="width:25%;padding-left:2em;">주소</td>
                                                     <td>
                                                         <div class="form-inline">
                                                             <button type="button" id="postcodify_search_button"
-                                                                    class="btn btn-default">주소찾기
+                                                                    class="btn btn-default" style="display:inline">주소찾기
                                                             </button>
                                                             {{--<a id="modal-261803" href="#modal-container-261803" role="button"
                                                                class="btn btn-default"
@@ -149,7 +147,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>연락처</td>
+                                                    <td style="width:25%;padding-left:2em;">연락처</td>
                                                     <td><input type="text" class="form-control" id="contact"
                                                                name="contact"
                                                                value="{{ old('contact', $order->contact) }}">
@@ -157,7 +155,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>요청사항</td>
+                                                    <td style="width:25%;padding-left:2em;">요청사항</td>
                                                     <td><textarea class="form-control" rows="3" id="please"
                                                                   name="please"
                                                                   value="{{ old('please', $order->please) }}"></textarea>
@@ -172,7 +170,7 @@
                                             <table class="table">
                                                 <tbody>
                                                 <tr>
-                                                    <td>매장선택</td>
+                                                    <td style="width:25%;padding-left:2em;">매장선택</td>
                                                     <td>
                                                         <div class="form-inline">
                                                             <select id="states" class="form-control form-inline"
@@ -193,7 +191,7 @@
 
                                                 </tr>
                                                 <tr>
-                                                    <td>매장정보</td>
+                                                    <td style="width:25%;padding-left:2em;">매장정보</td>
                                                     <td>
                                                         <h4 id="shop_name">{{ old('postcode2', $order->postcode) ? old('postcode2', $order->postcode) : '매장정보 없음'  }}</h4>
                                                         <p id="shop_address">{{ old('find_address2', $order->find_address) ? old('find_address2', $order->find_address) : '상단에 매장선택을 이용하세요!'  }}</p>
@@ -207,7 +205,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>이름</td>
+                                                    <td style="width:25%;padding-left:2em;">이름</td>
                                                     <td>
                                                         <input type="text" id="name2" name="name2" class="form-control"
                                                                placeholder="홍길동"
@@ -216,7 +214,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>연락처</td>
+                                                    <td style="width:25%;padding-left:2em;">연락처</td>
                                                     <td>
                                                         <input type="text" id="contact2" name="contact2"
                                                                class="form-control"
@@ -226,7 +224,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>요청사항</td>
+                                                    <td style="width:25%;padding-left:2em;">요청사항</td>
                                                     <td><textarea name="please2" class="form-control" row="5"
                                                                   placeholder="완제품 조립 및 도착 후 피팅까지 부탁드립니다."
                                                                   value="{{ old('please2', $order->please) }}"></textarea>
@@ -237,7 +235,9 @@
                                         </div>
                                         <div class="padding-side text-right">
                                             <div><p class="text-danger" id="validation-error"></p></div>
-                                            <button type="button" class="btn btn-primary" onclick="formValidation()">다음</button>
+                                            <button type="button" class="btn btn-primary" onclick="formValidation()">
+                                                다음
+                                            </button>
                                         </div>
                                     </div>
 
@@ -245,7 +245,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="panel panel-default" >
+                        <div class="panel panel-default">
                             <div class="panel-heading">
                                 <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-754737"
                                    href="#panel-element-644507">구매상품 확인</a>
@@ -278,11 +278,12 @@
                                         @endphp
                                     @empty
                                     @endforelse
-                                        <div class="padding-side text-right">
-                                            <div><p class="text-danger" id="validation-error"></p></div>
-                                            <button type="button" class="btn btn-primary" data-toggle="collapse"
-                                                    data-parent="#panel-754737" data-target="#panel-element-15432">다음</button>
-                                        </div>
+                                    <div class="padding-side text-right">
+                                        <div><p class="text-danger" id="validation-error"></p></div>
+                                        <button type="button" class="btn btn-primary" data-toggle="collapse"
+                                                data-parent="#panel-754737" data-target="#panel-element-15432">다음
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -296,15 +297,48 @@
                                     <table class="table">
                                         <tbody>
                                         <tr>
-                                            <td>
-                                                결제예정금액
+                                            <td style="width:25%;padding-left:2em;">
+                                                상품금액
                                             </td>
                                             <td>
                                                 {{ number_format($total_amount) }} 원
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>결제수단</td>
+                                            <td style="width:25%;padding-left:2em;">
+                                                배송비
+                                            </td>
+                                            <td>
+                                                @if($order->ship_fee == "무료")
+                                                    0 원(무료)
+                                                    <input type="hidden" name="ship_fee" value="무료">
+                                                @else
+                                                    <p id="ship_fee">{{ number_format(2500) }} 원(선결제)</p>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="ship_fee" id="shipFeeRadio1"
+                                                               value="포함" checked>선결제
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="ship_fee" id="shipFeeRadio2"
+                                                               value="착불"> 착불
+                                                    </label>
+                                                @endif
+                                                <input type="hidden" id="products_price"
+                                                       value="{{ $total_amount }}"/>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td style="width:25%;padding-left:2em;">
+                                                결제예정금액
+                                            </td>
+                                            <td>
+                                                <p id="total_amount">{{ number_format($order->ship_fee == "포함" ? $total_amount + 2500 : $total_amount) }}
+                                                    원</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:25%;padding-left:2em;">결제수단</td>
                                             <td>
                                                 <label class="radio-inline">
                                                     <input type="radio" name="paymethod" id="inlineRadio3"
@@ -312,7 +346,7 @@
                                                 </label>
                                                 <label class="radio-inline">
                                                     <input type="radio" name="paymethod" id="inlineRadio2"
-                                                           value="계좌이체"> 계좌이체
+                                                           value="계좌이체"> 계좌이체(에스크로)
                                                 </label>
                                                 <label class="radio-inline">
                                                     <input type="radio" name="paymethod" id="inlineRadio1"
@@ -321,7 +355,7 @@
                                             </td>
                                         </tr>
                                         <tr class="account_form" style="display:none;">
-                                            <td>
+                                            <td style="width:25%;padding-left:2em;">
                                                 입금자명
                                             </td>
                                             <td>
@@ -340,7 +374,7 @@
                                             </td>
                                         </tr>
                                         <tr class="account_form" style="display:none;">
-                                            <td>
+                                            <td style="width:25%;padding-left:2em;">
                                                 입금은행
                                             </td>
                                             <td>
@@ -354,14 +388,15 @@
                                                     결제하기
                                                 </button>
                                                 <button type="button" class="btn btn-block btn-primary" id="btn_pg">
-                                                    결제하기(PG)
+                                                    결제하기
                                                 </button>
                                             </td>
                                         </tr>
                                         </tbody>
                                     </table>
                                     <input type="hidden" name="item_id_list" value="{{ $itemIdList }}">
-                                    <input type="hidden" id="amount" name="amount" value="{{ $total_amount }}">
+                                    <input type="hidden" id="amount" name="amount"
+                                           value="{{ $order->ship_fee == "포함" ? $total_amount + 2500 : $total_amount }}">
                                     <input type="hidden" id="merchant_uid" name="merchant_uid" value="">
                                 </div>
                             </div>
@@ -469,6 +504,18 @@
                 }
             });
 
+            $('input[type=radio][name=ship_fee]').change(function () {
+                if (this.value == '포함') {
+                    $total_amount = parseInt($('#products_price').val()) + 2500;
+                    $('#ship_fee').text("2,500 원(선결제)");
+                } else {
+                    $total_amount = parseInt($('#products_price').val());
+                    $('#ship_fee').text("0 원(착불)");
+                }
+                $('#total_amount').text(number_format($total_amount) + " 원");
+                $('#amount').val($total_amount);
+            });
+
             /*$("#states").select2({
              placeholder: "시/도"
              });*/
@@ -491,8 +538,8 @@
                     if (name.length < 1) {
                         name = $('#name2').val();
                     }
-                    $('#banker').prop('disabled', true)
-                        .attr('value', name);
+                    $('#banker').prop('disabled', false)
+                        .val(name);
 
                 } else {
                     $('#banker').val('');
@@ -599,9 +646,6 @@
 
         function onSuccess(order) {
             // 결제방식
-
-
-
             if (order.paymethod == '계좌이체') {
                 var pay_method = 'trans';
             } else {
@@ -627,23 +671,30 @@
                     var url = 'http://bluecrank.kr/payments/complete?imp_uid=' + rsp.imp_uid + '&merchant_uid=' + rsp.merchant_uid;
                     $(location).attr('href', url);
                 } else {
+                    var str = "";
+                    for (key in rsp) {
+                        str += key + "=" + rsp[key] + "\n";
+                    }
+
+                    console.log(str);
                     alert('PG사 결제 에러');
                 }
             });
         }
 
         function onError(data) {
+
             alert("서버 내부 에러입니다. 다시 시도해주세요.");
         }
 
         function formValidation() {
-            if($('#shipmethod').val() == 'direct') {
+            if ($('#shipmethod').val() == 'direct') {
                 var name = $('#name').val();
                 var postcode = $('#postcode').val();
                 var find_address = $('#find_address').val();
                 var input_address = $('#input_address').val();
                 var contact = $('#contact').val();
-            }else {
+            } else {
                 var name = $('#name2').val();
                 var postcode = $('#postcode2').val();
                 var find_address = $('#find_address2').val();
@@ -654,25 +705,24 @@
             var errors = '';
 
 
-
-            if(name == '') {
-                if(errors == '')    errors += '이름';
+            if (name == '') {
+                if (errors == '') errors += '이름';
                 else                errors += ', 이름';
             }
-            if(postcode == '' || find_address == '' || input_address == '') {
-                if(errors == '')    errors += '주소정보';
+            if (postcode == '' || find_address == '' || input_address == '') {
+                if (errors == '') errors += '주소정보';
                 else                errors += ', 주소정보';
             }
-            if(contact == '') {
-                if(errors == '')    errors += '연락처';
+            if (contact == '') {
+                if (errors == '') errors += '연락처';
                 else                errors += ', 연락처';
             }
 
-            if(errors == '') {
+            if (errors == '') {
                 $('#panel-element-43672')
-                 .collapse('hide');
-                 $('#panel-element-644507')
-                 .collapse('show');
+                    .collapse('hide');
+                $('#panel-element-644507')
+                    .collapse('show');
 
                 $('#validation-error').text('');
             } else {
@@ -680,7 +730,42 @@
             }
 
 
+        }
 
+        function logs(l) {
+            if (typeof console == 'object') {
+                var fctName = logs.caller && logs.caller.name || '전역';
+                if (l instanceof Object) {
+                    console.log('[' + fctName + ']');
+                    console.log(l);
+                } else {
+                    console.log('[' + fctName + ']' + l);
+                }
+            }
+        }
+
+        function number_format(num, decimals, dec_point, thousands_sep) {
+            num = parseFloat(num);
+            if (isNaN(num)) return '0';
+
+            if (typeof(decimals) == 'undefined') decimals = 0;
+            if (typeof(dec_point) == 'undefined') dec_point = '.';
+            if (typeof(thousands_sep) == 'undefined') thousands_sep = ',';
+            decimals = Math.pow(10, decimals);
+
+            num = num * decimals;
+            num = Math.round(num);
+            num = num / decimals;
+
+            num = String(num);
+            var reg = /(^[+-]?\d+)(\d{3})/;
+            var tmp = num.split('.');
+            var n = tmp[0];
+            var d = tmp[1] ? dec_point + tmp[1] : '';
+
+            while (reg.test(n)) n = n.replace(reg, "$1" + thousands_sep + "$2");
+
+            return n + d;
         }
 
 

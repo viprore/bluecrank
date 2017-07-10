@@ -1,18 +1,19 @@
 <?php
 
-if (! function_exists('markdown')) {
+if (!function_exists('markdown')) {
     /**
      * Compile Markdown to HTML.
      *
      * @param string|null $text
      * @return string
      */
-    function markdown($text = null) {
+    function markdown($text = null)
+    {
         return app(ParsedownExtra::class)->text($text);
     }
 }
 
-if (! function_exists('gravatar_profile_url')) {
+if (!function_exists('gravatar_profile_url')) {
     /**
      * Generate gravatar profile page url.
      *
@@ -25,11 +26,11 @@ if (! function_exists('gravatar_profile_url')) {
     }
 }
 
-if (! function_exists('gravatar_url')) {
+if (!function_exists('gravatar_url')) {
     /**
      * Generate gravatar image url
      *
-     * @param  string  $email
+     * @param  string $email
      * @param  integer $size
      * @return string
      */
@@ -39,7 +40,7 @@ if (! function_exists('gravatar_url')) {
     }
 }
 
-if (! function_exists('attachments_path')) {
+if (!function_exists('attachments_path')) {
     /**
      * Generate attachments path.
      *
@@ -48,11 +49,11 @@ if (! function_exists('attachments_path')) {
      */
     function attachments_path($path = null)
     {
-        return public_path('files'.($path ? DIRECTORY_SEPARATOR.$path : $path));
+        return public_path('files' . ($path ? DIRECTORY_SEPARATOR . $path : $path));
     }
 }
 
-if (! function_exists('format_filesize')) {
+if (!function_exists('format_filesize')) {
     /**
      * Calculate human-readable file size string.
      *
@@ -61,7 +62,7 @@ if (! function_exists('format_filesize')) {
      */
     function format_filesize($bytes)
     {
-        if (! is_numeric($bytes)) return 'NaN';
+        if (!is_numeric($bytes)) return 'NaN';
 
         $decr = 1024;
         $step = 0;
@@ -69,20 +70,20 @@ if (! function_exists('format_filesize')) {
 
         while (($bytes / $decr) > 0.9) {
             $bytes = $bytes / $decr;
-            $step ++;
+            $step++;
         }
 
         return round($bytes, 2) . $suffix[$step];
     }
 }
 
-if (! function_exists('link_for_sort')) {
+if (!function_exists('link_for_sort')) {
     /**
      * Build HTML anchor tag for sorting
      *
      * @param string $column
      * @param string $text
-     * @param array  $params
+     * @param array $params
      * @return string
      */
     function link_for_sort($column, $text, $params = [])
@@ -116,7 +117,7 @@ if (! function_exists('link_for_sort')) {
     }
 }
 
-if (! function_exists('cache_key')) {
+if (!function_exists('cache_key')) {
     /**
      * Generate key for caching.
      *
@@ -136,7 +137,7 @@ if (! function_exists('cache_key')) {
     }
 }
 
-if (! function_exists('taggable')) {
+if (!function_exists('taggable')) {
     /**
      * Determine if the current cache driver has cacheTags() method
      *
@@ -148,7 +149,7 @@ if (! function_exists('taggable')) {
     }
 }
 
-if (! function_exists('current_url')) {
+if (!function_exists('current_url')) {
     /**
      * Build current url string, without return param.
      *
@@ -156,7 +157,7 @@ if (! function_exists('current_url')) {
      */
     function current_url()
     {
-        if (! request()->has('return')) {
+        if (!request()->has('return')) {
             return request()->fullUrl();
         }
 
@@ -168,7 +169,7 @@ if (! function_exists('current_url')) {
     }
 }
 
-if (! function_exists('array_transpose')) {
+if (!function_exists('array_transpose')) {
     /**
      * Transpose the given array.
      *
@@ -190,7 +191,7 @@ if (! function_exists('array_transpose')) {
 }
 
 // TODO 만들다 맘
-if (! function_exists('cleanNoLinkAttachment')) {
+if (!function_exists('cleanNoLinkAttachment')) {
     function cleanNoLinkAttachment()
     {
         $results = array();
@@ -204,5 +205,199 @@ if (! function_exists('cleanNoLinkAttachment')) {
 
         closedir($handler);
         return $results;
+    }
+}
+
+if (!function_exists('naverEpExport')) {
+    function naverEpExport()
+    {
+        /*
+** Example usage:
+*/
+
+        $array = array(
+            [
+                "id",
+                "title",
+                "price_pc",
+                "price_mobile",
+                "normal_price",
+                "link",
+                "mobile_link",
+                "image_link",
+                "add_image_link",
+                "category_name1",
+                "category_name2",
+                "category_name3",
+                "category_name4",
+                "naver_category",
+                "naver_product_id",
+                "condition",
+                "import_flag",
+                "parallel_import",
+                "order_made",
+                "product_flag",
+                "adult",
+                "goods_type",
+                "barcode",
+                "manufacture_define_number",
+                "model_number",
+                "brand",
+                "maker",
+                "origin",
+                "card_event",
+                "event_words",
+                "coupon",
+                "partner_coupon_download",
+                "interest_free_event",
+                "point",
+                "installation_costs",
+                "search_tag",
+                "group_id",
+                "vendor_id",
+                "coordi_id",
+                "minimum_purchase_quantity",
+                "review_count",
+                "shipping",
+                "delivery_grade",
+                "delivery_detail",
+                "attribute",
+                "option_detail",
+                "seller_id",
+                "age_group",
+                "gender",
+                "class",
+                "update_time",
+            ],
+        );
+
+        $products = App\Product::all();
+        $categories = config('project.categories');
+
+        foreach ($products as $product) {
+            $product_arr = [
+                $product->id,
+                $product->ad_title,
+                $product->price,
+                "",
+                "",
+                route('products.show', $product->id),
+                "",
+                $product->attachments->count() > 0 ? $product->attachments->first()->url : "",
+                "",
+                $categories[$product->category]['ko'],
+                "",
+                "",
+                "",
+                "수동으로 수정 요망",
+                "수동으로 수정 요망",
+                $product->is_old ? "중고" : "신상품",
+                "",
+                "",
+                "",
+                "",
+                "N",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                $product->reviews->count(),
+                $product->price >= 50000 ? 0 : 2500,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                $product->created_at == $product->updated_at ? "I" : ($product->updated_at->isToday() ? "U" : "I"),
+                $product->updated_at->toDateTimeString()
+            ];
+
+            array_push($array, $product_arr);
+        }
+
+// save the array to the data.txt file:
+        write_tabbed_file('public/files/data.txt', $array, true);
+
+        /* the data.txt content looks like this:
+        line1	data-1-1	data-1-2	data-1-3
+        line2	data-2-1	data-2-2	data-2-3
+        line3	data-3-1	data-3-2	data-3-3
+        line4	foobar
+        line5	hello world
+        */
+
+// load the saved array:
+        $reloaded_array = load_tabbed_file('public/files/data.txt',true);
+
+        print_r($reloaded_array);
+// returns the array from above
+    }
+}
+
+if (!function_exists('write_tabbed_file')) {
+    function write_tabbed_file($filepath, $array, $save_keys=false){
+        $content = '';
+
+        reset($array);
+        while(list($key, $val) = each($array)){
+
+            // replace tabs in keys and values to [space]
+            $key = str_replace("\t", " ", $key);
+            $val = str_replace("\t", " ", $val);
+
+            if ($save_keys){ $content .=  $key."\t"; }
+
+            // create line:
+            $content .= (is_array($val)) ? implode("\t", $val) : $val;
+            $content .= "\n";
+        }
+
+        if (file_exists($filepath) && !is_writeable($filepath)){
+            return false;
+        }
+        if ($fp = fopen($filepath, 'w+')){
+            fwrite($fp, $content);
+            fclose($fp);
+        }
+        else { return false; }
+        return true;
+    }
+}
+
+if (!function_exists('load_tabbed_file')) {
+    function load_tabbed_file($filepath, $load_keys=false){
+        $array = array();
+
+        if (!file_exists($filepath)){ return $array; }
+        $content = file($filepath);
+
+        for ($x=0; $x < count($content); $x++){
+            if (trim($content[$x]) != ''){
+                $line = explode("\t", trim($content[$x]));
+                if ($load_keys){
+                    $key = array_shift($line);
+                    $array[$key] = $line;
+                }
+                else { $array[] = $line; }
+            }
+        }
+        return $array;
     }
 }

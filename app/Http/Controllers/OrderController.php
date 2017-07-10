@@ -101,7 +101,22 @@ class OrderController extends Controller
             }
         }
 
+        $items_price = 0;
+
+        foreach ($items as $item) {
+            $price = $item->option->product->price;
+
+            $count = $item->count;
+            $items_price += $price * $count;
+        }
+
+
+
         $order = new Order;
+
+        if($items_price >= 50000) $order->ship_fee = '무료';
+        else                      $order->ship_fee = '포함';
+
         $order->shipmethod = 'direct';
 
         // TODO :: 캐시에 박기(변경 별로 없으니)
@@ -177,6 +192,7 @@ class OrderController extends Controller
         }
         $paymethod = $request->input('paymethod');
         $amount = $request->input('amount');
+        $ship_fee = $request->input('ship_fee');
 
         $list = explode(',', $request->input('item_id_list'));
         $items = Item::find($list);
@@ -192,7 +208,8 @@ class OrderController extends Controller
             "paymethod" => $paymethod,
             "amount" => $amount,
             "shipmethod" => $shipmethod,
-            "baker" => $banker
+            "ship_fee" => $ship_fee,
+            "banker" => $banker
         ];
 
         if (strpos($paymethod, '무통장') === false) {
@@ -209,8 +226,7 @@ class OrderController extends Controller
         }
 
 
-
-        if (strpos($paymethod, '무통장') === true) {
+        if (str_contains($paymethod, '무통장')) {
             event(new \App\Events\OrderEvent($order));
 
             flash()->success(
@@ -219,8 +235,9 @@ class OrderController extends Controller
 
             return redirect(route('orders.show', $order->id));
         } else {
-            return redirect(route('orders.show', $order->id));
-            /*return response()->json($order, 200, [], JSON_PRETTY_PRINT);*/
+            /*return redirect(route('orders.show', $order->id));*/
+            // 아약스 요청으로 인해 응답에 order 오브젝트를 Json 반환
+            return response()->json($order, 200, [], JSON_PRETTY_PRINT);
         }
 
     }

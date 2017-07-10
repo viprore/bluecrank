@@ -161,9 +161,7 @@ class ArticleController extends Controller implements Cacheable
         $article->tags()->sync($request->input('tags'));
 
         event(new \App\Events\ModelChanged(['articles']));
-        flash()->success(
-            trans('forum.articles.success_updating')
-        );
+        flash()->success('게시글이 수정되었습니다.');
 
         return redirect(route('articles.show', $article->id));
     }

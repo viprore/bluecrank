@@ -24,7 +24,8 @@ class Order extends Model
         'amount',
         'banker',
         'status',
-        'merchant_uid'
+        'merchant_uid',
+        'ship_fee'
     ];
 
     /**

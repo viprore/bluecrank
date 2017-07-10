@@ -198,7 +198,7 @@
                                     aria-hidden="true">×</span></button>
                         <span class="card-title">{{ isset($item->ad_title) ? $item->ad_title : $item->title }}</span>
                         <p>
-                            {{ isset($item->ad_short_description) ? $item->ad_short_description : substr($item->content, 0, 50) . "..." }}
+                            {{ isset($item->ad_short_description) ? $item->ad_short_description : substr(strip_tags($item->content), 0, 50) . "..." }}
                         </p>
                     </div><!-- card reveal -->
                 </div>
