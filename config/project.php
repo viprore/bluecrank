@@ -66,7 +66,7 @@ return [
     'categories' => [
         'road' => [
             'ko' => '로드',
-            'en' => 'Road'
+            'en' => 'Road',
         ],
         'mtb' => [
             'ko' => 'MTB',

@@ -36,6 +36,14 @@ class WelcomeController extends Controller
         return view('info');
     }
 
+    public function useinfo() {
+        return view('layouts.use');
+    }
+
+    public function privateinfo() {
+        return view('layouts.private');
+    }
+
     /**
      * Set locale.
      *

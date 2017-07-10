@@ -311,7 +311,7 @@ if (!function_exists('naverEpExport')) {
                 "",
                 "",
                 "",
-                "",
+                "자전거|로드|MTB|하이브리드|로드 자전거|한강|라이딩|ROAD|BIKE|바이크",
                 "",
                 "",
                 "",
@@ -333,7 +333,7 @@ if (!function_exists('naverEpExport')) {
         }
 
 // save the array to the data.txt file:
-        write_tabbed_file('public/files/data.txt', $array, true);
+        write_tabbed_file('public/files/data.txt', $array, false);
 
         /* the data.txt content looks like this:
         line1	data-1-1	data-1-2	data-1-3
@@ -344,7 +344,7 @@ if (!function_exists('naverEpExport')) {
         */
 
 // load the saved array:
-        $reloaded_array = load_tabbed_file('public/files/data.txt',true);
+        $reloaded_array = load_tabbed_file('public/files/data.txt',false);
 
         print_r($reloaded_array);
 // returns the array from above

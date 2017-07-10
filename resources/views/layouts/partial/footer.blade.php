@@ -26,37 +26,45 @@
 
     </ul>
 
-    <div class="row" id="shop-info">
-        <div class="col-sm-4 ft-div">
-            <b class="ft-title">바이크아카데미학원</b>
+    <div id="shop-info">
+        <div class="row">
+            <div class="col-sm-4 ft-div">
+                <b class="ft-title">바이크아카데미학원</b>
 
-            <p class="ft-body"><br/>(07212) 서울시 영등포구 선유로 258<br/>
-                대표 : 이상훈<br/>
-                사업자 등록번호 : 107-15-91150<b><a href="http://www.ftc.go.kr/info/bizinfo/communicationList.jsp"
-                                             target="_blank">[사업자 정보 확인]</a></b><br/>
-                통신판매업신고 : 2017-서울영등포-0671호<br/>
-                Tel : 02-2631-9910</p>
-        </div>
-        <div class="col-sm-4 ft-div">
-            <b class="ft-title">고객센터</b>
+                <p class="ft-body"><br/>(07212) 서울시 영등포구 선유로 258<br/>
+                    대표 : 이상훈<br/>
+                    사업자 등록번호 : 107-15-91150<br/>
+                    통신판매업신고 : 2017-서울영등포-0671호<br/>
+                    Tel : 02-2631-9910</p>
+            </div>
+            <div class="col-sm-4 ft-div">
+                <b class="ft-title">고객센터</b>
 
-            <p class="ft-body"><br/>상담 가능 시간 : 10:00~19:00 (토,일, 공휴일 휴무)<br/>
-                (01849) 서울 노원구 동일로 174길 27 305호<br/>
-                Tel : 0507-1453-7457 E-mail : bt.biketrade@gmail.com<br/>
-                KAKAO : <a href="http://pf.kakao.com/_DxnLmu">@블루크랭크</a></p>
-        </div>
-        <div class="col-sm-3 ft-div">
-            <b class="ft-title">BANK INFO</b>
+                <p class="ft-body"><br/>상담 가능 시간 : 10:00~19:00 (토,일, 공휴일 휴무)<br/>
+                    (01849) 서울 노원구 동일로 174길 27 305호<br/>
+                    Tel : 0507-1453-7457<br/>
+                    E-mail : bt.biketrade@gmail.com<br/>
+                    KAKAO : <a href="http://pf.kakao.com/_DxnLmu">@블루크랭크</a></p>
+            </div>
+            <div class="col-sm-3 ft-div">
+                <b class="ft-title">BANK INFO</b>
 
-            <p class="ft-body"><br/>신한은행<br/>
-                110-274-824505<br/>
-                예금주 : 바이크아카데미학원(이상훈)</p>
+                <p class="ft-body"><br/>신한은행<br/>
+                    110-274-824505<br/>
+                    예금주 : 바이크아카데미학원(이상훈)</p>
+            </div>
         </div>
-        {{--&copy; {{ date('Y') }}
-        <a href="{{ config('project.url') }}">
-            {{ config('app.name') }}
-        </a>--}}
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <b><a href="{{ route('use.info') }}">이용약관</a>&nbsp;|&nbsp;
+                <a href="{{ route('private.info') }}">개인정보 취급방침</a>&nbsp;|&nbsp;
+                <a href="http://www.ftc.go.kr/info/bizinfo/communicationList.jsp"
+                      target="_blank">사업자 정보 확인</a></b>
+            </div>
+        </div>
     </div>
+
+
 
     <div class="row visible-xs-block visible-sm-block">
         <button type="button" id="toggle-shop-info" class="btn btn-block btn-shop-info">SHOP INFO ▼</button>

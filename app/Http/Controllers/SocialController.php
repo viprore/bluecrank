@@ -61,7 +61,7 @@ class SocialController extends Controller
             } else {
                 if (! $native_user->activated) {
                     flash()->error(
-                        '가입확인해 주세요.'
+                        '가입 이메일을 확인해 주세요.'
                     );
 
                     return back()->withInput();
@@ -105,22 +105,63 @@ class SocialController extends Controller
 
     public function createUser(Request $request)
     {
-        $this->validate($request, [
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $socialId = $request->input('id');
+        $provider = $request->input('provider'). '_id';
+
+        /*$this->validate($request, [
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'id' => 'required|unique:users',
-        ]);
+            $provider . '_id' => 'required|unique:users',
+        ]);*/
 
+        // socialId 탐색
         $confirmCode = str_random(60);
+        $native_user = User::where($provider, '=', $socialId)->first();
 
-        $user = \App\User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'confirm_code' => $confirmCode,
-            $request->input('provider') . '_id' => $request->input('id'),
-        ]);
+        if ($native_user === null) {
+            // 소셜 아이디 최초 등록
+            $native_user = User::whereEmail($email)->first();
 
-        event(new \App\Events\UserCreated($user));
+            if ($native_user === null) {
+                // 이메일도 등록한 적 없음
+
+
+                $native_user = \App\User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'confirm_code' => $confirmCode,
+                    $provider => $socialId,
+                ]);
+            } else {
+                // 기존에 등록된 이메일이 존재함
+
+                if ($native_user->$provider === null) {
+                    // 해당 아이디에 소셜 아이디가 미기재
+                    $native_user->$provider = $socialId;
+                    $native_user->activated = false;
+                    $native_user->confirm_code = $confirmCode;
+                    $native_user->save();
+                    event(new \App\Events\UserCreated($native_user));
+                    flash('가입 이메일을 확인해 주세요.');
+                    return redirect(route('sessions.create'));
+                } else {
+                    // 해당 아이디에 소셜 아이디가 이미 기입되어 있음
+                    flash()->error('해당 이메일을 다른 유저가 사용중으로 나옵니다.<br />다른 이메일을 기입하시거나 고객센터에 문의하세요.');
+                    return redirect(route('sessions.create'));
+                }
+            }
+        }else{
+            // 기존 등록된 소셜 아이디가 있을 경우
+            auth()->login($native_user);
+            flash(auth()->user()->name . '님, 환영합니다.');
+
+            return redirect(route('products.index'));
+        }
+
+
+        event(new \App\Events\UserCreated($native_user));
 
         flash('가입하신 메일 계정으로 가입 확인 메일을 보내드렸습니다. 가입 확인하시고 로그인해 주세요.');
         return redirect(route('sessions.create'));

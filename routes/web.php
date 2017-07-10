@@ -224,7 +224,7 @@ Route::get('social/{provider}', [
     'as' => 'social.login',
     'uses' => 'SocialController@execute',
 ]);
-Route::post('social/regist', [
+Route::post('regist/social', [
     'as' => 'social.regist',
     'uses' => 'SocialController@createUser',
 ]);
@@ -317,6 +317,15 @@ Route::get('phpinfo', [
     'uses' => 'WelcomeController@phpinfo'
 ]);
 
+Route::get('useinfo', [
+    'as' => 'use.info',
+    'uses' => 'WelcomeController@useinfo'
+]);
+
+Route::get('private', [
+    'as' => 'private.info',
+    'uses' => 'WelcomeController@privateinfo'
+]);
 
 
 
