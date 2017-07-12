@@ -19,8 +19,9 @@ class SessionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+
         return view('sessions.create');
     }
 
@@ -32,6 +33,7 @@ class SessionController extends Controller
      */
     public function store(Request $request)
     {
+
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required|min:6',

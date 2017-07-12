@@ -291,7 +291,7 @@
                             @endif--}}
 
                         @else
-                            <a href="{{ route('sessions.create') }}">로그인</a>후 구매 가능합니다.
+                            <a href="{{ route('sessions.create', ['return' => urlencode($currentUrl)]) }}">로그인</a>후 구매 가능합니다.
                         @endif
                     </div>
                 @endif

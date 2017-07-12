@@ -24,10 +24,10 @@ class SocialController extends Controller
      */
     public function execute(Request $request, $provider)
     {
+
         if (!$request->has('code')) {
             return $this->redirectToProvider($provider);
         }
-
         return $this->handleProviderCallback($provider);
     }
 
@@ -39,6 +39,7 @@ class SocialController extends Controller
      */
     protected function redirectToProvider($provider)
     {
+
         return \Socialite::driver($provider)->redirect();
     }
 
@@ -52,12 +53,17 @@ class SocialController extends Controller
     {
         $user = \Socialite::driver($provider)->user();
 
+        $return = request('return');
+        if ($return == null) {
+            $previous_url = session('_previous')['url'];
+            $return = $this->getParameter($previous_url, 'return');
+        }
 
         if ($user->getEmail() === null) {
             $native_user = User::where($provider . '_id', '=', $user->id)->first();
 
             if ($native_user == null) {
-                return view('socials.email', compact('user', 'provider'));
+                return view('socials.email', compact('user', 'provider', 'return'));
             } else {
                 if (! $native_user->activated) {
                     flash()->error(
@@ -96,11 +102,17 @@ class SocialController extends Controller
 
         auth()->login($native_user);
 
-        flash(
-            auth()->user()->name . '님, 환영합니다.'
-        );
+        flash(auth()->user()->name . '님, 환영합니다.');
 
-        return redirect(route('products.index'));
+
+
+        if (!empty($return) && str_contains(urldecode($return), env('APP_URL'))) {
+            return redirect(urldecode($return));
+        } else {
+            return redirect(route('products.index'));
+        }
+
+
     }
 
     public function createUser(Request $request)
@@ -109,6 +121,12 @@ class SocialController extends Controller
         $email = $request->input('email');
         $socialId = $request->input('id');
         $provider = $request->input('provider'). '_id';
+
+        $return = request('return');
+        if ($return == null) {
+            $previous_url = session('_previous')['url'];
+            $return = $this->getParameter($previous_url, 'return');
+        }
 
         /*$this->validate($request, [
             'name' => 'required|max:255',
@@ -157,14 +175,24 @@ class SocialController extends Controller
             auth()->login($native_user);
             flash(auth()->user()->name . '님, 환영합니다.');
 
-            return redirect(route('products.index'));
+            if (!empty($return) && str_contains(urldecode($return), env('APP_URL'))) {
+                return redirect(urldecode($return));
+            } else {
+                return redirect(route('products.index'));
+            }
         }
 
 
         event(new \App\Events\UserCreated($native_user));
 
         flash('가입하신 메일 계정으로 가입 확인 메일을 보내드렸습니다. 가입 확인하시고 로그인해 주세요.');
-        return redirect(route('sessions.create'));
+        return redirect(route('sessions.create'), compact('return', 'email'));
 
+    }
+
+    function getParameter($url,$tag) {
+        $parts = parse_url($url);
+        parse_str($parts['query'], $query);
+        return $query[$tag];
     }
 }

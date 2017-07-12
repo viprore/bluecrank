@@ -7,6 +7,9 @@
     <input type="hidden" name="id" value="{{ $user->id }}">
     <input type="hidden" name="name" value="{{ $user->name ? : $user->nickname }}">
     <input type="hidden" name="provider" value="{{ $provider }}">
+    @if ($return = request('return'))
+      <input type="hidden" name="return" value="{{ $return }}">
+    @endif
 
     <div class="page-header">
       <h4>추가 정보 입력</h4>

@@ -16,6 +16,7 @@
 @stop
 
 @section('content')
+
     <form action="{{ route('sessions.store') }}" method="POST" role="form" class="form__auth">
         {!! csrf_field() !!}
 
@@ -36,28 +37,28 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-md-3 col-xs-3">
-                    <a class="img-social" href="{{ route('social.login', ['naver']) }}">
+                    <a class="img-social" href="{{ route('social.login', ['provider' => 'naver', 'return' => $return]) }}">
                         <img src="{{ url('icons/' .  'btn_naver.png') }}"
                              onmouseover="this.src='{{ url('icons/' .  'btn_naver_ov.png') }}'"
                              onmouseout="this.src='{{ url('icons/' .  'btn_naver.png') }}'">
                     </a>
                 </div>
                 <div class="col-md-3 col-xs-3">
-                    <a class="img-social" href="{{ route('social.login', ['kakao']) }}">
+                    <a class="img-social" href="{{ route('social.login', ['provider' => 'kakao', 'return' => $return]) }}">
                         <img src="{{ url('icons/' .  'btn_kakao.png') }}"
                              onmouseover="this.src='{{ url('icons/' .  'btn_kakao_ov.png') }}'"
                              onmouseout="this.src='{{ url('icons/' .  'btn_kakao.png') }}'">
                     </a>
                 </div>
                 <div class="col-md-3 col-xs-3">
-                    <a class="img-social" href="{{ route('social.login', ['facebook']) }}">
+                    <a class="img-social" href="{{ route('social.login', ['provider' => 'facebook', 'return' => $return]) }}">
                         <img src="{{ url('icons/' .  'btn_facebook.png') }}"
                              onmouseover="this.src='{{ url('icons/' .  'btn_facebook_ov.png') }}'"
                              onmouseout="this.src='{{ url('icons/' .  'btn_facebook.png') }}'">
                     </a>
                 </div>
                 <div class="col-md-3 col-xs-3">
-                    <a class="img-social" href="{{ route('social.login', ['google']) }}">
+                    <a class="img-social" href="{{ route('social.login', ['provider' => 'google', 'return' => $return]) }}">
                         <img src="{{ url('icons/' .  'btn_google.png') }}"
                              onmouseover="this.src='{{ url('icons/' .  'btn_google_ov.png') }}'"
                              onmouseout="this.src='{{ url('icons/' .  'btn_google.png') }}'">

@@ -130,7 +130,7 @@ class UserController extends Controller
     {
         flash()->error($message);
 
-        return redirect(route('root'));
+        return redirect()->back();
     }
 
     /**
@@ -141,7 +141,7 @@ class UserController extends Controller
     {
         flash($message);
 
-        return redirect(route('root'));
+        return redirect(route('sessions.create'));
     }
 
     /**
