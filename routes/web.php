@@ -327,8 +327,25 @@ Route::get('private', [
     'uses' => 'WelcomeController@privateinfo'
 ]);
 
+Route::get('npay/order/{item_list}/{ship_type?}', [
+    'as' => 'npay.order',
+    'uses' => 'NPayController@makeOrder'
+]);
 
+Route::post('npay/cart', [
+    'as' => 'npay.cart',
+    'uses' => 'NPayController@inCart'
+]);
 
+Route::get('npay/items', [
+    'as' => 'npay.items',
+    'uses' => 'NPayController@itemInfo'
+]);
+
+Route::get('npay/wish/{item_list}', [
+    'as' => 'npay.wish',
+    'uses' => 'NPayController@makeWish'
+]);
 
 
 

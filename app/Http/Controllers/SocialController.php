@@ -56,7 +56,7 @@ class SocialController extends Controller
         $return = request('return');
         if ($return == null) {
             $previous_url = session('_previous')['url'];
-            $return = $this->getParameter($previous_url, 'return');
+            $return = $this->getUrlParameter($previous_url, 'return');
         }
 
         if ($user->getEmail() === null) {
@@ -125,7 +125,7 @@ class SocialController extends Controller
         $return = request('return');
         if ($return == null) {
             $previous_url = session('_previous')['url'];
-            $return = $this->getParameter($previous_url, 'return');
+            $return = $this->getUrlParameter($previous_url, 'return');
         }
 
         /*$this->validate($request, [
@@ -190,9 +190,13 @@ class SocialController extends Controller
 
     }
 
-    function getParameter($url,$tag) {
+    function getUrlParameter($url, $sch_tag) {
         $parts = parse_url($url);
-        parse_str($parts['query'], $query);
-        return $query[$tag];
+        if (isset($parts['query'])) {
+            parse_str($parts['query'], $query);
+            return isset($query[$sch_tag]) ? $query[$sch_tag] : "";
+        } else {
+            return "";
+        }
     }
 }

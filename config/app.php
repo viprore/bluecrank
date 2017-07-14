@@ -185,6 +185,7 @@ return [
          * 3rd Party Service Providers...(for development)
          */
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
+        XmlResponse\XmlResponseServiceProvider::class,
 
     ],
 

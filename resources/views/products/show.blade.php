@@ -2,7 +2,8 @@
 
 @section('style')
     @parent
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.min.css">
     <style>
         .item_info h3 {
             font-size: 1.5em;
@@ -133,17 +134,16 @@
             background: #225378;
             border-color: #124d78;
         }
+
         .btn-success {
             background: #1695a3;
             border-color: #0694a3;
         }
 
         .my-6 {
-            margin-top : 1em;
-            margin-bottom : 1em;
+            margin-top: 1em;
+            margin-bottom: 1em;
         }
-
-
 
         .quantity-count {
             color: #555555;
@@ -151,6 +151,74 @@
 
         /*-- quantity-end --*/
     </style>
+    <script type="text/javascript"
+            src="http://pay.naver.com/customer/js/naverPayButton.js" charset="UTF-8"></script>
+    <script type="text/javascript">//<!CDATA[
+        function checkOption(selectBox, nonSelectedIndex, optionName) {
+            if (selectBox.selectedIndex == nonSelectedIndex) {
+                alert("상품 옵션을 선택해 주세요. (" + optionName + ")");
+                return false;
+            }
+            return true;
+        }
+        function checkShippingPrice(radio) {
+            var len = radio.length;
+            if (len == undefined) {
+                if (radio.checked) {
+                    return true;
+                }
+            } else {
+                for (var i = 0; i < len; i++) {
+                    if (radio[i].checked) {
+                        return true;
+                    }
+                }
+            }
+            alert("배송비를 선택해 주세요.");
+            return false;
+        }
+        function buy_nc(url) {
+            var optionId = $('#select_option option:selected').val();
+            var count = parseInt($('.value1').text(), 10);
+
+            $.ajax({
+                type: 'POST',
+                url: '/npay/cart',
+                data: {
+                    option_id: optionId,
+                    count: count
+                }
+            }).then(function (res) {
+                location.href = '/npay/order/' + res.id;
+            });
+
+            return false;
+        }
+
+        function wishlist_nc(url) {
+            var optionId = $('#select_option option:selected').val();
+            var count = parseInt($('.value1').text(), 10);
+            // 네이버페이로 찜 정보를 등록하는 가맹점 페이지 팝업 창 생성.
+            // 해당 페이지에서 찜 정보 등록 후 네이버페이 찜 페이지로 이동.
+
+            $.ajax({
+                type: 'POST',
+                url: '/npay/cart',
+                data: {
+                    option_id: optionId,
+                    count: count
+                }
+            }).then(function (res) {
+                window.open('/npay/wish/' + res.id, "", "scrollbars=yes,width=400,height=267");
+            });
+
+            return false;
+        }
+        function not_buy_nc() {
+            alert("죄송합니다. 네이버페이로 구매가 불가한 상품입니다.");
+            return false;
+        }
+        //]]></script>
 @stop
 @section('content')
     @php
@@ -250,7 +318,7 @@
                                     <select name="select_option[]" id="select_option" class="form-control">
                                         @foreach($product->options as $option)
                                             <option value="{{ $option->id }}">
-                                                {{ strpos($option->color, '-') ? ($option->color . " - (" . $option->size .")") : $option->size }}
+                                                {{ !empty($option->color) ? ($option->color . " - (" . $option->size .")") : $option->size }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -291,9 +359,28 @@
                             @endif--}}
 
                         @else
-                            <a href="{{ route('sessions.create', ['return' => urlencode($currentUrl)]) }}">로그인</a>후 구매 가능합니다.
+                            <a href="{{ route('sessions.create', ['return' => urlencode($currentUrl)]) }}">로그인</a>후 구매
+                            가능합니다.
                         @endif
                     </div>
+                    @if($currentUser ? $currentUser->isTester() : false)
+                        <div class="row">
+                            <div class="col-xs-12 text-center">
+                                <script type="text/javascript">//<![CDATA[
+                                    naver.NaverPayButton.apply({
+                                        BUTTON_KEY: "C06715B6-5172-4A2C-8FC7-5C1F53CA9314",
+                                        TYPE: "A", // 버튼 모음 종류 설정
+                                        COLOR: 1, // 버튼 모음의 색 설정
+                                        COUNT: 2, // 버튼 개수 설정. 구매하기 버튼만 있으면(장바구니 페이지) 1, 찜하기 버튼도 있으면(상품 상세 페이지) 2를 입력.
+                                        ENABLE: "Y", // 품절 등의 이유로 버튼 모음을 비활성화할 때에는 "N" 입력
+                                        BUY_BUTTON_HANDLER: buy_nc,
+                                        WISHLIST_BUTTON_HANDLER: wishlist_nc,
+                                        "": ""
+                                    });
+                                    //]]></script>
+                            </div>
+                        </div>
+                    @endif
                 @endif
             </div>
 
@@ -306,7 +393,7 @@
 
                 <div class="content__article">
                     {!! markdown($product->description) !!}
-                    <img src="{{ url("/icons/guide.jpg") }}" />
+                    <img src="{{ url("/icons/guide.jpg") }}"/>
 
                 </div>
 
@@ -396,15 +483,9 @@
 
 @section('script')
     @parent
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>
     <script>
-        $(window).on('load', function () {
-            $('.flexslider').flexslider({
-                animation: "slide",
-                controlNav: "thumbnails"
-            });
-        });
-
         $('.value-plus1').on('click', function () {
             var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10) + 1;
             divUpd.text(newVal);
@@ -452,7 +533,7 @@
                 message: '상품명 : <b>' + product_title.replace('\n', '') + "</b>옵션 : <b>" + optionTxt.replace('\n', '') + "</b> " + count + "개를 장바구니에 추가합니다.",
                 buttons: [{
                     label: '담기',
-                    action: function(dialog) {
+                    action: function (dialog) {
                         $.ajax({
                             type: 'POST',
                             url: '/carts',
@@ -466,7 +547,7 @@
                     }
                 }, {
                     label: '취소',
-                    action: function(dialog) {
+                    action: function (dialog) {
                         dialog.close();
                     }
                 }]
@@ -474,20 +555,20 @@
 
 
             /*
-            if (confirm(optionTxt + " " + count + "개를 장바구니에 추가합니다.")) {
-                $.ajax({
-//                    type: 'POST',
-//                    url: '/carts/' + optionId + '/count/' + count
-                    type: 'POST',
-                    url: '/carts',
-                    data: {
-                        option_id: optionId,
-                        count: count
-                    }
-                }).then(function () {
-                    window.location.href = '/products/' + productId;
-                });
-            }*/
+             if (confirm(optionTxt + " " + count + "개를 장바구니에 추가합니다.")) {
+             $.ajax({
+             //                    type: 'POST',
+             //                    url: '/carts/' + optionId + '/count/' + count
+             type: 'POST',
+             url: '/carts',
+             data: {
+             option_id: optionId,
+             count: count
+             }
+             }).then(function () {
+             window.location.href = '/products/' + productId;
+             });
+             }*/
         });
 
         $('.btn__buy').on('click', function (e) {
@@ -501,7 +582,7 @@
                 message: '상품명 : <b>' + product_title.replace('\n', '') + "</b>옵션 : <b>" + optionTxt.replace('\n', '') + "</b> " + count + "개를 바로 구매합니다.",
                 buttons: [{
                     label: '구매',
-                    action: function(dialog) {
+                    action: function (dialog) {
                         post_to_url('/direct/option', {
                             '_token': $('meta[name="csrf-token"]').attr('content'),
                             'option_id': optionId,
@@ -510,7 +591,7 @@
                     }
                 }, {
                     label: '취소',
-                    action: function(dialog) {
+                    action: function (dialog) {
                         dialog.close();
                     }
                 }]
@@ -539,5 +620,16 @@
             document.body.appendChild(form);
             form.submit();
         }
+        function showObj(obj) {
+            var str = "";
+            for (key in obj) {
+                str += key + "=" + obj[key] + "\n";
+            }
+
+            alert(str);
+            return;
+        }
+
     </script>
+
 @stop

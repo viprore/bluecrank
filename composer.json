@@ -10,6 +10,7 @@
         "erusev/parsedown-extra": "^0.7.1",
         "guzzlehttp/guzzle": "^6.2",
         "intervention/image": "^2.3",
+        "jailtonsc/laravel-response-xml": "^2.0",
         "laracasts/flash": "^2.0",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
