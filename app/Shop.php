@@ -25,5 +25,6 @@ class Shop extends Model
         'city',
         'contact',
         'homepage',
+        'postcode'
     ];
 }

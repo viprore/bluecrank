@@ -289,8 +289,8 @@ if (!function_exists('naverEpExport')) {
                 "",
                 "",
                 "",
-                "수동으로 수정 요망",
-                "수동으로 수정 요망",
+                "",
+                "",
                 $product->is_old ? "중고" : "신상품",
                 "",
                 "",
@@ -399,5 +399,22 @@ if (!function_exists('load_tabbed_file')) {
             }
         }
         return $array;
+    }
+}
+
+// TODO 만들다 맘
+if (!function_exists('checkMobile')) {
+    function checkMobile()
+    {
+        $mAgent = array("iPhone","iPod","Android","Blackberry",
+            "Opera Mini", "Windows ce", "Nokia", "sony" );
+        $chkMobile = false;
+        for($i=0; $i<sizeof($mAgent); $i++){
+            if(stripos( $_SERVER['HTTP_USER_AGENT'], $mAgent[$i] )){
+                $chkMobile = true;
+                break;
+            }
+        }
+        return $chkMobile;
     }
 }

@@ -20,7 +20,8 @@ class Product extends Model
         'brand',
         'model',
         'description',
-        'is_old'
+        'is_old',
+        'ec_mall_pid'
     ];
 
     /**

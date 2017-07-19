@@ -7,6 +7,8 @@
         <input type="hidden" name="SHOP_ID" value="{{ $shopId }}">
         <input type="hidden" name="TOTAL_PRICE" value="{{ $totalPrice }}">
     </form>
+    @else
+    <p>{{ $logs }}</p>
 @endif
 </body>
 <script>

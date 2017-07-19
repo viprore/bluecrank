@@ -16,41 +16,46 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * 주문 내역 or 취소 내역 리스트
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View|string
      */
     public function index(Request $request)
     {
-        $user = \Auth::user();
+        // TODO : 회원일 경우와 비회원일 경우 처리
+        if (\Auth::check()) {
+            $user = \Auth::user();
+        }else{
+            // 아마 이게 변경될듯. 오더 폴더에 블레이드 뷰 하나 더 생성해서 작업업
+           return route('sessions.create');
+        }
 
-        // 주문하다 실패한 주문서들 삭제
-        $orders = $user->orders;
-
+        // 걸러내기
+        // 1. 작성중인 주문서 중 Item이 연결되지 않은 주문서
+        // 2. 작성중인 주문서 중 생성 후 1일이 경과한 주문서
+        $orders = $user->orders()->where('status', '작성중');
         foreach ($orders as $order) {
-            if ($order->items->count() == 0) {
+            if ($order->items->count() == 0 || ($order->created_at->addDays('+1') < Carbon::now())) {
                 $order->delete();
             }
         }
 
-
-        // 종료일 설정
+        // 시작일, 종료일 쿼리 세팅
         if (!empty($request->get('end_date'))) {
             $end_date = Carbon::createFromFormat('Y-m-d', $request->get('end_date'));
         } else {
             $end_date = Carbon::now();
         }
-
         if (!empty($request->get('start_date'))) {
             $start_date = Carbon::createFromFormat('Y-m-d', $request->get('start_date'));
         } else {
             $start_date = $end_date->copy()->addMonths(-1);
         }
-
-
         $orders = $user->orders()->whereBetween('created_at', [$start_date, $end_date]);
 
-        if (strpos($request->url(), 'cancel')) {
+        // 주문내역 / 취소내역을 url로 구분
+        if (str_contains($request->url(), 'cancel')) {
             $orders = $orders->whereIn('status', ['반품', '취소']);
         } else {
             $orders = $orders->whereIn('status', [
@@ -62,7 +67,6 @@ class OrderController extends Controller
                 '구매결정',
             ]);
         }
-
 
         $orders = $orders->orderBy('created_at', 'desc')
             ->paginate(3);
@@ -78,27 +82,13 @@ class OrderController extends Controller
     public function create(Request $request)
     {
         if (empty($request->input('items', []))) {
-            $user = \Auth::user();
-            $items = $user->carts->where('order_id', '=', null);
+            flash('선택된 상품이 존재하지 않습니다.');
+            return redirect()->back();
         } else {
             $items = Item::whereIn(
                 'id',
                 $request->input('items', [])
             )->get();
-            $counts = $request->input('items_count', []);
-
-            $key = 0;
-            if (!empty($counts)) {
-                foreach ($items as $item) {
-                    if ($item->count != $counts[$key]) {
-                        $item->count = $counts[$key];
-                        $item->save();
-                    }
-                    $key++;
-
-                    flash("상품 수량이 변경되었습니다.");
-                }
-            }
         }
 
         $items_price = 0;
@@ -117,7 +107,9 @@ class OrderController extends Controller
         if($items_price >= 50000) $order->ship_fee = '무료';
         else                      $order->ship_fee = '포함';
 
-        $order->shipmethod = 'direct';
+        $order->shipmethod = 'toshop';
+
+        $order->paymethod = '신용카드';
 
         // TODO :: 캐시에 박기(변경 별로 없으니)
         $states = \DB::table('shops')->distinct()->pluck('state');
@@ -135,11 +127,11 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $user = \Auth::user();
+        /*dd($request->input());
+        $user = \Auth::user();*/
 
-        // request 데이터 유효성검사 및 페이로드 생성
+        // 배송방법에 따른 유효성검사, 입력값 삽입
         $shipmethod = $request->input('shipmethod');
-
         if ($shipmethod == 'direct') {
             $this->validate($request, [
                 'name' => ['required'],
@@ -151,6 +143,7 @@ class OrderController extends Controller
                 'paymethod' => ['required'],
                 'amount' => ['required']
             ]);
+
             $name = $request->input('name');
             $postcode = $request->input('postcode');
             $find_address = $request->input('find_address');
@@ -158,7 +151,68 @@ class OrderController extends Controller
             $contact = $request->input('contact');
             $please = $request->input('please');
             $banker = $request->input('banker');
+        } else {
+            $this->validate($request, [
+                'name2' => ['required'],
+                'contact2' => ['required'],
+                'item_id_list' => ['required'],
+                'paymethod' => ['required'],
+                'amount' => ['required'],
+                'shop_id' => ['required']
+            ]);
 
+            $shop = Shop::find($request->input('shop_id'));
+
+            $postcode = $shop->postcode;
+            $find_address = $shop->address;
+            $input_address = $shop->name;
+            $shop_id = $shop->id;
+            $name = $request->input('name2');
+            $contact = $request->input('contact2');
+            $please = $request->input('please2');
+            $banker = $request->input('banker');
+        }
+        $paymethod = $request->input('paymethod');
+        $amount = $request->input('amount');
+        $ship_fee = $request->input('ship_fee');
+
+        $payload = [
+            "name" => $name,
+            "postcode" => $postcode,
+            "find_address" => $find_address,
+            "input_address" => $input_address,
+            "contact" => $contact,
+            "please" => $please,
+            "paymethod" => $paymethod,
+            "amount" => $amount,
+            "shipmethod" => $shipmethod,
+            "ship_fee" => $ship_fee,
+            "banker" => $banker,
+            "status" => '입금전'
+        ];
+
+        // PG사 이용시 생성되는 상점 id 추가
+        if (strpos($paymethod, '무통장') === false) {
+            $payload = array_merge($payload, [
+                "merchant_uid" => $request->input('merchant_uid')
+            ]);
+        }
+        // 매장 배송일 경우 매장 id 추가
+        if (!empty($shop_id)) {
+            $payload = array_merge($payload, [
+                "shop_id" => $shop_id
+            ]);
+        }
+
+        $order = Order::create($payload);
+
+        // 회원일 경우 계정에 주문서 귀속
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $order->user_id = $user->id;
+            $order->save();
+
+            // 주문서 저장시 처리
             if ($request->input('ship_save') == 'on') {
                 Ship::create([
                     "user_id" => $user->id,
@@ -170,64 +224,20 @@ class OrderController extends Controller
                     "contact" => $request->input('contact'),
                 ]);
             }
-        } else {
-            $this->validate($request, [
-                'name2' => ['required'],
-                'postcode2' => ['required'],
-                'find_address2' => ['required'],
-                'input_address2' => ['required'],
-                'contact2' => ['required'],
-                'item_id_list' => ['required'],
-                'paymethod' => ['required'],
-                'amount' => ['required']
-            ]);
-
-            $name = $request->input('name2');
-            $postcode = $request->input('postcode2');
-            $find_address = $request->input('find_address2');
-            $input_address = $request->input('input_address2');
-            $contact = $request->input('contact2');
-            $please = $request->input('please2');
-            $banker = $request->input('banker');
         }
-        $paymethod = $request->input('paymethod');
-        $amount = $request->input('amount');
-        $ship_fee = $request->input('ship_fee');
+
 
         $list = explode(',', $request->input('item_id_list'));
         $items = Item::find($list);
-
-        $payload = [
-            "user_id" => $user->id,
-            "name" => $name,
-            "postcode" => $postcode,
-            "find_address" => $find_address,
-            "input_address" => $input_address,
-            "contact" => $contact,
-            "please" => $please,
-            "paymethod" => $paymethod,
-            "amount" => $amount,
-            "shipmethod" => $shipmethod,
-            "ship_fee" => $ship_fee,
-            "banker" => $banker
-        ];
-
-        if (strpos($paymethod, '무통장') === false) {
-            $payload = array_merge($payload, [
-                "merchant_uid" => $request->input('merchant_uid')
-            ]);
-        }
-
-        $order = Order::create($payload);
-
         foreach ($items as $item) {
             $item->order_id = $order->id;
             $item->save();
         }
 
+        event(new \App\Events\OrderEvent($order));
 
         if (str_contains($paymethod, '무통장')) {
-            event(new \App\Events\OrderEvent($order));
+
 
             flash()->success(
                 '주문이 완료되었습니다.'
@@ -253,16 +263,7 @@ class OrderController extends Controller
         return view('orders.show', compact('order'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -299,6 +300,10 @@ class OrderController extends Controller
 //        $this->authorize('update', $order);
 //        dd($request->input('message'), $status, $order);
         switch ($status) {
+            case 'failed':
+                $order->status = '작성중';
+                $order->save();
+                break;
             case 'cancel':
                 $order->status = '취소';
                 $order->message = $request->input('message');

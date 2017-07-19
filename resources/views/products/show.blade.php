@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+    $isMobile = checkMobile();
+@endphp
+
 @section('style')
     @parent
     <link rel="stylesheet"
@@ -151,8 +155,9 @@
 
         /*-- quantity-end --*/
     </style>
+    <!-- 네이버 페이 스크립트 시작(헤더 파트) -->
     <script type="text/javascript"
-            src="http://pay.naver.com/customer/js/naverPayButton.js" charset="UTF-8"></script>
+            src="http://test-pay.naver.com/customer/js/naverPayButton.js" charset="UTF-8"></script>
     <script type="text/javascript">//<!CDATA[
         function checkOption(selectBox, nonSelectedIndex, optionName) {
             if (selectBox.selectedIndex == nonSelectedIndex) {
@@ -209,7 +214,11 @@
                     count: count
                 }
             }).then(function (res) {
-                window.open('/npay/wish/' + res.id, "", "scrollbars=yes,width=400,height=267");
+                @if($isMobile)
+                    location.href = '/npay/wish/' + res.id;
+                @else
+                    window.open('/npay/wish/' + res.id, "", "scrollbars=yes,width=400,height=267");
+                @endif
             });
 
             return false;
@@ -219,6 +228,7 @@
             return false;
         }
         //]]></script>
+    <!-- 네이버 페이 스크립트 끝(헤더 파트) -->
 @stop
 @section('content')
     @php
@@ -229,10 +239,7 @@
             $viewName = 'olds.show';
             $prefix = 'olds.';
         }
-
     @endphp
-
-
 
     <div class="page-header">
         <h4>
@@ -343,25 +350,18 @@
                         </div>
 
                     </div>
-                    <div class="form-group text-center my-6">
-                        @if(Auth::check())
-                            <button type="button" class="btn btn-danger btn__want">
-                                @if(empty(Auth::user()->wantProducts->where('id', '=', $product->id)->first()))
-                                    찜하기
-                                @else
-                                    찜하기 해제
-                                @endif
-                            </button>
-                            <button type="button" class="btn btn-success  btn__cart">카트</button>
-                            <button type="button" class="btn btn-primary  btn__buy">구매</button>
-                            {{--@if($product->cafe_id != 0)
-                                <a href="http://bluecrank.net/product/detail.html?product_no={{ $product->cafe_id }}" class="btn btn-warning">카드결제(임시)</a>
-                            @endif--}}
 
-                        @else
-                            <a href="{{ route('sessions.create', ['return' => urlencode($currentUrl)]) }}">로그인</a>후 구매
-                            가능합니다.
-                        @endif
+                    <div class="form-group text-center my-6">
+                        <button type="button" class="btn btn-danger {{ Auth::check() ? 'btn__want' : '' }}"
+                                {!! Auth::check() ? '' : 'data-toggle="tooltip" data-placement="left" title="로그인 후 사용 가능"' !!}>
+                            @if(Auth::check() && empty(Auth::user()->wantProducts->where('id', '=', $product->id)->first()))
+                                ♥
+                            @else
+                                ♡
+                            @endif
+                        </button>
+                        <button type="button" class="btn btn-success  btn__cart">카트</button>
+                        <button type="button" class="btn btn-primary  btn__buy">구매</button>
                     </div>
                     @if($currentUser ? $currentUser->isTester() : false)
                         <div class="row">
@@ -486,6 +486,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>
     <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+
         $('.value-plus1').on('click', function () {
             var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10) + 1;
             divUpd.text(newVal);
@@ -511,7 +515,6 @@
         $('.btn__want').on('click', function (e) {
             var productId = $('article').data('id');
 
-
             $.ajax({
                 type: 'POST',
                 url: '/wants/' + productId
@@ -522,7 +525,6 @@
         });
 
         $('.btn__cart').on('click', function (e) {
-            var productId = $('article').data('id');
             var product_title = $(".page-header small").text().replace(' /', '');
             var optionId = $('#select_option option:selected').val();
             var optionTxt = $('#select_option option:selected').text();
@@ -530,6 +532,7 @@
 
             BootstrapDialog.show({
                 title: '카트에 담기',
+                size: BootstrapDialog.SIZE_SMALL,
                 message: '상품명 : <b>' + product_title.replace('\n', '') + "</b>옵션 : <b>" + optionTxt.replace('\n', '') + "</b> " + count + "개를 장바구니에 추가합니다.",
                 buttons: [{
                     label: '담기',
@@ -579,14 +582,24 @@
 
             BootstrapDialog.show({
                 title: '바로 구매',
+                size: BootstrapDialog.SIZE_SMALL,
                 message: '상품명 : <b>' + product_title.replace('\n', '') + "</b>옵션 : <b>" + optionTxt.replace('\n', '') + "</b> " + count + "개를 바로 구매합니다.",
                 buttons: [{
                     label: '구매',
                     action: function (dialog) {
-                        post_to_url('/direct/option', {
-                            '_token': $('meta[name="csrf-token"]').attr('content'),
-                            'option_id': optionId,
-                            'count': count
+                        $.ajax({
+                            type: 'POST',
+                            url: '/carts',
+                            data: {
+                                option_id: optionId,
+                                count: count
+                            }
+                        }).then(function (item) {
+                            if (item) {
+                                location.href = '/orders/create?items[]=' + item.id;
+                            } else {
+                                location.reload();
+                            }
                         });
                     }
                 }, {
@@ -620,6 +633,7 @@
             document.body.appendChild(form);
             form.submit();
         }
+
         function showObj(obj) {
             var str = "";
             for (key in obj) {
@@ -629,6 +643,7 @@
             alert(str);
             return;
         }
+
 
     </script>
 

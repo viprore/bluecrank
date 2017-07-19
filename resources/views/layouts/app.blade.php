@@ -47,6 +47,10 @@
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet"/>
 
+    <!-- Favorite Icon -->
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+    <link rel="icon" href="favicon.png" type="image/x-icon" />
+
 @yield('style')
 
 <!-- Scripts -->

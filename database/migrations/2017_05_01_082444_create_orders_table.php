@@ -26,15 +26,15 @@ class CreateOrdersTable extends Migration
             $table->unsignedInteger('amount');
             $table->string('ship_code')->nullable();
             $table->enum('status', [
-                '입금전', '입금완료', '배송준비', '배송중', '배송완료', '구매결정', '반품', '취소'])
-                ->default('입금전');
+                '작성중', '입금전', '입금완료', '배송준비', '배송중', '배송완료', '구매결정', '반품', '취소'])
+                ->default('작성중');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
         Schema::table('items', function (Blueprint $table) {
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('set null');
         });
     }
 

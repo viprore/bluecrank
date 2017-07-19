@@ -1,5 +1,5 @@
 <h1>
-  {{ $order->user->name }}님으로부터 주문이 접수되었습니다.
+  {{ isset($order->user) ? $order->user->name : $order->name }}님으로부터 주문이 접수되었습니다.
 </h1>
 
 <hr/>

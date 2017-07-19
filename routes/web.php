@@ -12,18 +12,6 @@
 |
 */
 
-
-
-
-/**
- * 작업중
- * TODO : 인증/점검, 중고 마르쉐, 배송지(ShipController)
- */
-
-
-
-
-
 /**
  * 1. BC몰 관련
  */
@@ -96,7 +84,20 @@ Route::resource('olds.options', 'OptionController', ['only' => 'store']);
  * 3. 구매 관련
  *    참고 : BC몰, 중고 공통
  */
-Route::resource('carts', 'ItemController', ['except' => ['show', 'create', 'edit']]);
+Route::resource('carts', 'ItemController', ['only' => ['index', 'store']]);
+Route::put('carts', [
+    'as' => 'carts.update',
+    'uses' => 'ItemController@update'
+]);
+Route::put('npay/carts', [
+    'as' => 'npay.carts.update',
+    'uses' => 'ItemController@update'
+]);
+Route::delete('carts/{itemIds}', [
+    'as' => 'carts.destroy',
+    'uses' => 'ItemController@destroy'
+]);
+
 Route::resource('orders', 'OrderController', ['except' => ['destroy']]);
 // 배송지
 Route::resource('ships', 'ShipController');
@@ -347,7 +348,10 @@ Route::get('npay/wish/{item_list}', [
     'uses' => 'NPayController@makeWish'
 ]);
 
-
+Route::get('cookies', [
+    'as' => 'item.cookies',
+    'uses' => 'ItemController@cookcook'
+]);
 
 
 

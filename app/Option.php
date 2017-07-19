@@ -50,4 +50,18 @@ class Option extends Model
     {
         return $this->hasMany(Item::class);
     }
+
+    /* Accessors */
+    public function getStockAttribute()
+    {
+        $items = Item::where('option_id', $this->id)->where('order_id', '!=', null)->get();
+        $buyed_count = 0;
+        foreach ($items as $item) {
+            if ($item->order->status != "작성중") {
+                $buyed_count += $item->count;
+            }
+        }
+
+        return ($this->inventory - $buyed_count);
+    }
 }

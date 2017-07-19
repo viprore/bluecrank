@@ -25,7 +25,8 @@ class Order extends Model
         'banker',
         'status',
         'merchant_uid',
-        'ship_fee'
+        'ship_fee',
+        'shop_id'
     ];
 
     /**
@@ -47,5 +48,10 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class);
     }
 }

@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
+@php
+    $isMobile = checkMobile();
+@endphp
+
 @section('style')
+    @parent
     <style>
         .py-3 {
             padding-top: 1em;
@@ -48,6 +53,31 @@
         }
 
     </style>
+    <!-- 네이버 페이 스크립트 시작(헤더 파트) -->
+    <script type="text/javascript"
+            src="http://test-pay.naver.com/customer/js/{{ $isMobile ? 'mobile/' : '' }}naverPayButton.js" charset="UTF-8"></script>
+    <script type="text/javascript">//<!CDATA[
+        function buy_nc(url) {
+            var formData = $("#selectOrdrForm").serialize();
+
+            $.ajax({
+                type: 'put',
+                url: '/npay/carts',
+                cache: false,
+                data: formData,
+                success: function(itemIds) {
+//                    alert(itemIds);
+                    location.href = '/npay/order/' + itemIds;
+                },
+                error: function() {
+                    alert('Error');
+                }
+            });
+
+            return false;
+        }
+        //]]></script>
+    <!-- 네이버 페이 스크립트 끝(헤더 파트) -->
 @stop
 
 @section('content')
@@ -56,6 +86,8 @@
     <div class="page-header">
         <h3>
             장바구니
+
+
         </h3>
     </div>
 
@@ -133,13 +165,33 @@
         </div>
         <div class="row my-3 text-center">
             <div class="col-md-12">
-                <form action="{{ route('orders.create') }}" method="GET" enctype="multipart/form-data">
+                <form id="selectOrdrForm" action="{{ route('carts.update') }}" method="POST" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                    {!! method_field('PUT') !!}
                     <button type="submit" class="btn btn-secondary select__submit">선택상품주문</button>
                 </form>
                 <button type="button" class="btn btn-primary" onclick="buyAll()">전체상품주문</button>
 
             </div>
         </div>
+            @if($currentUser ? $currentUser->isTester() : false)
+                <div class="row">
+                    <div class="col-xs-12 text-center">
+                        {{ $isMobile ? '모바일' : 'PC' }}
+                        <script type="text/javascript">//<![CDATA[
+                            naver.NaverPayButton.apply({
+                                BUTTON_KEY: "C06715B6-5172-4A2C-8FC7-5C1F53CA9314",
+                                TYPE: "{{ $isMobile ? 'M' : '' }}A", // 버튼 모음 종류 설정
+                                COLOR: 1, // 버튼 모음의 색 설정
+                                COUNT: 1, // 버튼 개수 설정. 구매하기 버튼만 있으면(장바구니 페이지) 1, 찜하기 버튼도 있으면(상품 상세 페이지) 2를 입력.
+                                ENABLE: "Y", // 품절 등의 이유로 버튼 모음을 비활성화할 때에는 "N" 입력
+                                BUY_BUTTON_HANDLER: buy_nc,
+                                "": ""
+                            });
+                            //]]></script>
+                    </div>
+                </div>
+            @endif
     </div>
 
 @stop
@@ -208,9 +260,11 @@
                 });
 
                 if (items != '') {
-                    post_to_url('/items/destroy/list', {
-                        '_token': $('meta[name="csrf-token"]').attr('content'),
-                        'items': items
+                    $.ajax({
+                        type: 'DELETE',
+                        url: 'carts/' + items
+                    }).then(function () {
+                        location.reload();
                     });
                 }
             });
@@ -241,10 +295,20 @@
         function buyDirectly(id) {
             var count = $('#item_' + id + '_count').val();
 
-            post_to_url('/direct/item', {
-                '_token': $('meta[name="csrf-token"]').attr('content'),
-                'item_id': id,
-                'count': count
+            $.ajax({
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                type: 'PUT',
+                url: 'carts',
+                data: {
+                    items: [id],
+                    items_count: [count]
+                }
+            }).then(function (itemIds) {
+                if(itemIds) {
+                    location.href='/orders/create?items[]=' + itemIds;
+                }else{
+                    location.reload();
+                }
             });
         }
 
@@ -339,12 +403,18 @@
         }
         function buyAll() {
             var form = $('form').first();
-            $('.item__checkbox').checked = false;
+            $('.item__checkbox').each(function (i, e) {
+                e.checked=false;
+            });
+
+            /*$('.item__checkbox').checked = false;*/
             $('input[name="items[]"]').remove();
             $('input[name="items_count[]"]').remove();
 
             $('.btn__select__all').click();
             $('.select__submit').click();
         }
+
+
     </script>
 @stop

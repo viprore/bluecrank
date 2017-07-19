@@ -91,11 +91,11 @@
             <div class="row item-info">
                 <div class="col-xs-5">
                     <img class="w-100"
-                         src="{{ $order->items->first()->option->product->attachments->first()->url }}"/>
+                         src="{{ $order->items->count() > 0 ? $order->items->first()->option->product->attachments->first()->url : 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQlzvW0rg_vTZkwz20Ot15G_zcKgx2L5DTtgUNPOrArVnPjpRoJiK8hJZc' }}"/>
                 </div>
                 <div class="col-xs-7">
                     <a href="/orders/{{ $order->id }}">
-                        <h4>{{ $order->items->first()->option->product->ad_title . "외 " . $order->items->count() . "건" }}</h4>
+                        <h4>{{ $order->items->count() > 0 ? $order->items->first()->option->product->ad_title . "외 " . $order->items->count() . "건" : '연결된 Item이 존재하지 않습니다.' }}</h4>
                     </a>
 
                     <p><b>주문일자</b> : {{ $order->created_at->format('Y-m-d') }}&nbsp;&nbsp;<b>가격</b>

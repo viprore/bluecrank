@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
+@php
+    $isMobile = checkMobile();
+@endphp
+
 @section('style')
     @parent
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.min.css">
     <style>
         .item_info h3 {
             font-size: 1.5em;
@@ -120,13 +126,95 @@
 
         /*-- quantity-end --*/
     </style>
+    <!-- 네이버 페이 스크립트 시작(헤더 파트) -->
+    <script type="text/javascript"
+            src="http://test-pay.naver.com/customer/js/naverPayButton.js" charset="UTF-8"></script>
+    <script type="text/javascript">//<!CDATA[
+        function checkOption(selectBox, nonSelectedIndex, optionName) {
+            if (selectBox.selectedIndex == nonSelectedIndex) {
+                alert("상품 옵션을 선택해 주세요. (" + optionName + ")");
+                return false;
+            }
+            return true;
+        }
+        function checkShippingPrice(radio) {
+            var len = radio.length;
+            if (len == undefined) {
+                if (radio.checked) {
+                    return true;
+                }
+            } else {
+                for (var i = 0; i < len; i++) {
+                    if (radio[i].checked) {
+                        return true;
+                    }
+                }
+            }
+            alert("배송비를 선택해 주세요.");
+            return false;
+        }
+        function buy_nc(url) {
+            var optionId = $('#select_option option:selected').val();
+            var count = parseInt($('.value1').text(), 10);
+
+            $.ajax({
+                type: 'POST',
+                url: '/npay/cart',
+                data: {
+                    option_id: optionId,
+                    count: count
+                }
+            }).then(function (res) {
+                location.href = '/npay/order/' + res.id;
+            });
+
+            return false;
+        }
+
+        function wishlist_nc(url) {
+            var optionId = $('#select_option option:selected').val();
+            var count = parseInt($('.value1').text(), 10);
+            // 네이버페이로 찜 정보를 등록하는 가맹점 페이지 팝업 창 생성.
+            // 해당 페이지에서 찜 정보 등록 후 네이버페이 찜 페이지로 이동.
+
+            $.ajax({
+                type: 'POST',
+                url: '/npay/cart',
+                data: {
+                    option_id: optionId,
+                    count: count
+                }
+            }).then(function (res) {
+                @if($isMobile)
+                    location.href = '/npay/wish/' + res.id;
+                @else
+                    window.open('/npay/wish/' + res.id, "", "scrollbars=yes,width=400,height=267");
+                @endif
+            });
+
+            return false;
+        }
+        function not_buy_nc() {
+            alert("죄송합니다. 네이버페이로 구매가 불가한 상품입니다.");
+            return false;
+        }
+        //]]></script>
+    <!-- 네이버 페이 스크립트 끝(헤더 파트) -->
 @stop
 @section('content')
-    @php $viewName = 'olds.show'; @endphp
+    @php
+        if(str_contains(request()->url(), 'product')){
+            $viewName = 'products.show';
+            $prefix = 'products.';
+        }else{
+            $viewName = 'olds.show';
+            $prefix = 'olds.';
+        }
+    @endphp
 
     <div class="page-header">
         <h4>
-            <a href="{{ route('olds.index') }}">
+            <a href="{{ route($prefix . 'index') }}">
                 상품
             </a>
             <small>
@@ -137,20 +225,13 @@
     </div>
 
     <div class="row container__article">
-        {{--<div class="col-md-3 sidebar__article">
-            <aside>
-                @include('articles.partial.search')
-
-                @include('tags.partial.index')
-            </aside>
-        </div>--}}
-
         <div class="col-md-12 list__article">
             <div class="form-group">
                 @if($product->options->count() == 0)
                     해당 옵션이 존재하지 않습니다.
                     옵션을 등록하시고 판매하세요!
                 @else
+                    {{-- row1 : 상품 캐러셀 & 간략 정보 & 수량 --}}
                     <div class="row">
                         <div class="col-md-4">
                             <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
@@ -197,7 +278,7 @@
                             </div>
                             <div class="price">
                                 <h5>가격</h5>
-                                <p>{{ number_format($product->price) }}&nbsp;<i class="fa fa-krw"></i></p>
+                                <p>{{ number_format($product->price) }}&nbsp;원</p>
                             </div>
 
                             <div class="option-quantity">
@@ -206,7 +287,7 @@
                                     <select name="select_option[]" id="select_option" class="form-control">
                                         @foreach($product->options as $option)
                                             <option value="{{ $option->id }}">
-                                                {{ strpos($option->color, '-') ? ($option->color . " - (" . $option->size .")") : $option->size }}
+                                                {{ !empty($option->color) ? ($option->color . " - (" . $option->size .")") : $option->size }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -221,54 +302,64 @@
                                             <div class="entry value-plus1 active">&nbsp;</div>
                                         </div>
                                     </div>
-                                    <!--quantity-->
-
-                                    <!--quantity-->
-
                                 </div>
                             </div>
 
                         </div>
 
                     </div>
-                    <div class="form-group text-center">
-                        @if(Auth::check())
-                            <button type="button" class="btn btn-danger btn__want">
-                                @if(empty(Auth::user()->wantProducts->where('id', '=', $product->id)->first()))
-                                    찜하기
-                                @else
-                                    찜하기 해제
-                                @endif
-                            </button>
-                            <button type="button" class="btn btn-success  btn__cart">카트</button>
-                            <button type="button" class="btn btn-primary  btn__buy">구매</button>
-                            @if($product->cafe_id != 0)
-                                <a href="http://bluecrank.net/product/detail.html?product_no={{ $product->cafe_id }}" class="btn btn-warning">카드결제(임시)</a>
-                            @endif
 
-                        @else
-                            <a href="{{ route('sessions.create', ['return' => urlencode($currentUrl)]) }}">로그인</a>후 구매 가능합니다.
-                        @endif
+                    {{-- row2 : 품목 조작부(카트에서 쓰이는 1개 품목 단위 조작) --}}
+                    <div class="form-group text-center my-6">
+                        <button type="button" class="btn btn-danger {{ Auth::check() ? 'btn__want' : '' }}"
+                                {!! Auth::check() ? '' : 'data-toggle="tooltip" data-placement="left" title="로그인 후 사용 가능"' !!}>
+                            @if(Auth::check() && empty(Auth::user()->wantProducts->where('id', '=', $product->id)->first()))
+                                ♥
+                            @else
+                                ♡
+                            @endif
+                        </button>
+                        <button type="button" class="btn btn-success  btn__cart">카트</button>
+                        <button type="button" class="btn btn-primary  btn__buy">구매</button>
                     </div>
+
+                    {{-- row3 : 네이버페이버튼(0719 Tester 한정) --}}
+                    @if($currentUser ? $currentUser->isTester() : false)
+                        <div class="row">
+                            <div class="col-xs-12 text-center">
+                                <script type="text/javascript">//<![CDATA[
+                                    naver.NaverPayButton.apply({
+                                        BUTTON_KEY: "C06715B6-5172-4A2C-8FC7-5C1F53CA9314",
+                                        TYPE: "A", // 버튼 모음 종류 설정
+                                        COLOR: 1, // 버튼 모음의 색 설정
+                                        COUNT: 2, // 버튼 개수 설정. 구매하기 버튼만 있으면(장바구니 페이지) 1, 찜하기 버튼도 있으면(상품 상세 페이지) 2를 입력.
+                                        ENABLE: "Y", // 품절 등의 이유로 버튼 모음을 비활성화할 때에는 "N" 입력
+                                        BUY_BUTTON_HANDLER: buy_nc,
+                                        WISHLIST_BUTTON_HANDLER: wishlist_nc,
+                                        "": ""
+                                    });
+                                    //]]></script>
+                            </div>
+                        </div>
+                    @endif
                 @endif
             </div>
 
-
+            {{-- 상품 상세 내용(가이드는 BC몰만) --}}
             <article data-id="{{ $product->id }}" id="item__article">
                 <hr/>
-                {{--@include('olds.partial.article', compact('product'))--}}
-
                 @include('tags.partial.list', ['tags' => $product->tags])
 
                 <div class="content__article">
                     {!! markdown($product->description) !!}
-                    {{--<img src="{{ url("/icons/guide.jpg") }}" />--}}
-
+                    @if($prefix == 'products.')
+                        <img src="{{ url("/icons/guide.jpg") }}"/>
+                    @endif
                 </div>
 
-                {{--@include('tags.partial.list', ['tags' => $product->tags])--}}
             </article>
 
+            {{-- 상품 조작부 --}}
             <div class="text-center action__article">
                 @can('update', $product)
                     <a href="{{ route('olds.edit.option', $product->id) }}" class="btn btn-info">
@@ -298,6 +389,7 @@
                 </a>
             </div>
 
+            {{-- 리뷰 리스트 --}}
             <div class="container__reviews">
                 <div class="page-header">
                     <h4>
@@ -342,6 +434,7 @@
                 </table>
             </div>
 
+            {{-- 문의 리스트 --}}
             <div class="container__comment">
                 @include('comments.index')
             </div>
@@ -351,23 +444,21 @@
 
 @section('script')
     @parent
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>
     <script>
-        $(window).on('load', function () {
-            $('.flexslider').flexslider({
-                animation: "slide",
-                controlNav: "thumbnails"
-            });
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip()
         });
 
         $('.value-plus1').on('click', function () {
             var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10) + 1;
             divUpd.text(newVal);
         });
-
         $('.value-minus1').on('click', function () {
             var divUpd = $(this).parent().find('.value1'), newVal = parseInt(divUpd.text(), 10) - 1;
             if (newVal >= 1) divUpd.text(newVal);
         });
+
         $('.button__delete').on('click', function (e) {
             var productId = $('article').data('id');
 
@@ -376,7 +467,12 @@
                     type: 'DELETE',
                     url: '/products/' + productId
                 }).then(function () {
-                    window.location.href = '/olds';
+                    var nowUrl = document.location.href;
+                    if(nowUrl.indexOf("product") != -1) {
+                        window.location.href = '/products';
+                    }else {
+                        window.location.href = '/olds';
+                    }
                 });
             }
         });
@@ -384,50 +480,88 @@
         $('.btn__want').on('click', function (e) {
             var productId = $('article').data('id');
 
-
             $.ajax({
                 type: 'POST',
                 url: '/wants/' + productId
             }).then(function () {
-                window.location.href = '/olds/' + productId;
+                var nowUrl = document.location.href;
+                if(nowUrl.indexOf("product") != -1) {
+                    window.location.href = '/products/' + productId;
+                }else {
+                    window.location.href = '/olds/' + productId;
+                }
             });
 
         });
 
         $('.btn__cart').on('click', function (e) {
-            var productId = $('article').data('id');
+            var product_title = $(".page-header small").text().replace(' /', '');
             var optionId = $('#select_option option:selected').val();
             var optionTxt = $('#select_option option:selected').text();
             var count = parseInt($('.value1').text(), 10);
 
-            if (confirm(optionTxt + " " + count + "개를 장바구니에 추가합니다.")) {
-                $.ajax({
-//                    type: 'POST',
-//                    url: '/carts/' + optionId + '/count/' + count
-                    type: 'POST',
-                    url: '/carts',
-                    data: {
-                        option_id: optionId,
-                        count: count
+            BootstrapDialog.show({
+                title: '장바구니에 담기',
+                size: BootstrapDialog.SIZE_SMALL,
+                message: '상품명 : <b>' + product_title.replace('\n', '') + "</b>옵션 : <b>" + optionTxt.replace('\n', '') + "</b> " + count + "개를 장바구니에 추가합니다.",
+                buttons: [{
+                    label: '담기',
+                    action: function (dialog) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/carts',
+                            data: {
+                                option_id: optionId,
+                                count: count
+                            }
+                        }).then(function () {
+                            location.reload();
+                        });
                     }
-                }).then(function () {
-                    window.location.href = '/olds/' + productId;
-                });
-            }
+                }, {
+                    label: '취소',
+                    action: function (dialog) {
+                        dialog.close();
+                    }
+                }]
+            });
         });
 
         $('.btn__buy').on('click', function (e) {
+            var product_title = $(".page-header small").text().replace(' /', '');
             var optionId = $('#select_option option:selected').val();
             var optionTxt = $('#select_option option:selected').text();
             var count = parseInt($('.value1').text(), 10);
 
-            if (confirm(optionTxt + " " + count + "개를 바로 구매합니다.")) {
-                post_to_url('/direct/option', {
-                    '_token': $('meta[name="csrf-token"]').attr('content'),
-                    'option_id': optionId,
-                    'count': count
-                });
-            }
+            BootstrapDialog.show({
+                title: '바로 구매',
+                size: BootstrapDialog.SIZE_SMALL,
+                message: '상품명 : <b>' + product_title.replace('\n', '') + "</b>옵션 : <b>" + optionTxt.replace('\n', '') + "</b> " + count + "개를 바로 구매합니다.",
+                buttons: [{
+                    label: '구매',
+                    action: function (dialog) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/carts',
+                            data: {
+                                option_id: optionId,
+                                count: count
+                            }
+                        }).then(function (item) {
+                            if (item) {
+                                location.href = '/orders/create?items[]=' + item.id;
+                            } else {
+                                location.reload();
+                            }
+                        });
+                    }
+                }, {
+                    label: '취소',
+                    action: function (dialog) {
+                        dialog.close();
+                    }
+                }]
+            });
         });
 
         function post_to_url(path, params, method) {

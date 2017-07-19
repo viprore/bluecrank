@@ -13,7 +13,7 @@ class NPayController extends Controller
 {
 
 
-    function makeOrder($item_list, $shipping_type = null)
+    function makeOrder(Request $request, $item_list, $shipping_type = null)
     {
         $shopId = env('NAVER_SHOP_ID');
         $certiKey = env('NAVER_CERTI_KEY');
@@ -32,11 +32,11 @@ class NPayController extends Controller
 
         $queryString .= '&RESERVE1=&RESERVE2=&RESERVE3=&RESERVE4=&RESERVE5=';
         $queryString .= '&BACK_URL=' . $backUrl;
-//        $queryString .= '&SA_CLICK_ID=' . $_COOKIE["NVADID"]; //CTS
+        $queryString .= '&SA_CLICK_ID=' . (isset($_COOKIE["NVADID"]) ? $_COOKIE["NVADID"] : ''); //CTS
 
         // CPA 스크립트 가이드 설치 업체는 해당 값 전달
-//        $queryString .= '&CPA_INFLOW_CODE=' . urlencode($_COOKIE["CPAValidator"]);
-//        $queryString .= '&NAVER_INFLOW_CODE=' . urlencode($_COOKIE["NA_CO"]);
+        $queryString .= '&CPA_INFLOW_CODE=' . (isset($_COOKIE["CPAValidator"]) ? urlencode($_COOKIE["CPAValidator"]) : '');
+        $queryString .= '&NAVER_INFLOW_CODE=' . (isset($_COOKIE["NA_CO"]) ? urlencode($_COOKIE["NA_CO"]) : '');
 
         $totalMoney = 0;
 
@@ -49,7 +49,11 @@ class NPayController extends Controller
             $uprice = $product->price;
             $count = $item->count;
             $tprice = $uprice * $count;
-            $option = "색상 : " . $opt->color . " / 사이즈 : " . $opt->size;
+            if ($opt->color == '`' || $opt->color == '-' || empty($opt->color)) {
+                $option = "사이즈 : " . $opt->size;
+            }else{
+                $option = "색상 : " . $opt->color . " / 사이즈 : " . $opt->size;
+            }
 
             $itemStack = new ItemStack($id, $name, $tprice, $uprice, $option, $count);
             $totalMoney += $tprice;
@@ -78,7 +82,7 @@ class NPayController extends Controller
         $totalPrice = (int)$totalMoney + (int)$shippingPrice;
         $queryString .= '&TOTAL_PRICE=' . $totalPrice;
 
-        $logs = $queryString . "<br>\n";
+        $logs = $queryString . "<br />\n";
 
         $req_addr = 'ssl://test-pay.naver.com';
         $req_url = 'POST /customer/api/order.nhn HTTP/1.1'; // utf-8
@@ -125,7 +129,7 @@ class NPayController extends Controller
                 $logs .= $bodys;
             }
         } else {
-            $logs .= "$errstr ($errno)<br>\n";
+            $logs .= "$errstr ($errno)<br />\n";
             exit(-1);
             //에러처리
         }
@@ -133,9 +137,11 @@ class NPayController extends Controller
 
         //리턴받은 order_id로 주문서 page를 호출한다.
         if (isset($orderId)) {
-            $logs .= ($orderId . "<br>\n");
+            $logs .= ($orderId . "<br />\n");
         }
-        $orderUrl = "https://test-pay.naver.com/customer/order.nhn";
+        $orderUrl = "https://test-pay.naver.com/". (checkMobile() ? 'mobile/' : '') ."customer/order.nhn";
+
+//        dd($logs);
 
         return view('npay.order', compact('orderUrl', 'orderId', 'shopId', 'totalPrice', 'resultCode', 'logs'));
     }
@@ -206,7 +212,11 @@ class NPayController extends Controller
             $quantity = 0;
             foreach ($product->options as $option) {
                 $quantity += $option->inventory;
-                $xml_option->addChildWithCDATA('select', $option->color . '/' . $option->size);
+                if ($option->color == '`' || $option->color == '-' || empty($option->color)) {
+                    $xml_option->addChildWithCDATA('select', $option->size);
+                }else{
+                    $xml_option->addChildWithCDATA('select', $option->color . '/' . $option->size);
+                }
             }
             $xml->addChild('quantity', $quantity);
 
@@ -317,7 +327,7 @@ class NPayController extends Controller
             exit(-1);
             //에러처리
         }
-        $wishlistPopupUrl = "https://test-pay.naver.com/customer/wishlistPopup.nhn";
+        $wishlistPopupUrl = "https://test-pay.naver.com/".(checkMobile() ? 'mobile/' : '')."customer/wishlistPopup.nhn";
 
         return view('npay.wish', compact('logs', 'itemId', 'itemIdList', 'shopId', 'wishlistPopupUrl', 'resultCode'));
     }

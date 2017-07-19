@@ -22,6 +22,11 @@ class Item extends Model
         'user_id',
         'option_id',
         'count',
+        'expire_at',
+    ];
+
+    protected $dates = [
+        'expire_at'
     ];
 
     /* Relationships */
