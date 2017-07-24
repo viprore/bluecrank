@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Item;
 use App\Product;
 use Illuminate\Http\Request;
 use League\HTMLToMarkdown\HtmlConverter;
@@ -184,10 +185,22 @@ class ProductController extends Controller implements Cacheable
             ->whereNull('parent_id')
             ->latest()->get();
 
+        $sel_item = $request->input('itemId');
+
         if (str_contains($request->url(), 'products')) {
-            return view('products.show', compact('product', 'comments'));
+            if (!empty($sel_item)) {
+                $item = Item::find($sel_item);
+                return view('products.show', compact('product', 'comments', 'item'));
+            }else{
+                return view('products.show', compact('product', 'comments'));
+            }
         }else{
-            return view('olds.show', compact('product', 'comments'));
+            if (!empty($sel_item)) {
+                $item = Item::find($sel_item);
+                return view('olds.show', compact('product', 'comments', 'item'));
+            }else{
+                return view('olds.show', compact('product', 'comments'));
+            }
         }
 
 

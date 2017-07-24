@@ -16,6 +16,7 @@ class CreateShopsTable extends Migration
         Schema::create('shops', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('postcode')->nullable();
             $table->string('batch');
             $table->string('mechanic');
             $table->string('address');

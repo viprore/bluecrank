@@ -8,7 +8,7 @@
             @forelse($items as $item)
                 <div class="row">
                     <div class="col-xs-3">
-                        <img src="{{ $item->option->product->attachments->first()->url }}"
+                        <img src="{{ $item->option->product->attachments->count() > 0 ? $item->option->product->attachments->first()->url : 'https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQlzvW0rg_vTZkwz20Ot15G_zcKgx2L5DTtgUNPOrArVnPjpRoJiK8hJZc' }}"
                              class="img-thumbnail w-100">
                     </div>
                     <div class="col-xs-9">

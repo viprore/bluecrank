@@ -21,10 +21,11 @@ class NPayController extends Controller
         $list = explode(',', $item_list);
         $items = Item::find($list);
 
-        if ($items->count() == 1) {
-            $backUrl = route('products.show', $items->first()->option->product->id);
-        } else {
-            $backUrl = route('products.index');
+        if (str_contains(url()->previous(), 'olds') || str_contains(url()->previous(), 'products')) {
+            $item = $items->first();    // 이전 아이템
+            $backUrl = url()->previous() . "?itemId=". $item->id;
+        }else{
+            $backUrl = route('carts.index');
         }
 
         $queryString = 'SHOP_ID=' . urlencode($shopId);
@@ -45,17 +46,18 @@ class NPayController extends Controller
             $opt = $item->option;
 
             $id = $product->id;
+            $ec_mall_pid = $product->id;
             $name = $product->ad_title;
             $uprice = $product->price;
             $count = $item->count;
             $tprice = $uprice * $count;
             if ($opt->color == '`' || $opt->color == '-' || empty($opt->color)) {
                 $option = "사이즈 : " . $opt->size;
-            }else{
+            } else {
                 $option = "색상 : " . $opt->color . " / 사이즈 : " . $opt->size;
             }
 
-            $itemStack = new ItemStack($id, $name, $tprice, $uprice, $option, $count);
+            $itemStack = new ItemStack($id, $ec_mall_pid, $name, $tprice, $uprice, $option, $count);
             $totalMoney += $tprice;
             $queryString .= '&' . $itemStack->makeQueryString();
         }
@@ -84,10 +86,10 @@ class NPayController extends Controller
 
         $logs = $queryString . "<br />\n";
 
-        $req_addr = 'ssl://test-pay.naver.com';
+        $req_addr = 'ssl://pay.naver.com';
         $req_url = 'POST /customer/api/order.nhn HTTP/1.1'; // utf-8
 // $req_url = 'POST /customer/api/CP949/order.nhn HTTP/1.1'; // euc-kr
-        $req_host = 'test-pay.naver.com';
+        $req_host = 'pay.naver.com';
         $req_port = 443;
         $nc_sock = @fsockopen($req_addr, $req_port, $errno, $errstr);
         if ($nc_sock) {
@@ -139,9 +141,11 @@ class NPayController extends Controller
         if (isset($orderId)) {
             $logs .= ($orderId . "<br />\n");
         }
-        $orderUrl = "https://test-pay.naver.com/". (checkMobile() ? 'mobile/' : '') ."customer/order.nhn";
+        $orderUrl = "https://" . (checkMobile() ? 'm.' : '') . "pay.naver.com/" . (checkMobile() ? 'mobile/' : '') . "customer/order.nhn";
 
-//        dd($logs);
+
+        /*print_r(str_replace("&", "<br />", urldecode($queryString)));
+        dd();*/
 
         return view('npay.order', compact('orderUrl', 'orderId', 'shopId', 'totalPrice', 'resultCode', 'logs'));
     }
@@ -214,7 +218,7 @@ class NPayController extends Controller
                 $quantity += $option->inventory;
                 if ($option->color == '`' || $option->color == '-' || empty($option->color)) {
                     $xml_option->addChildWithCDATA('select', $option->size);
-                }else{
+                } else {
                     $xml_option->addChildWithCDATA('select', $option->color . '/' . $option->size);
                 }
             }
@@ -258,23 +262,24 @@ class NPayController extends Controller
             $opt = $item->option;
 
             $uid = $product->id;
+            $ec_mall_pid = $product->id;
             $name = $product->ad_title;
             $uprice = $product->price;
             $image = $product->attachments->first()->url;
             $thumb = $product->attachments->first()->url;
             $url = route('products.show', $product->id);
-            $item_ws = new ItemWishStack($uid, $name, $uprice, $image, $thumb, $url);
+            $item_ws = new ItemWishStack($uid, $ec_mall_pid, $name, $uprice, $image, $thumb, $url);
             $queryString .= '&' . $item_ws->makeQueryString();
         }
 
         $logs = 'query : ' . $queryString . "<br>\n";
 
 
-        $req_addr = 'ssl://test-pay.naver.com';
+        $req_addr = 'ssl://pay.naver.com';
         $req_url = 'POST /customer/api/wishlist.nhn HTTP/1.1'; // utf-8
         // $req_url = 'POST /customer/api/CP949/wishlist.nhn HTTP/1.1'; // euc-kr
 
-        $req_host = 'test-pay.naver.com';
+        $req_host = 'pay.naver.com';
         $req_port = 443;
         $nc_sock = @fsockopen($req_addr, $req_port, $errno, $errstr);
 
@@ -322,12 +327,16 @@ class NPayController extends Controller
                 $logs .= $bodys;
             }
         } else {
-            $logs .="$errstr ($errno)<br>\n";
+            $logs .= "$errstr ($errno)<br>\n";
             log($logs);
             exit(-1);
             //에러처리
         }
-        $wishlistPopupUrl = "https://test-pay.naver.com/".(checkMobile() ? 'mobile/' : '')."customer/wishlistPopup.nhn";
+        if (checkMobile()) {
+            $wishlistPopupUrl = "https://m.pay.naver.com/mobile/customer/wishList.nhn";
+        }else{
+            $wishlistPopupUrl = "https://pay.naver.com/customer/wishlistPopup.nhn";
+        }
 
         return view('npay.wish', compact('logs', 'itemId', 'itemIdList', 'shopId', 'wishlistPopupUrl', 'resultCode'));
     }
@@ -336,15 +345,17 @@ class NPayController extends Controller
 class ItemWishStack
 {
     var $id;
+    var $ec_mall_pid;
     var $name;
     var $uprice;
     var $image;
     var $thumb;
     var $url;
 
-    function __construct($_id, $_name, $_uprice, $_image, $_thumb, $_url)
+    function __construct($_id, $_ec_mall_pid, $_name, $_uprice, $_image, $_thumb, $_url)
     {
         $this->id = $_id;
+        $this->ec_mall_pid = $_ec_mall_pid;
         $this->name = $_name;
         $this->uprice = $_uprice;
         $this->image = $_image;
@@ -356,6 +367,7 @@ class ItemWishStack
     {
         $ret = "";
         $ret .= 'ITEM_ID=' . urlencode($this->id);
+        $ret .= 'EC_MALL_PID=' . urlencode($this->ec_mall_pid);
         $ret .= '&ITEM_NAME=' . urlencode($this->name);
         $ret .= '&ITEM_UPRICE=' . $this->uprice;
         $ret .= '&ITEM_IMAGE=' . urlencode($this->image);

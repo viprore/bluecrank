@@ -128,7 +128,7 @@
     </style>
     <!-- 네이버 페이 스크립트 시작(헤더 파트) -->
     <script type="text/javascript"
-            src="http://test-pay.naver.com/customer/js/naverPayButton.js" charset="UTF-8"></script>
+            src="http://pay.naver.com/customer/js/{{ $isMobile ? 'mobile/' : '' }}naverPayButton.js" charset="UTF-8"></script>
     <script type="text/javascript">//<!CDATA[
         function checkOption(selectBox, nonSelectedIndex, optionName) {
             if (selectBox.selectedIndex == nonSelectedIndex) {
@@ -159,13 +159,22 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/npay/cart',
+                url: '/carts',
                 data: {
                     option_id: optionId,
                     count: count
                 }
             }).then(function (res) {
-                location.href = '/npay/order/' + res.id;
+                if (res) {
+                    if (res.id == "") {
+                        alert('장바구니 등록시 에러 발생');
+                        location.reload();
+                    } else {
+                        location.href = '/npay/order/' + res.id;
+                    }
+                } else {
+                    location.reload();
+                }
             });
 
             return false;
@@ -179,7 +188,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/npay/cart',
+                url: '/carts',
                 data: {
                     option_id: optionId,
                     count: count
@@ -286,7 +295,7 @@
                                     <h5>옵션 선택 : </h5>
                                     <select name="select_option[]" id="select_option" class="form-control">
                                         @foreach($product->options as $option)
-                                            <option value="{{ $option->id }}">
+                                            <option value="{{ $option->id }}" {!! (isset($sel_opt) && $option->id == $sel_opt) ? 'selected' : '' !!}>
                                                 {{ !empty($option->color) ? ($option->color . " - (" . $option->size .")") : $option->size }}
                                             </option>
                                         @endforeach
@@ -298,7 +307,7 @@
                                     <div class="quantity">
                                         <div class="quantity-select">
                                             <div class="entry value-minus1">&nbsp;</div>
-                                            <div class="entry value1"><span>1</span></div>
+                                            <div class="entry value1"><span>{{ isset($sel_cnt) ? $sel_cnt : '1' }}</span></div>
                                             <div class="entry value-plus1 active">&nbsp;</div>
                                         </div>
                                     </div>
@@ -330,7 +339,7 @@
                                 <script type="text/javascript">//<![CDATA[
                                     naver.NaverPayButton.apply({
                                         BUTTON_KEY: "C06715B6-5172-4A2C-8FC7-5C1F53CA9314",
-                                        TYPE: "A", // 버튼 모음 종류 설정
+                                        TYPE: "{{ $isMobile ? "MB" : "A" }}", // 버튼 모음 종류 설정
                                         COLOR: 1, // 버튼 모음의 색 설정
                                         COUNT: 2, // 버튼 개수 설정. 구매하기 버튼만 있으면(장바구니 페이지) 1, 찜하기 버튼도 있으면(상품 상세 페이지) 2를 입력.
                                         ENABLE: "Y", // 품절 등의 이유로 버튼 모음을 비활성화할 때에는 "N" 입력

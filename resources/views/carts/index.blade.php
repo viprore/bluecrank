@@ -55,7 +55,8 @@
     </style>
     <!-- 네이버 페이 스크립트 시작(헤더 파트) -->
     <script type="text/javascript"
-            src="http://test-pay.naver.com/customer/js/{{ $isMobile ? 'mobile/' : '' }}naverPayButton.js" charset="UTF-8"></script>
+            src="http://test-pay.naver.com/customer/js/{{ $isMobile ? 'mobile/' : '' }}naverPayButton.js"
+            charset="UTF-8"></script>
     <script type="text/javascript">//<!CDATA[
         function buy_nc(url) {
             var formData = $("#selectOrdrForm").serialize();
@@ -65,11 +66,19 @@
                 url: '/npay/carts',
                 cache: false,
                 data: formData,
-                success: function(itemIds) {
-//                    alert(itemIds);
-                    location.href = '/npay/order/' + itemIds;
+                success: function (itemIds) {
+                    if(itemIds) {
+                        if(itemIds == "") {
+                            alert('상품이 선택되지 않았습니다. \n다시 확인해주세요.');
+                            location.reload();
+                        }else {
+                            location.href = '/npay/order/' + itemIds;
+                        }
+                    }else {
+                        location.reload();
+                    }
                 },
-                error: function() {
+                error: function () {
                     alert('Error');
                 }
             });
@@ -165,7 +174,8 @@
         </div>
         <div class="row my-3 text-center">
             <div class="col-md-12">
-                <form id="selectOrdrForm" action="{{ route('carts.update') }}" method="POST" enctype="multipart/form-data">
+                <form id="selectOrdrForm" action="{{ route('carts.update') }}" method="POST"
+                      enctype="multipart/form-data">
                     {{ csrf_field() }}
                     {!! method_field('PUT') !!}
                     <button type="submit" class="btn btn-secondary select__submit">선택상품주문</button>
@@ -174,24 +184,23 @@
 
             </div>
         </div>
-            @if($currentUser ? $currentUser->isTester() : false)
-                <div class="row">
-                    <div class="col-xs-12 text-center">
-                        {{ $isMobile ? '모바일' : 'PC' }}
-                        <script type="text/javascript">//<![CDATA[
-                            naver.NaverPayButton.apply({
-                                BUTTON_KEY: "C06715B6-5172-4A2C-8FC7-5C1F53CA9314",
-                                TYPE: "{{ $isMobile ? 'M' : '' }}A", // 버튼 모음 종류 설정
-                                COLOR: 1, // 버튼 모음의 색 설정
-                                COUNT: 1, // 버튼 개수 설정. 구매하기 버튼만 있으면(장바구니 페이지) 1, 찜하기 버튼도 있으면(상품 상세 페이지) 2를 입력.
-                                ENABLE: "Y", // 품절 등의 이유로 버튼 모음을 비활성화할 때에는 "N" 입력
-                                BUY_BUTTON_HANDLER: buy_nc,
-                                "": ""
-                            });
-                            //]]></script>
-                    </div>
+        @if($currentUser ? $currentUser->isTester() : false)
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <script type="text/javascript">//<![CDATA[
+                        naver.NaverPayButton.apply({
+                            BUTTON_KEY: "C06715B6-5172-4A2C-8FC7-5C1F53CA9314",
+                            TYPE: "{{ $isMobile ? 'MB' : 'A' }}", // 버튼 모음 종류 설정
+                            COLOR: 1, // 버튼 모음의 색 설정
+                            COUNT: 1, // 버튼 개수 설정. 구매하기 버튼만 있으면(장바구니 페이지) 1, 찜하기 버튼도 있으면(상품 상세 페이지) 2를 입력.
+                            ENABLE: "{{ $items->count() > 0 ? 'Y' : 'N' }}", // 품절 등의 이유로 버튼 모음을 비활성화할 때에는 "N" 입력
+                            BUY_BUTTON_HANDLER: buy_nc,
+                            "": ""
+                        });
+                        //]]></script>
                 </div>
-            @endif
+            </div>
+        @endif
     </div>
 
 @stop
@@ -199,6 +208,11 @@
     <script>
         $(document).ready(function () {
             var checked_all = false;
+
+            $('.item__checkbox').each(function (i, e) {
+                e.checked = false;
+            });
+
             $(".item__checkbox").change(function () {
                 var item_id = this.getAttribute("item_id");
                 var item_count = $('#item_' + item_id + '_count').val();
@@ -304,9 +318,9 @@
                     items_count: [count]
                 }
             }).then(function (itemIds) {
-                if(itemIds) {
-                    location.href='/orders/create?items[]=' + itemIds;
-                }else{
+                if (itemIds) {
+                    location.href = '/orders/create?items[]=' + itemIds;
+                } else {
                     location.reload();
                 }
             });
@@ -321,6 +335,10 @@
 
             var itemPrice = $("#item_" + itemId + "_price").val();
             var itemCount = $("#item_" + itemId + "_count").val();
+
+            if($('input[name="items_count[]"][itemId="' + itemId + '"]')){
+                $('input[name="items_count[]"][itemId="' + itemId + '"]').val(newVal)
+            }
 
             $("#item_" + itemId + "_total").text(number_format(itemPrice * itemCount));
 
@@ -337,6 +355,10 @@
 
                 var itemPrice = $("#item_" + itemId + "_price").val();
                 var itemCount = $("#item_" + itemId + "_count").val();
+
+                if($('input[name="items_count[]"][itemId="' + itemId + '"]')){
+                    $('input[name="items_count[]"][itemId="' + itemId + '"]').val(newVal)
+                }
 
                 $("#item_" + itemId + "_total").text(number_format(itemPrice * itemCount));
 
@@ -404,7 +426,7 @@
         function buyAll() {
             var form = $('form').first();
             $('.item__checkbox').each(function (i, e) {
-                e.checked=false;
+                e.checked = false;
             });
 
             /*$('.item__checkbox').checked = false;*/

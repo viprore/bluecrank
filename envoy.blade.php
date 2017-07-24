@@ -47,9 +47,9 @@ cd {{ $release_dir }}/{{ $distname }} && composer install --prefer-dist --no-scr
 
 ln -nfs {{ $release_dir }}/{{ $distname }} {{ $project_root }};
 
-chmod -R 775 {{ $shared_dir }}/storage;
-chmod -R 775 {{ $shared_dir }}/cache;
-chmod -R 775 {{ $shared_dir }}/files;
+sudo chmod -R 775 {{ $shared_dir }}/storage;
+sudo chmod -R 775 {{ $shared_dir }}/cache;
+sudo chmod -R 775 {{ $shared_dir }}/files;
 chgrp -h -R www-data {{ $release_dir }}/{{ $distname }};
 
 sudo service nginx restart;

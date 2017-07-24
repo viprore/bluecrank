@@ -32,7 +32,6 @@ class AdminController extends Controller
             ->get();
 
 
-
         return view('admin.index', compact('orders', 'dates', 'summary'));
     }
 
@@ -104,6 +103,7 @@ class AdminController extends Controller
 
     public function status($slug)
     {
+        $status = null;
         switch ($slug) {
             case 'deposit':
                 $status = '입금전';
@@ -133,20 +133,28 @@ class AdminController extends Controller
                 $status = '반품';
                 break;
             case 'qna':
-                dd('제작중');
+                return response("제작중");
                 break;
 
         }
 
 
-//        dd($orders);
-
-        $orders = Order::all();
         $datas = Order::where('status', $status)
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'desc')->get();
+
+//        $datas = Order::all();
+
+
+
+        $status_cnt = \DB::table('orders')
+            ->select(\DB::raw('status, count(*) as status_count'))
+            ->groupBy('status')
             ->get();
 
-        return view('admin.status', compact('orders', 'datas'));
+//        dd($orders);
+
+
+        return view('admin.status', compact('status_cnt', 'datas'));
     }
 
     public function statusPost(Request $request, Order $order, $slug)
@@ -178,7 +186,7 @@ class AdminController extends Controller
         }
         if (!empty($next)) {
             $order->status = $next;
-            flash('게시글 번호 '.$order->id . '의 주문 상태가 '. $next .'로 변경되었습니다');
+            flash('게시글 번호 ' . $order->id . '의 주문 상태가 ' . $next . '로 변경되었습니다');
         }
 
         if (!empty($shipcode)) {

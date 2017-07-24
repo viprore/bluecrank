@@ -333,10 +333,10 @@ Route::get('npay/order/{item_list}/{ship_type?}', [
     'uses' => 'NPayController@makeOrder'
 ]);
 
-Route::post('npay/cart', [
+/*Route::post('npay/cart', [
     'as' => 'npay.cart',
     'uses' => 'NPayController@inCart'
-]);
+]);*/
 
 Route::get('npay/items', [
     'as' => 'npay.items',

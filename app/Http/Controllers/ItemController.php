@@ -110,7 +110,6 @@ class ItemController extends Controller
         $counts = $request->input('items_count', []);
 
         $key = 0;
-
         $notEnoughMessage = '';
         foreach ($items as $item) {
             if ($item->option->stock >= $counts[$key]) {
@@ -121,10 +120,11 @@ class ItemController extends Controller
                 if ($notEnoughMessage == '') $notEnoughMessage = '해당 상품의 재고가 부족합니다 <br />';
                 $notEnoughMessage .= '[' . $item->option->product->ad_title . '] 재고 : ' . $item->option->stock . '개 <br />';
             }
+            $key++;
         }
 
         if (empty($notEnoughMessage)) {
-            if ($items->count() == 1) {
+            /*if ($items->count() == 1) {
                 return response()->json($items->first()->id, 200, [], JSON_PRETTY_PRINT);
             } else {
                 if (str_contains($request->url(), 'npay')) {
@@ -132,17 +132,20 @@ class ItemController extends Controller
                 } else {
                     return redirect(route('orders.create', ['items[]' => $items->pluck('id')->all()]));
                 }
+            }*/
 
-                /*if($request->input('npay') == 'yes'){
-                    return response()->json($itemIds, 200, [], JSON_PRETTY_PRINT);
-                }else{
-                    return redirect(route('orders.create', ['items[]' => $items->pluck('id')->all()]));
-                }*/
-
+            if (str_contains($request->url(), 'npay')) {
+                return response()->json($itemIds, 200, [], JSON_PRETTY_PRINT);
+            } else {
+                return redirect(route('orders.create', ['items[]' => $items->pluck('id')->all()]));
             }
         } else {
             flash($notEnoughMessage, 'warning');
-            return response()->json([], 204, [], JSON_PRETTY_PRINT);
+            if (str_contains($request->url(), 'npay')) {
+                return response()->json([], 204, [], JSON_PRETTY_PRINT);
+            }else{
+                return redirect()->back();
+            }
         }
     }
 

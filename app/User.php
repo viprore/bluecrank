@@ -127,7 +127,7 @@ class User extends Authenticatable
 
     public function isTester()
     {
-        return ($this->id === 7457) ? true : false;
+        return true;
     }
 
     public function isSocialUser()
