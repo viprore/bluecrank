@@ -178,7 +178,7 @@
                       enctype="multipart/form-data">
                     {{ csrf_field() }}
                     {!! method_field('PUT') !!}
-                    <button type="submit" class="btn btn-secondary select__submit">선택상품주문</button>
+                    <button type="button" class="btn btn-secondary select__submit">선택상품주문</button>
                 </form>
                 <button type="button" class="btn btn-primary" onclick="buyAll()">전체상품주문</button>
 
@@ -207,6 +207,43 @@
 @section('script')
     <script>
         $(document).ready(function () {
+            $('.select__submit').click(function(){
+                var formData = $("#selectOrdrForm").serialize();
+
+                $.ajax({
+                    type: 'put',
+                    url: 'carts',
+                    cache: false,
+                    data: formData,
+                    success: function (itemIds) {
+                        if(itemIds) {
+                            if(itemIds == "") {
+                                alert('상품이 선택되지 않았습니다. \n다시 확인해주세요.');
+                                location.reload();
+                            }else {
+                                var res = String(itemIds).split(',');
+                                var addItemQuery = "";
+                                for(var i in res){
+                                    if(addItemQuery == "") {
+                                        addItemQuery += "items[]=" + res[i];
+                                    }else {
+                                        addItemQuery += "&items[]=" + res[i];
+                                    }
+
+                                }
+                                location.href = '/orders/create?' + addItemQuery;
+                            }
+                        }else {
+                            alert('서버 응답 에러');
+//                            location.reload();
+                        }
+                    },
+                    error: function () {
+                        location.reload();
+                    }
+                });
+            });
+
             var checked_all = false;
 
             $('.item__checkbox').each(function (i, e) {

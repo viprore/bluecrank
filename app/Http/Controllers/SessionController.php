@@ -15,30 +15,29 @@ class SessionController extends Controller
     }
 
     /**
-     * Show the application login form.
+     * 로그인 폼을 보여준다
      *
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
     {
-
         return view('sessions.create');
     }
 
     /**
-     * Handle login request to the application.
+     * 로그인 요청을 처리한다
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request)
     {
-
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required|min:6',
         ]);
 
+        // 네이티브 계정 로그인 실패시 소셜 여부 확인
         if (! auth()->attempt($request->only('email', 'password'), $request->has('remember'))) {
             $user = \App\User::socialUser($request->input('email'))->first();
             if ($user) {
@@ -51,6 +50,7 @@ class SessionController extends Controller
             return $this->respondError('이메일 또는 비밀번호가 맞지 않습니다.');
         }
 
+        // 인증 여부 확인
         if (! auth()->user()->activated) {
             auth()->logout();
 
@@ -61,7 +61,7 @@ class SessionController extends Controller
     }
 
     /**
-     * Log the user out of the application.
+     * 유저 로그아웃
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
@@ -98,6 +98,7 @@ class SessionController extends Controller
     {
         flash($message);
 
+        // 리턴 정보 유무에 따른 리다이렉트 처리
         return ($return = request('return'))
             ? redirect(urldecode($return))
             : redirect()->intended('products');

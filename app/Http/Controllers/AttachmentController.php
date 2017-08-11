@@ -99,7 +99,7 @@ class AttachmentController extends Controller
      */
     public function destroy(Attachment $attachment)
     {
-        $path = attachments_path($attachment->name);
+        $path = attachments_path($attachment->filename);
 
         if (\File::exists($path)) {
             \File::delete($path);

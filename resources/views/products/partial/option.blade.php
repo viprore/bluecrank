@@ -155,7 +155,7 @@
                     옵션 추가하기
                 </button>
 
-                <a href="{{ route('products.show', $product->id) }}" class="btn btn-primary">
+                <a href="{{ route($prefix.'show', $product->id) }}" class="btn btn-primary">
                     <i class="fa fa-eye"></i>
                     상품 보기
                 </a>
@@ -183,7 +183,7 @@
             if (confirm(productId + '옵션을 등록합니다\n' + color + ' - (' + size + ') // ' + inventory + '개')) {
                 $.ajax({
                     type: 'POST',
-                    url: "/products/" + productId + "/options",
+                    url: "/{{ str_contains($prefix, 'olds') ? 'olds' : 'products' }}/" + productId + "/options",
                     data: params,
                     success: function () {
                         location.reload();

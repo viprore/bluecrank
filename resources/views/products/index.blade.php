@@ -3,7 +3,7 @@
 @section('style')
     <style>
         .caption h4 {
-            display: block;
+            /*display: block;*/
             /*width: 200px; */
             white-space: nowrap;
             overflow: hidden;
@@ -56,19 +56,170 @@
             padding-top: 1em;
         }
 
+/*아이템*/
+        .card .card-image {
+            overflow: hidden;
+            -webkit-transform-style: preserve-3d;
+            -moz-transform-style: preserve-3d;
+            -ms-transform-style: preserve-3d;
+            -o-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+        }
 
+        .card .card-image img {
+            -webkit-transition: all 0.4s ease;
+            -moz-transition: all 0.4s ease;
+            -ms-transition: all 0.4s ease;
+            -o-transition: all 0.4s ease;
+            transition: all 0.4s ease;
+        }
+
+        .card .card-image:hover img {
+            -webkit-transform: scale(1.1);
+            -moz-transform: scale(1.1);
+            -ms-transform: scale(1.1);
+            -o-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+
+        .card {
+            /*-webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+            -moz-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+            box-shadow: 2 1px 2px 0 rgba(0, 0, 0, 0.16), 0 1px 5px 0 rgba(0, 0, 0, 0.12);*/
+            border: transparent;
+        }
+
+        .padding-option {
+            padding: 24px;
+        }
+
+        .thumbnail {
+            padding: 0
+        }
+
+        .glyphicon-heart {
+            padding-right: 3px;
+            color: #ff514d;
+        }
+
+        .glyphicon-comment {
+            padding-left: 10px;
+            padding-right: 3px;
+            color: #6f80bd;
+        }
+
+        .img-product {
+            object-fit: contain;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .ratings {
+            margin-top: 0;
+            border-top: 1px solid lightgray;
+            padding-top: 10px;
+            padding-right: 10px;
+            padding-left: 10px;
+            color: #0E2231;
+        }
+
+        .ratings > p {
+            padding-top: 2px;
+            border-top: 1px solid lightgray;
+        }
+
+        .ratings > div > h5, .ratings > div > h6 {
+            margin: 0;
+        }
+
+        .ratings > div > h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .caption {
+            height: auto;
+            overflow: hidden;
+        }
+
+        .caption>h4 {
+            margin: 0;
+            margin-top: 6px;
+            margin-bottom: 1em;
+        }
+
+        .caption>h4 > a {
+            color: black;
+        }
+
+        .caption>p {
+            margin: 0;
+            color: darkgray;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .price {
+            display: inline-block;
+            float: right;
+            vertical-align: middle;
+            color: #475cdd;
+        }
+
+        .caption>h6 {
+            padding-right: 0.5em;
+            padding-top: 2px;
+            display: inline-block;
+            float: right;
+            vertical-align: middle;
+            margin: 0;
+            margin-top: 6px;
+        }
+
+        .tags__product {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-weight: 100;
+            font-size: 0.8em;
+        }
+
+        .tags__product li {
+            display: inline-block;
+            padding: 2px 8px;
+            margin-right: 0.6em;
+            background-color: #8fa9d5;
+            border-radius: 0;
+        }
+
+        .tags__product a {
+            background-color : transparent;
+            color: white;
+            text-decoration: none;
+        }
     </style>
 @endsection
 
 @section('content')
-    @php $viewName = 'products.index'; @endphp
+    @php
+        if(str_contains(request()->url(), 'product')){
+            $viewName = 'products.show';
+            $prefix = 'products.';
+        }elseif(str_contains(request()->url(), 'olds')){
+            $viewName = 'olds.show';
+            $prefix = 'olds.';
+        }else{
+            $viewName = 'secrets.show';
+            $prefix = 'secrets.';
+        }
+    @endphp
 
     @include('products.partial.banner')
 
     {{-- 태블릿 디바이스부터 카테고리를 숨기고 버튼으로 토글 --}}
     <div class="row visible-xs visible-sm">
         <div class="col-xs-12">
-            <form method="get" action="{{ route('products.index') }}" role="search" class="form-inline">
+            <form method="get" action="{{ route($prefix.'index') }}" role="search" class="form-inline">
                 <div class="form-group no-margin">
                     <button class="btn btn-default" type="button" id="toggle-category"
                             title="카테고리 여/닫">
@@ -88,10 +239,10 @@
 
     <div class="row">
         {{-- 좌측 검색(데스크탑), 카테고리, 배너 --}}
-        <div class="col-md-3 sidebar__article">
+        <div class="col-md-3 sidebar__article visible-xs">
             {{-- 검색바(데스크탑) --}}
             <div class="visible-md visible-lg">
-                @include('products.partial.search')
+                @include('products.partial.search', [$prefix])
             </div>
 
             {{-- 카테고리 --}}
@@ -103,7 +254,7 @@
 
                 <div class="list-group">
                     @foreach($categories as $slug => $locale)
-                        <a href="{{ route('categories.products.index', $slug) }}"
+                        <a href="{{ route('categories.'.$prefix.'index', $slug) }}"
                            class="list-group-item {{ str_contains(request()->path(), $slug) ? 'category-active' : '' }}">{{ $locale['ko'] }}</a>
                     @endforeach
                 </div>
@@ -134,7 +285,7 @@
         </div>
 
         {{-- 우측 아이템 리스트, 인기 태그, 등록/정렬 --}}
-        <div class="col-md-9 list__article">
+        <div class="col-md-12 list__article">
             <!-- 태그 -->
             <div class="row">
                 <div class="col-md-12">
@@ -143,7 +294,7 @@
                             <small>(최대 3개 선택 가능)</small>
                         </div>
                         <div class="panel-body padding-8">
-                            @foreach($productTags as $tag)
+                            @foreach((str_contains($prefix, 'olds') ? $oldTags : $productTags) as $tag)
                                 <button type="button" id="{{ $tag->slug }}"
                                         class="button__slug btn btn-sm {{ str_contains(request()->input('slug'), $tag->slug) ? 'btn-info' : 'btn-default' }}">
                                     # {{ $tag->name }}
@@ -159,7 +310,7 @@
                 <div class="col-xs-12">
                     <div class="text-right">
                         @if(($currentUser ? ($currentUser->isAdmin() ? true : false ) : false))
-                            <a href="{{ route('products.create') }}" class="btn btn-primary">
+                            <a href="{{ str_contains($prefix, 'olds') ? route('olds.create'): route('products.create') }}" class="btn btn-primary">
                                 <i class="fa fa-plus-circle"></i>
                                 등록
                             </a>
@@ -189,7 +340,7 @@
             <!-- 아이템 리스트 -->
             <div class="row padding-12">
                 @forelse($products as $product)
-                    @include('products.partial.item', $product)
+                    @include('products.partial.item', [$product, $prefix])
                 @empty
                     <p class="text-center">해당 물품이 없습니다.</p>
                 @endforelse

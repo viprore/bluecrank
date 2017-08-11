@@ -124,21 +124,7 @@ class ItemController extends Controller
         }
 
         if (empty($notEnoughMessage)) {
-            /*if ($items->count() == 1) {
-                return response()->json($items->first()->id, 200, [], JSON_PRETTY_PRINT);
-            } else {
-                if (str_contains($request->url(), 'npay')) {
-                    return response()->json($itemIds, 200, [], JSON_PRETTY_PRINT);
-                } else {
-                    return redirect(route('orders.create', ['items[]' => $items->pluck('id')->all()]));
-                }
-            }*/
-
-            if (str_contains($request->url(), 'npay')) {
-                return response()->json($itemIds, 200, [], JSON_PRETTY_PRINT);
-            } else {
-                return redirect(route('orders.create', ['items[]' => $items->pluck('id')->all()]));
-            }
+            return response()->json($itemIds, 200, [], JSON_PRETTY_PRINT);
         } else {
             flash($notEnoughMessage, 'warning');
             if (str_contains($request->url(), 'npay')) {
@@ -228,8 +214,7 @@ class ItemController extends Controller
      *
      * @param Item $item
      */
-    public
-    function setExpireAndUserCart(Item $item)
+    public function setExpireAndUserCart(Item $item)
     {
         if (\Auth::check()) {
             $item->user_id = \Auth::user()->id;

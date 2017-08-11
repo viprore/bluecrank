@@ -15,11 +15,11 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('user_id')->nullable();
             $table->string('name');
             $table->string('postcode');
             $table->string('find_address');
-            $table->string('input_address');
+            $table->string('input_address')->nullable();
             $table->string('contact');
             $table->string('please')->nullable();
             $table->enum('paymethod', ['계좌이체', '무통장입금', '신용카드'])->default('계좌이체');

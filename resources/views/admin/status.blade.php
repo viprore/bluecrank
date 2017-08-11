@@ -18,24 +18,7 @@
 
     <div class="row">
         <div class="col-md-3 sidebar__article">
-            <aside>
-                <p class="lead">
-                    <i class="fa fa-list"></i>
-                    Status
-                </p>
-            </aside>
-            <div class="list-group">
-                @foreach($statusList as $slug => $status)
-                    <a href="{{ route('admin.orders.status', $slug) }}"
-                       class="list-group-item {!! str_contains(request()->path(), $slug) ? 'active' : '' !!}">
-                        {{ $status }}
-                        ({{ $status_cnt->where('status', $status)->first() ? $status_cnt->where('status', $status)->first()->status_count : '0'}})
-                        {{--{{ $status .' ('. $status_cnt->where('status', $status)->first()->status_count.')' }}--}}
-                    </a>
-                @endforeach
-
-                <a href="{{ route('admin.orders.status', 'qna') }}" class="list-group-item">상품문의</a>
-            </div>
+            @include('admin.partial.menu', $statusList)
         </div>
 
         <div class="col-md-9 list__article">

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class ShipController extends Controller
 {
+    // TODO : 내 정보에서 관리할 수 있도록
+
     /**
      * Display a listing of the resource.
      *
@@ -83,6 +85,12 @@ class ShipController extends Controller
         //
     }
 
+    /**
+     * 배송지 정보를 JSON 리턴
+     *
+     * @param Ship $ship
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getJsonShip(Ship $ship)
     {
         return response()->json($ship, 200, [], JSON_PRETTY_PRINT);

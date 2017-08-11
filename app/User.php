@@ -93,11 +93,6 @@ class User extends Authenticatable
         return $this->morphedByMany('App\Product', 'markkable');
     }
 
-    public function wantMarkets()
-    {
-        return $this->morphedByMany('App\Market', 'markkable');
-    }
-
     public function comments() {
         return $this->hasMany(Comment::class);
     }
@@ -128,6 +123,11 @@ class User extends Authenticatable
     public function isTester()
     {
         return true;
+    }
+
+    public function isStudent()
+    {
+        return ($this->id === 1) ? true : false;
     }
 
     public function isSocialUser()

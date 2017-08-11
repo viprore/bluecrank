@@ -23,17 +23,18 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        // TODO : 회원일 경우와 비회원일 경우 처리
+
         if (\Auth::check()) {
             $user = \Auth::user();
         }else{
-            // 아마 이게 변경될듯. 오더 폴더에 블레이드 뷰 하나 더 생성해서 작업업
+            // TODO : 비회원일 경우 처리
            return route('sessions.create');
         }
 
         // 걸러내기
         // 1. 작성중인 주문서 중 Item이 연결되지 않은 주문서
         // 2. 작성중인 주문서 중 생성 후 1일이 경과한 주문서
+        // TODO : 신용카드인데 입금전인 주문서 주기적으로 입금취소 처리
         $orders = $user->orders()->where('status', '작성중');
         foreach ($orders as $order) {
             if ($order->items->count() == 0 || ($order->created_at->addDays('+1') < Carbon::now())) {
@@ -111,7 +112,6 @@ class OrderController extends Controller
 
         $order->paymethod = '신용카드';
 
-        // TODO :: 캐시에 박기(변경 별로 없으니)
         $states = \DB::table('shops')->distinct()->pluck('state');
 
         $shops = Shop::whereState('서울')->get();
@@ -263,10 +263,8 @@ class OrderController extends Controller
         return view('orders.show', compact('order'));
     }
 
-
-
     /**
-     * Update the specified resource in storage.
+     * TODO : Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
      * @param  int $id
@@ -278,7 +276,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * TODO : Remove the specified resource from storage.
      *
      * @param  int $id
      * @return \Illuminate\Http\Response
@@ -346,7 +344,6 @@ class OrderController extends Controller
 
     }
 
-
     public function checkPayment(Request $request)
     {
         $iamport = new \Iamport(ENV('IMP_REST_API_KEY'), ENV('IMP_REST_API_SECRET'));
@@ -398,11 +395,10 @@ class OrderController extends Controller
 
                     return response()->json("결제실패 또는 결제 금액 불일치 입니다.", 400, [], JSON_PRETTY_PRINT);
                 }
+            } else {
+                return response()->json("아임포트 조회중 오류 발생", 400, [], JSON_PRETTY_PRINT);
             }
-
-
         }
-
 
     }
 

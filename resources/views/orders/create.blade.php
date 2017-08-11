@@ -21,11 +21,14 @@
         foreach($items as $item){
             $total_amount += $item->option->product->price * $item->count;
         }
+        if(str_contains(url()->previous(), 'secrets') && $currentUser->isStudent()){
+            $total_amount = $total_amount * 0.9;
+        }
     @endphp
 
     <div class="page-header">
         <h3>
-            주문서 작성
+            주문서 작성{{ (str_contains(url()->previous(), 'secrets') && $currentUser->isStudent()) ? '(교육생 전용)' : '' }}
         </h3>
     </div>
 
@@ -46,6 +49,7 @@
 
 
                     </div>
+
 
                 </div>
             </form>

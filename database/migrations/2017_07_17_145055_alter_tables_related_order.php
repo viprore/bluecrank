@@ -14,7 +14,7 @@ class AlterTablesRelatedOrder extends Migration
     public function up()
     {
         Schema::table('items', function (Blueprint $table) {
-            $table->timestamp('expire_at')->default(\DB::raw('DATE_ADD(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)'));
+            $table->timestamp('expire_at')->nullable();
         });
     }
 

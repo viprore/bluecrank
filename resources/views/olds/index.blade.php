@@ -194,7 +194,7 @@
             <!-- 아이템 리스트 -->
             <div class="row">
                 @forelse($products as $product)
-                    @include('olds.partial.item', $product)
+                    @include('olds.partial.item', [$product, $prefix])
                 @empty
                     <p class="text-center">해당 물품이 없습니다.</p>
                 @endforelse

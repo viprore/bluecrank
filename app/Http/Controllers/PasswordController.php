@@ -48,7 +48,7 @@ class PasswordController extends Controller
         event(new \App\Events\PasswordRemindCreated($email, $token));
 
         return $this->respondSuccess(
-            '비밀번호를 바꾸는 방법을 담은 이메일을 발송했습니다. 메일박스를 확인하세요.'
+            '비밀번호 변경을 위한 이메일을 발송했습니다. 메일박스를 확인하세요.'
         );
     }
 

@@ -13,7 +13,6 @@ class AttachmentsTableSeeder extends Seeder
     {
         $faker = app(Faker\Generator::class);
         $articles = App\Article::all();
-        $markets = App\Market::all();
         $products = App\Product::all();
 
         if (! File::isDirectory(attachments_path())) {
@@ -26,7 +25,7 @@ class AttachmentsTableSeeder extends Seeder
         File::put(attachments_path('.gitignore'), "*\n!.gitignore");
 
         $this->command->error(
-            'Downloading ' . ($articles->count()+$markets->count()+$products->count()) . ' images from lorempixel. It takes time...'
+            'Downloading ' . ($articles->count()+$products->count()) . ' images from lorempixel. It takes time...'
         );
 
         $articles->each(function ($article) use ($faker) {
@@ -56,23 +55,6 @@ class AttachmentsTableSeeder extends Seeder
 
             $product->ad_img_id = $product->attachments->first()->id;
             $product->save();
-
-        });
-
-        $markets->each(function ($market) use ($faker) {
-            $path = $faker->image(attachments_path());
-            $filename = File::basename($path);
-            $bytes = File::size($path);
-            $mime = File::mimeType($path);
-
-            $this->command->warn("File saved: {$filename}");
-
-            $market->attachments()->save(
-                factory(App\Attachment::class)->make(compact('filename', 'bytes', 'mime'))
-            );
-
-            $market->ad_img_id = $market->attachments->first()->id;
-            $market->save();
 
         });
 

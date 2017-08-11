@@ -1,12 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
-  @php $viewName = 'products.create'; @endphp
+  @php
+    if(str_contains(request()->url(), 'olds')){
+        $viewName = 'olds.create';
+        $prefix = 'olds.';
+        $isOld = true;
+    }else{
+        $viewName = 'products.create';
+        $prefix = 'products.';
+        $isOld = false;
+    }
+  @endphp
 
   <div class="page-header">
     <h4>
-      <a href="{{ route('products.index') }}">
-        BC몰
+
+      <a href="{{ route($prefix . 'index') }}">
+        {{ $isOld ? '중고' : 'BC몰' }}
       </a>
       <small>
         / 상품등록
@@ -14,7 +25,7 @@
     </h4>
   </div>
 
-  <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" class="form__article">
+  <form action="{{ route($prefix . 'store') }}" method="POST" enctype="multipart/form-data" class="form__article">
     {!! csrf_field() !!}
 
     @include('products.partial.form')

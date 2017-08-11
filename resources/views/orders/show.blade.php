@@ -1,7 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-    @php $viewName = 'orders.index'; @endphp
+    @php $viewName = 'orders.index';
+        $temp_ship_fee = 0;
+        if($order->ship_fee == '포함'){
+            $temp_ship_fee = 2500;
+        }
+        $origin_amount = 0;
+        foreach($order->items as $item){
+            $origin_amount += $item->option->product->price * $item->count;
+        }
+        $origin_amount += $temp_ship_fee;
+    @endphp
 
     <div class="page-header">
         <h4>
@@ -80,7 +90,7 @@
                                 <dd>색상 : {{ $item->option->color }} // 사이즈
                                     : {{ $item->option->size }}</dd>
                                 <dt>가격(수량 {{ $item->count }}개)</dt>
-                                <dd>{{ number_format($item->option->product->price * $item->count) }}원</dd>
+                                <dd>{{ number_format(($origin_amount == $order->amount ? '1' : '0.9') * $item->option->product->price * $item->count) }}원</dd>
                             </dl>
                         </div>
                     </div>

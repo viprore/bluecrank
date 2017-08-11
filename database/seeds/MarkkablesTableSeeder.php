@@ -14,18 +14,9 @@ class MarkkablesTableSeeder extends Seeder
         $faker = app(Faker\Generator::class);
         $users = App\User::all();
         $articles = App\Article::all();
-        $markets = App\Market::all();
         $products = App\Product::all();
-        $tags = App\Tag::all();
 
         foreach($users as $user) {
-            $user->wantMarkets()->sync(
-                $faker->randomElements(
-                    $markets->pluck('id')->toArray(),
-                    rand(1, 5)
-                )
-            );
-
             $user->wantProducts()->sync(
                 $faker->randomElements(
                     $products->pluck('id')->toArray(),

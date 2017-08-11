@@ -91,7 +91,7 @@
 </head>
 
 <body id="app-layout">
-@include('layouts.partial.navigation')
+@include('layouts.partial.new-navigation')
 
 <div class="container">
     @include('flash::message')

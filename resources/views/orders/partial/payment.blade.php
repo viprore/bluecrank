@@ -125,18 +125,23 @@
             IMP.init('imp26813303');
             $('#btn_pg').click(function () {
                 // 기타 정보
-                $('#merchant_uid').val(init_orderid());
-                var formData = $("#ordrForm").serialize();
+                var error = formCheck();
+                if(error=='') {
+                    $('#merchant_uid').val(init_orderid());
+                    var formData = $("#ordrForm").serialize();
 
 
-                $.ajax({
-                    type: "POST",
-                    url: "/orders",
-                    cache: false,
-                    data: formData,
-                    success: onSuccess,
-                    error: onError
-                });
+                    $.ajax({
+                        type: "POST",
+                        url: "/orders",
+                        cache: false,
+                        data: formData,
+                        success: onSuccess,
+                        error: onError
+                    });
+                }else {
+                    alert(error + "란을 확인해주세요.");
+                }
             });
 
             $('input[type=radio][name=paymethod]').change(function () {
@@ -306,6 +311,40 @@
 
             alert(str);
             return;
+        }
+
+        function formCheck() {
+            if ($('#shipmethod').val() == 'direct') {
+                var name = $('#name').val();
+                var postcode = $('#postcode').val();
+                var find_address = $('#find_address').val();
+                var input_address = $('#input_address').val();
+                var contact = $('#contact').val();
+            } else {
+                var name = $('#name2').val();
+                var shop_id = $('#shop_id').val();
+                var contact = $('#contact2').val();
+            }
+            var errors = '';
+
+            if (shop_id == '') {
+                if (errors == '') errors += '매장정보';
+                else                errors += ', 매장정보';
+            }
+            if (name == '') {
+                if (errors == '') errors += '이름';
+                else                errors += ', 이름';
+            }
+            if (postcode == '' || find_address == '' || input_address == '') {
+                if (errors == '') errors += '주소정보';
+                else                errors += ', 주소정보';
+            }
+            if (contact == '') {
+                if (errors == '') errors += '연락처';
+                else                errors += ', 연락처';
+            }
+
+            return errors;
         }
     </script>
 @endsection

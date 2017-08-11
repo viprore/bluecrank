@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Blurb;
 use App\Order;
 use Illuminate\Http\Request;
 
@@ -31,8 +32,12 @@ class AdminController extends Controller
             ->groupBy('created_date', 'status')
             ->get();
 
+        $status_cnt = \DB::table('orders')
+            ->select(\DB::raw('status, count(*) as status_count'))
+            ->groupBy('status')
+            ->get();
 
-        return view('admin.index', compact('orders', 'dates', 'summary'));
+        return view('admin.index', compact('orders', 'dates', 'summary' , 'status_cnt'));
     }
 
     /**
@@ -145,7 +150,6 @@ class AdminController extends Controller
 //        $datas = Order::all();
 
 
-
         $status_cnt = \DB::table('orders')
             ->select(\DB::raw('status, count(*) as status_count'))
             ->groupBy('status')
@@ -196,5 +200,72 @@ class AdminController extends Controller
 
 
         return redirect(route('admin.orders.status', $slug));
+    }
+
+    public function editMain()
+    {
+        $blurbs = Blurb::all();
+        $status_cnt = \DB::table('orders')
+            ->select(\DB::raw('status, count(*) as status_count'))
+            ->groupBy('status')
+            ->get();
+        return view('admin.main', compact('blurbs', 'status_cnt'));
+    }
+
+    public function storeBlurb(Request $request)
+    {
+        $id = $request->input('id');
+
+        $payload = [
+            'type' => $request->input('type'),
+            'order' => $request->input('order'),
+            'link' => $request->input('link'),
+            'title' => $request->input('title'),
+            'text1' => $request->input('text1'),
+            'text2' => $request->input('text2')
+        ];
+
+        $result_msg = '';
+        if ($id) {
+            $blurb = Blurb::find($id);
+            $blurb->update($payload);
+            $blurb->save();
+            $result_msg .= '광고 수정';
+        }else{
+            $blurb = Blurb::create($payload);
+            $result_msg .= '광고 생성';
+        }
+
+        if ($request->hasFile('files')) {
+            $this->uploadFileWithBlurb($request, $blurb);
+            $result_msg .= ' 및 파일 업로드';
+        }
+
+        $result_msg .= '을(를) 완료했습니다.';
+
+        flash()->success($result_msg);
+
+        return redirect()->back();
+    }
+
+    private function uploadFileWithBlurb(Request $request, $blurb)
+    {
+        $file = $request->file('files');
+        $filename = str_random() . filter_var($file->getClientOriginalName(), FILTER_SANITIZE_URL);
+
+        $payload = [
+            'filename' => $filename,
+            'bytes' => $file->getClientSize(),
+            'mime' => $file->getClientMimeType()
+        ];
+
+        $file->move(attachments_path(), $filename);
+
+        if ($blurb->attachments()->first()) {
+            $blurb->attachments()->first()->delete();
+        }
+
+        $blurb->attachments()->create($payload);
+
     }
 }

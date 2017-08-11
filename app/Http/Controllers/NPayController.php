@@ -6,13 +6,20 @@ use App\Item;
 use App\Option;
 use App\ItemStack;
 use App\Product;
+use App\Src\SimpleXMLElementExtended;
 use Illuminate\Http\Request;
 
 
 class NPayController extends Controller
 {
-
-
+    /**
+     * 네이버 페이용 주문 정보를 생성한다
+     *
+     * @param Request $request
+     * @param $item_list
+     * @param null $shipping_type
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     function makeOrder(Request $request, $item_list, $shipping_type = null)
     {
         $shopId = env('NAVER_SHOP_ID');
@@ -57,14 +64,12 @@ class NPayController extends Controller
                 $option = "색상 : " . $opt->color . " / 사이즈 : " . $opt->size;
             }
 
-            $itemStack = new ItemStack($id, $ec_mall_pid, $name, $tprice, $uprice, $option, $count);
+            $itemStack = new ItemStack($id, $ec_mall_pid, $uprice, $name, false, $tprice, $option, $count);
             $totalMoney += $tprice;
             $queryString .= '&' . $itemStack->makeQueryString();
         }
 
-
         $shippingType = !empty($shipping_type) ? $shipping_type : 'PAYED'; // 무료, 선불, 착불 : FREE, PAYED, ONDELIVERY
-
 
         if ($totalMoney >= 50000) {
             $shippingType = 'FREE';
@@ -77,7 +82,6 @@ class NPayController extends Controller
             }
         }
 
-
         $queryString .= '&SHIPPING_TYPE=' . $shippingType;
         $queryString .= '&SHIPPING_PRICE=' . $shippingPrice;
 
@@ -88,7 +92,7 @@ class NPayController extends Controller
 
         $req_addr = 'ssl://pay.naver.com';
         $req_url = 'POST /customer/api/order.nhn HTTP/1.1'; // utf-8
-// $req_url = 'POST /customer/api/CP949/order.nhn HTTP/1.1'; // euc-kr
+        // $req_url = 'POST /customer/api/CP949/order.nhn HTTP/1.1'; // euc-kr
         $req_host = 'pay.naver.com';
         $req_port = 443;
         $nc_sock = @fsockopen($req_addr, $req_port, $errno, $errstr);
@@ -150,35 +154,12 @@ class NPayController extends Controller
         return view('npay.order', compact('orderUrl', 'orderId', 'shopId', 'totalPrice', 'resultCode', 'logs'));
     }
 
-    public function inCart(Request $request)
-    {
-        $option_id = $request->input('option_id');
-        $count = $request->input('count');
-
-        $option = Option::find($option_id);
-
-        if ($item = $this->checkInventory($option, $count)) {
-            return response()->json($item, 200, [], JSON_PRETTY_PRINT);
-        } else {
-            return response()->json($item, 204, [], JSON_PRETTY_PRINT);
-        }
-    }
-
-    public function checkInventory(Option $option, int $count)
-    {
-        if ($option->inventory < $count) {
-            flash('죄송합니다. 재고량이 부족합니다.', 'warning');
-            return null;
-        }
-
-        $item = Item::create([
-            'option_id' => $option->id,
-            'count' => $count,
-        ]);
-
-        return $item;
-    }
-
+    /**
+     * 상품 정보 조회 요청(From NaverPay)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function itemInfo(Request $request)
     {
         $query = $request->getQueryString();
@@ -238,13 +219,14 @@ class NPayController extends Controller
         $formattedXML = $dom->saveXML();
 
         return \Response::make($formattedXML, '200')->header('Content-Type', 'application/xml');
-        /*
-                Header('Content-Type: application/xml');
-                print($formattedXML);*/
-
-
     }
 
+    /**
+     * 네이버 페이용 찜하기 처리
+     *
+     * @param $item_list
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function makeWish($item_list)
     {
         $shopId = env('NAVER_SHOP_ID');
@@ -268,7 +250,7 @@ class NPayController extends Controller
             $image = $product->attachments->first()->url;
             $thumb = $product->attachments->first()->url;
             $url = route('products.show', $product->id);
-            $item_ws = new ItemWishStack($uid, $ec_mall_pid, $name, $uprice, $image, $thumb, $url);
+            $item_ws = new ItemStack($uid, $ec_mall_pid, $name, $uprice, true, $image, $thumb, $url);
             $queryString .= '&' . $item_ws->makeQueryString();
         }
 
@@ -339,64 +321,5 @@ class NPayController extends Controller
         }
 
         return view('npay.wish', compact('logs', 'itemId', 'itemIdList', 'shopId', 'wishlistPopupUrl', 'resultCode'));
-    }
-}
-
-class ItemWishStack
-{
-    var $id;
-    var $ec_mall_pid;
-    var $name;
-    var $uprice;
-    var $image;
-    var $thumb;
-    var $url;
-
-    function __construct($_id, $_ec_mall_pid, $_name, $_uprice, $_image, $_thumb, $_url)
-    {
-        $this->id = $_id;
-        $this->ec_mall_pid = $_ec_mall_pid;
-        $this->name = $_name;
-        $this->uprice = $_uprice;
-        $this->image = $_image;
-        $this->thumb = $_thumb;
-        $this->url = $_url;
-    }
-
-    function makeQueryString()
-    {
-        $ret = "";
-        $ret .= 'ITEM_ID=' . urlencode($this->id);
-        $ret .= 'EC_MALL_PID=' . urlencode($this->ec_mall_pid);
-        $ret .= '&ITEM_NAME=' . urlencode($this->name);
-        $ret .= '&ITEM_UPRICE=' . $this->uprice;
-        $ret .= '&ITEM_IMAGE=' . urlencode($this->image);
-        $ret .= '&ITEM_THUMB=' . urlencode($this->thumb);
-        $ret .= '&ITEM_URL=' . urlencode($this->url);
-        return $ret;
-    }
-}
-
-;
-
-Class SimpleXMLElementExtended extends \SimpleXMLElement
-{
-
-    /**
-     * Adds a child with $value inside CDATA
-     * @param unknown $name
-     * @param unknown $value
-     */
-    public function addChildWithCDATA($name, $value = NULL)
-    {
-        $new_child = $this->addChild($name);
-
-        if ($new_child !== NULL) {
-            $node = dom_import_simplexml($new_child);
-            $no = $node->ownerDocument;
-            $node->appendChild($no->createCDATASection($value));
-        }
-
-        return $new_child;
     }
 }

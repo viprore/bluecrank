@@ -12,10 +12,14 @@ class VotesTableSeeder extends Seeder
     public function run()
     {
         $comments = App\Comment::all();
+        $faker = Faker\Factory::create('ko_KR');
 
-        $comments->each(function ($comment) {
+
+        $comments->each(function ($comment) use ($faker) {
             foreach(range(1,5) as $index) {
-                $comment->votes()->save(factory(App\Vote::class)->make());
+                $comment->votes()->save(factory(App\Vote::class)->make([
+                    'voted_at' => $faker->dateTimeBetween($comment->created_at)
+                ]));
             }
         });
 

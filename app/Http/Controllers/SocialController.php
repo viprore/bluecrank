@@ -24,7 +24,6 @@ class SocialController extends Controller
      */
     public function execute(Request $request, $provider)
     {
-
         if (!$request->has('code')) {
             return $this->redirectToProvider($provider);
         }
@@ -39,7 +38,6 @@ class SocialController extends Controller
      */
     protected function redirectToProvider($provider)
     {
-
         return \Socialite::driver($provider)->redirect();
     }
 
@@ -97,14 +95,8 @@ class SocialController extends Controller
             }
         }
 
-
-
-
         auth()->login($native_user);
-
         flash(auth()->user()->name . '님, 환영합니다.');
-
-
 
         if (!empty($return) && str_contains(urldecode($return), env('APP_URL'))) {
             return redirect(urldecode($return));
@@ -115,6 +107,12 @@ class SocialController extends Controller
 
     }
 
+    /**
+     * 분기별 소셜 처리
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function createUser(Request $request)
     {
         $name = $request->input('name');
@@ -128,12 +126,6 @@ class SocialController extends Controller
             $return = $this->getUrlParameter($previous_url, 'return');
         }
 
-        /*$this->validate($request, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            $provider . '_id' => 'required|unique:users',
-        ]);*/
-
         // socialId 탐색
         $confirmCode = str_random(60);
         $native_user = User::where($provider, '=', $socialId)->first();
@@ -144,8 +136,6 @@ class SocialController extends Controller
 
             if ($native_user === null) {
                 // 이메일도 등록한 적 없음
-
-
                 $native_user = \App\User::create([
                     'name' => $name,
                     'email' => $email,
@@ -154,7 +144,6 @@ class SocialController extends Controller
                 ]);
             } else {
                 // 기존에 등록된 이메일이 존재함
-
                 if ($native_user->$provider === null) {
                     // 해당 아이디에 소셜 아이디가 미기재
                     $native_user->$provider = $socialId;

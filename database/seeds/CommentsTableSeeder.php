@@ -13,7 +13,6 @@ class CommentsTableSeeder extends Seeder
     {
         $faker = app(Faker\Generator::class);
         $articles = App\Article::all();
-        $markets = App\Market::all();
         $products = App\Product::all();
 
         $articles->each(function ($article) {
@@ -28,12 +27,6 @@ class CommentsTableSeeder extends Seeder
 //            ));
         });
 
-        $markets->each(function ($market) {
-            $range = rand(0,3);
-            while ($range-- > 0) {
-                $market->comments()->save(factory(App\Comment::class)->make());
-            }
-        });
 
         $products->each(function ($product) {
             $range = rand(0,3);
@@ -81,24 +74,6 @@ class CommentsTableSeeder extends Seeder
             }
         });
 
-        $markets->each(function ($market) use ($faker){
-            $commentIds = App\Comment::where('commentable_type', App\Market::class)
-                ->where('commentable_id', $market->id)
-                ->where('parent_id', null)
-                ->pluck('id')->toArray();
-
-            if ($commentIds != null) {
-                $now = Carbon\Carbon::now()->toDateTimeString();
-                foreach (range(1, rand(1, 3)) as $index) {
-                    $market->comments()->save(
-                        factory(App\Comment::class)->make([
-                            'parent_id' => $faker->randomElement($commentIds),
-                            'deleted_at' => $faker->optional()->randomElement([null, $now]),
-                        ])
-                    );
-                }
-            }
-        });
 
         $this->command->info('Seeded: comments table');
     }

@@ -16,6 +16,17 @@
  * 1. BC몰 관련
  */
 
+// 인기태그
+Route::get('tags', [
+    'as' => 'tags.index',
+    'uses' => 'ProductController@tagsIndex'
+]);
+// 통합검색
+Route::get('search', [
+    'as' => 'products.search',
+    'uses' => 'ProductController@search',
+]);
+
 // 리소스, 태그, 카테고리
 Route::resource('products', 'ProductController');
 Route::get('tags/{slug}/products', [
@@ -62,7 +73,6 @@ Route::get('olds/{product}', [
     'uses' => 'ProductController@show',
 ]);
 
-//Route::resource('olds', 'OldController', ['only' => ['index', 'create', 'store', 'show']]);
 Route::get('tags/{slug}/olds', [
     'as' => 'tags.olds.index',
     'uses' => 'ProductController@index',
@@ -78,6 +88,36 @@ Route::get('olds/{product}/options', [
     'uses' => 'ProductController@optionEdit'
 ]);
 Route::resource('olds.options', 'OptionController', ['only' => 'store']);
+
+/**
+ * 1-1. 교육생몰 관련
+ *      참고: 1.에서 금액적인 부분만 다름
+ */
+Route::get('secrets', [
+    'as' => 'secrets.index',
+    'uses' => 'ProductController@index',
+]);
+Route::get('secrets/{product}/edit', [
+    'as' => 'secrets.edit',
+    'uses' => 'ProductController@edit',
+]);
+
+Route::get('secrets/{product}', [
+    'as' => 'secrets.show',
+    'uses' => 'ProductController@show',
+]);
+
+Route::get('categories/{category}/secrets', [
+    'as' => 'categories.secrets.index',
+    'uses' => 'ProductController@index',
+]);
+
+Route::get('secrets/{product}/options', [
+    'as' => 'secrets.edit.option',
+    'uses' => 'ProductController@optionEdit'
+]);
+Route::resource('secrets.options', 'OptionController', ['only' => 'store']);
+
 
 
 /**
@@ -163,9 +203,8 @@ Route::get('tags/{slug}/articles', [
 
 Route::get('shops', [
     'as' => 'shops.index',
-    'uses' => 'WelcomeController@shop'
+    'uses' => 'ShopController@index'
 ]);
-Route::resource('certifications', 'CertificationController');
 
 /**
  * 6. 공통
@@ -259,15 +298,10 @@ Route::get('auth/orders', [
     'as' => 'users.order',
     'uses' => 'HomeController@order'
 ]);
-// 작성글 관리(작업중) ******************************
+// 작성글 관리(작업중)
 Route::post('auth/manage', [
     'as' => 'users.manage',
     'uses' => 'UserController@manage'
-]);
-// 내 프로필(작업중) ********************************
-Route::post('auth/profile', [
-    'as' => 'users.profile',
-    'uses' => 'UserController@profile'
 ]);
 
 
@@ -300,7 +334,16 @@ Route::get('payments/complete', [
     'as' => 'payment.check',
     'uses' => 'OrderController@checkPayment'
 ]);
-
+// 메인페이지 수정
+Route::get('admin/edit/main', [
+    'as' => 'admin.edit.main',
+    'uses' => 'AdminController@editMain'
+]);
+// 광고 저장
+Route::post('blurb', [
+    'as' => 'blurb.store',
+    'uses' => 'AdminController@storeBlurb'
+]);
 
 
 /**
@@ -333,10 +376,7 @@ Route::get('npay/order/{item_list}/{ship_type?}', [
     'uses' => 'NPayController@makeOrder'
 ]);
 
-/*Route::post('npay/cart', [
-    'as' => 'npay.cart',
-    'uses' => 'NPayController@inCart'
-]);*/
+
 
 Route::get('npay/items', [
     'as' => 'npay.items',

@@ -1,15 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
-  @php $viewName = 'products.edit' @endphp
+  @php
+    if(str_contains(request()->url(), 'olds')){
+        $viewName = 'olds.edit';
+        $prefix = 'olds.';
+        $isOld = true;
+    }else{
+        $viewName = 'products.edit';
+        $prefix = 'products.';
+        $isOld = false;
+    }
+  @endphp
   <div class="page-header">
     <h4>
-      <a href="{{ route('products.index') }}">
-        BC몰
+      <a href="{{ route($prefix . 'index') }}">
+        {{ $isOld ? '중고' : 'BC몰' }}
       </a>
       <small>
         / 상품 수정
-        / {{ $product->ad_short_title }}
+        / {{ $product->ad_title }}
       </small>
     </h4>
   </div>

@@ -17,7 +17,7 @@
                             <dd>색상 : {{ $item->option->color }} // 사이즈
                                 : {{ $item->option->size }}</dd>
                             <dt>가격(수량 {{ $item->count }}개)</dt>
-                            <dd>{{ $item->option->product->price * $item->count }}원</dd>
+                            <dd>{{ $item->option->product->price * ($currentUser->isStudent() ? 0.9 : 1) * $item->count }}원</dd>
                         </dl>
                     </div>
                 </div>

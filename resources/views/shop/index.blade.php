@@ -5,6 +5,15 @@
         .img-w100 {
             width: 100%;
         }
+
+        .nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+            color: #fff;
+            background-color: #5174f9;
+        }
+
+        .nav-pills>li>a {
+            color : #636b6f;
+        }
     </style>
 @endsection
 

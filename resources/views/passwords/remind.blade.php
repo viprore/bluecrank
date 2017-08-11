@@ -6,7 +6,7 @@
 
     <div class="page-header">
       <h4>
-        비밀번호 바꾸기 신청
+        비밀번호 변경 신청
       </h4>
       <p class="text-muted">
         회원가입한 이메일로 신청한 후, 메일박스를 확인하세요.
@@ -19,7 +19,7 @@
     </div>
 
     <button class="btn btn-primary btn-lg btn-block" type="submit">
-      비밀번호 바꾸기 메일 발송
+      비밀번호 변경 메일 발송
     </button>
   </form>
 @stop

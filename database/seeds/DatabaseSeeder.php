@@ -39,7 +39,6 @@ class DatabaseSeeder extends Seeder
         App\Article::truncate();
         App\Attachment::truncate();
         App\Comment::truncate();
-        App\Market::truncate();
         App\Option::truncate();
         App\Product::truncate();
         App\Review::truncate();
@@ -53,7 +52,6 @@ class DatabaseSeeder extends Seeder
         /* Main Seeding */
         $this->call(UsersTableSeeder::class);
         $this->call(ArticlesTableSeeder::class);
-        $this->call(MarketsTableSeeder::class);
         $this->call(ProductsTableSeeder::class);
 
         /* 변수 선언 */
@@ -75,9 +73,6 @@ class DatabaseSeeder extends Seeder
 
         /* 아이템, 주문, 배송지 */
         $this->call(BuyProcessRelatedTableSeeder::class);
-
-        /* 인증 예약 */
-        $this->call(CertificationsTableSeeder::class);
 
    }
 

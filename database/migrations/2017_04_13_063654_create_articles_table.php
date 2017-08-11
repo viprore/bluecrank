@@ -28,7 +28,7 @@ class CreateArticlesTable extends Migration
         });
 
         if (config('database.default') == 'mysql') {
-            DB::statement('ALTER TABLE articles ADD FULLTEXT search(title, content)');
+            DB::statement('ALTER TABLE articles ADD FULLTEXT search(title, content) WITH PARSER ngram');
         }
     }
 

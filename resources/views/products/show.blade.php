@@ -160,29 +160,6 @@
             src="http://pay.naver.com/customer/js/{{ $isMobile ? 'mobile/' : '' }}naverPayButton.js"
             charset="UTF-8"></script>
     <script type="text/javascript">//<!CDATA[
-        function checkOption(selectBox, nonSelectedIndex, optionName) {
-            if (selectBox.selectedIndex == nonSelectedIndex) {
-                alert("상품 옵션을 선택해 주세요. (" + optionName + ")");
-                return false;
-            }
-            return true;
-        }
-        function checkShippingPrice(radio) {
-            var len = radio.length;
-            if (len == undefined) {
-                if (radio.checked) {
-                    return true;
-                }
-            } else {
-                for (var i = 0; i < len; i++) {
-                    if (radio[i].checked) {
-                        return true;
-                    }
-                }
-            }
-            alert("배송비를 선택해 주세요.");
-            return false;
-        }
         function buy_nc(url) {
             var optionId = $('#select_option option:selected').val();
             var count = parseInt($('.value1').text(), 10);
@@ -227,16 +204,13 @@
                 @if($isMobile)
                     location.href = '/npay/wish/' + res.id;
                 @else
-                    window.open('/npay/wish/' + res.id, "", "scrollbars=yes,width=400,height=267");
+                window.open('/npay/wish/' + res.id, "", "scrollbars=yes,width=400,height=267");
                 @endif
             });
 
             return false;
         }
-        function not_buy_nc() {
-            alert("죄송합니다. 네이버페이로 구매가 불가한 상품입니다.");
-            return false;
-        }
+
         //]]></script>
     <!-- 네이버 페이 스크립트 끝(헤더 파트) -->
 @stop
@@ -245,9 +219,12 @@
         if(str_contains(request()->url(), 'product')){
             $viewName = 'products.show';
             $prefix = 'products.';
-        }else{
+        }elseif(str_contains(request()->url(), 'olds')){
             $viewName = 'olds.show';
             $prefix = 'olds.';
+        }else{
+            $viewName = 'secrets.show';
+            $prefix = 'secrets.';
         }
     @endphp
 
@@ -265,21 +242,13 @@
     </div>
 
     <div class="row container__article">
-        {{--<div class="col-md-3 sidebar__article">
-            <aside>
-                @include('articles.partial.search')
-
-                @include('tags.partial.index')
-            </aside>
-        </div>--}}
-
         <div class="col-md-12 list__article">
             <div class="form-group">
-
                 @if($product->options->count() == 0)
                     해당 옵션이 존재하지 않습니다.
                     옵션을 등록하시고 판매하세요!
                 @else
+                    {{-- row1 : 상품 캐러셀 & 간략 정보 & 수량 --}}
                     <div class="row">
                         <div class="col-md-4">
                             <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
@@ -326,16 +295,22 @@
                             </div>
                             <div class="price">
                                 <h5>가격</h5>
-                                <p>{{ number_format($product->price) }}&nbsp;원</p>
-                            </div>
+                                @if(str_contains($prefix, 'secrets'))
+                                    <p>{{ number_format($product->price * 0.9) }}&nbsp;원<s
+                                                style="font-weight:normal;font-size:13px;">(원가
+                                            : {{ number_format($product->price) }}&nbsp;원)</s></p>
+                                @else
+                                    <p>{{ number_format($product->price) }}&nbsp;원</p>
+                                @endif
 
+                            </div>
                             <div class="option-quantity">
                                 <div class="option-quantity-left">
                                     <h5>옵션 선택 : </h5>
                                     <select name="select_option[]" id="select_option" class="form-control">
                                         @foreach($product->options as $option)
                                             <option value="{{ $option->id }}" {!! (isset($sel_item) && $option->id == $sel_item->option->id) ? 'selected' : '' !!}>
-                                                {{ !empty($option->color) ? ($option->color . " - (" . $option->size .")") : $option->size }}
+                                                {{ !empty($option->color) ? ($option->color . "(" . $option->size .")") : $option->size }} {{ $option->stock == 0 ? ' - 품절' : ' - 재고 : ' . $option->stock . ' 개' }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -346,7 +321,8 @@
                                     <div class="quantity">
                                         <div class="quantity-select">
                                             <div class="entry quantity-ctrl value-minus1">&nbsp;</div>
-                                            <div class="entry quantity-count value1"><span>{{ isset($sel_item) ? $sel_item->count : '1' }}</span></div>
+                                            <div class="entry quantity-count value1">
+                                                <span>{{ isset($sel_item) ? $sel_item->count : '1' }}</span></div>
                                             <div class="entry quantity-ctrl value-plus1 active">&nbsp;</div>
                                         </div>
                                     </div>
@@ -356,24 +332,27 @@
 
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
 
+                    {{-- row2 : 품목 조작부(카트에서 쓰이는 1개 품목 단위 조작) --}}
                     <div class="form-group text-center my-6">
-                        <button type="button" class="btn btn-danger {{ Auth::check() ? 'btn__want' : '' }}"
-                                {!! Auth::check() ? '' : 'data-toggle="tooltip" data-placement="left" title="로그인 후 사용 가능"' !!}>
-                            @if(Auth::check() && empty(Auth::user()->wantProducts->where('id', '=', $product->id)->first()))
-                                ♥
-                            @else
-                                ♡
-                            @endif
-                        </button>
-                        <button type="button" class="btn btn-success  btn__cart">카트</button>
+                        @if(!str_contains($prefix, 'secrets'))
+                            <button type="button" class="btn btn-danger {{ Auth::check() ? 'btn__want' : '' }}"
+                                    {!! Auth::check() ? '' : 'data-toggle="tooltip" data-placement="left" title="로그인 후 사용 가능"' !!}>
+                                @if(Auth::check() && empty(Auth::user()->wantProducts->where('id', '=', $product->id)->first()))
+                                    ♥
+                                @else
+                                    ♡
+                                @endif
+                            </button>
+                            <button type="button" class="btn btn-success  btn__cart">카트</button>
+                        @endif
                         <button type="button" class="btn btn-primary  btn__buy">구매</button>
                     </div>
-                    @if($currentUser ? $currentUser->isTester() : false)
+
+                    {{-- row3 : 네이버페이버튼(0719 Tester 한정) --}}
+                    @if(!str_contains($prefix, 'secrets'))
                         <div class="row">
                             <div class="col-xs-12 text-center">
                                 <script type="text/javascript">//<![CDATA[
@@ -394,31 +373,29 @@
                 @endif
             </div>
 
-
+            {{-- 상품 상세 내용(가이드는 BC몰만) --}}
             <article data-id="{{ $product->id }}" id="item__article">
                 <hr/>
-                {{--@include('products.partial.article', compact('product'))--}}
-
                 @include('tags.partial.list', ['tags' => $product->tags])
 
                 <div class="content__article">
                     {!! markdown($product->description) !!}
-                    <img src="{{ url("/icons/guide.jpg") }}"/>
-
+                    @if(!str_contains($prefix, 'olds'))
+                        <img src="{{ url("/icons/guide.jpg") }}"/>
+                    @endif
                 </div>
-
-                {{--@include('tags.partial.list', ['tags' => $product->tags])--}}
             </article>
 
+            {{-- 상품 조작부 --}}
             <div class="text-center action__article">
                 @can('update', $product)
-                    <a href="{{ route('products.edit.option', $product->id) }}" class="btn btn-info">
+                    <a href="{{ route($prefix.'edit.option', $product->id) }}" class="btn btn-info">
                         <i class="fa fa-plus"></i>
                         옵션
                     </a>
                 @endcan
                 @can('update', $product)
-                    <a href="{{ route('products.edit', $product->id) }}" class="btn btn-info">
+                    <a href="{{ route($prefix.'edit', $product->id) }}" class="btn btn-info">
                         <i class="fa fa-pencil"></i>
                         수정
                     </a>
@@ -517,7 +494,7 @@
                     type: 'DELETE',
                     url: '/products/' + productId
                 }).then(function () {
-                    window.location.href = '/products';
+                    window.location.href = '/' + '{{ str_replace('.', '', $prefix) }}';
                 });
             }
         });
@@ -529,7 +506,7 @@
                 type: 'POST',
                 url: '/wants/' + productId
             }).then(function () {
-                window.location.href = '/products/' + productId;
+                location.reload();
             });
 
         });
@@ -565,23 +542,6 @@
                     }
                 }]
             });
-
-
-            /*
-             if (confirm(optionTxt + " " + count + "개를 장바구니에 추가합니다.")) {
-             $.ajax({
-             //                    type: 'POST',
-             //                    url: '/carts/' + optionId + '/count/' + count
-             type: 'POST',
-             url: '/carts',
-             data: {
-             option_id: optionId,
-             count: count
-             }
-             }).then(function () {
-             window.location.href = '/products/' + productId;
-             });
-             }*/
         });
 
         $('.btn__buy').on('click', function (e) {
@@ -621,39 +581,6 @@
             });
 
         });
-
-        function post_to_url(path, params, method) {
-            method = method || "post"; // 전송 방식 기본값을 POST로
-
-
-            var form = document.createElement("form");
-            form.setAttribute("method", method);
-            form.setAttribute("action", path);
-
-            //히든으로 값을 주입시킨다.
-            for (var key in params) {
-                var hiddenField = document.createElement("input");
-                hiddenField.setAttribute("type", "hidden");
-                hiddenField.setAttribute("name", key);
-                hiddenField.setAttribute("value", params[key]);
-
-                form.appendChild(hiddenField);
-            }
-
-            document.body.appendChild(form);
-            form.submit();
-        }
-
-        function showObj(obj) {
-            var str = "";
-            for (key in obj) {
-                str += key + "=" + obj[key] + "\n";
-            }
-
-            alert(str);
-            return;
-        }
-
 
     </script>
 

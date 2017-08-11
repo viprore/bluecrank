@@ -31,7 +31,7 @@ class CreateProductsTable extends Migration
         });
 
         if (config('database.default') == 'mysql') {
-            DB::statement('ALTER TABLE products ADD FULLTEXT search(ad_title, ad_short_description)');
+            DB::statement('ALTER TABLE products ADD FULLTEXT search(ad_title, ad_short_description) WITH PARSER ngram');
         }
     }
 

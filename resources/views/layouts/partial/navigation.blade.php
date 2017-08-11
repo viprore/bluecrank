@@ -43,6 +43,13 @@
                         오프라인매장
                     </a>
                 </li>
+                @if(Auth::check() && Auth::user()->isStudent())
+                <li {!! str_contains(request()->path(), 'secrets') ? 'class="active"' : '' !!}>
+                    <a href="{{ route('secrets.index') }}">
+                        교육생몰
+                    </a>
+                </li>
+                @endif
                 {{--<li {!! str_contains(request()->path(), 'certifications') ? 'class="active"' : '' !!}>
                     <a href="{{ route('certifications.index') }}">
                         점검/인증예약
@@ -53,6 +60,12 @@
             <!-- Right Side Of Navbar -->
             <ul class="nav navbar-nav navbar-right">
                 <!-- Authentication Links -->
+                <li>
+                    <a href="{{ route('carts.index') }}">
+                        카트
+                    </a>
+                </li>
+
                 @if (Auth::guest())
                     <li>
                         <a href="{{ route('sessions.create', ['return' => urlencode($currentUrl)]) }}">
@@ -65,11 +78,7 @@
                         </a>
                     </li>
                 @else
-                    <li>
-                        <a href="{{ route('carts.index') }}">
-                            카트
-                        </a>
-                    </li>
+
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                             {{ Auth::user()->name }} <span class="caret"></span>

@@ -271,7 +271,7 @@ if (!function_exists('naverEpExport')) {
             ],
         );
 
-        $products = App\Product::all();
+        $products = App\Product::where('ad_status', '판매')->get();
         $categories = config('project.categories');
 
         foreach ($products as $product) {

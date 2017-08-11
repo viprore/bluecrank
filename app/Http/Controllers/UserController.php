@@ -13,7 +13,7 @@ class UserController extends Controller
     }
 
     /**
-     * Show the application registration form.
+     * 회원가입 폼
      *
      * @return \Illuminate\Http\Response
      */
@@ -23,13 +23,14 @@ class UserController extends Controller
     }
 
     /**
-     * Handle a registration request for the application.
+     * User 저장
      *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
+        // 이메일로 소셜 계정이 이미 존재하는지 여부 확인
         if ($socialUser = \App\User::socialUser($request->get('email'))->first()) {
             return $this->updateSocialAccount($request, $socialUser);
         }
@@ -38,7 +39,7 @@ class UserController extends Controller
     }
 
     /**
-     * Confirm user's email address.
+     * 이메일 인증 처리
      *
      * @param string $code
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
@@ -62,12 +63,11 @@ class UserController extends Controller
     }
 
     /**
-     * A user has logged into the application with social account before.
-     * But s/he tries to register an native account again.
-     * So updating his/her existing social account with the information.
+     * 소셜계정에 패스워드를 업데이트하여
+     * 네이티브로 로그인이 가능하게 한다.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\User $user
+     * @param Request $request
+     * @param User $user
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     protected function updateSocialAccount(Request $request, \App\User $user)
@@ -89,8 +89,7 @@ class UserController extends Controller
     }
 
     /**
-     * A user tries to register a native account for the first time.
-     * S/he has not logged into this service before with a social account.
+     * 네이티브 회원 생성
      *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
@@ -134,6 +133,8 @@ class UserController extends Controller
     }
 
     /**
+     * 계정 생성 성공시 로그인창으로 이동
+     *
      * @param $message
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
@@ -145,7 +146,7 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * TODO : 작성글 관리
      *
      * @return \Illuminate\Http\Response
      */
@@ -153,41 +154,7 @@ class UserController extends Controller
     {
         $user = \Auth::user();
 
-
-
         return view('products.show', compact('product', 'comments'));
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\Product $product
-     * @return \Illuminate\Http\Response
-     */
-    public function want(\App\Product $product)
-    {
-        $product->view_count = 0;
-        $product->save();
-//        $user = \App\User::find(1);
-//        $user->wantProducts()->attach(21);
-//        \Auth::user();
-//        $user = \App\User::find(2);
-//
-//        $user->wantProducts()->attach(21);
-
-
-
-//        if ($user->wantProducts()->findOrFail($product->id)) {
-//            $user->wantProducts()->detach($product->id);
-//            flash('해제');
-//        } else {
-//            $user->wantProducts()->attach($product->id);
-//            flash('등록');
-//        }
-
-//        return response()->json([], 204, [], JSON_PRETTY_PRINT);
-        return view('products.show', compact('product'));
-
     }
 
 

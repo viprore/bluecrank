@@ -45,7 +45,7 @@
     <label for="tags">태그</label>
     <select name="tags[]" id="tags" multiple="multiple" class="form-control">
 
-        @foreach($productTags as $tag)
+        @foreach((str_contains($prefix, 'olds') ? $oldTags : $productTags) as $tag)
             <option value="{{ $tag->id }}" {{ $product->tags->contains($tag->id) ? 'selected="selected"' : '' }}>
                 {{ $tag->name }}
             </option>
@@ -54,7 +54,7 @@
     {!! $errors->first('tags', '<span class="form-error">:message</span>') !!}
 </div>
 
-@if($viewName == 'products.edit')
+@if(str_contains($viewName, 'edit'))
     <div class="form-group">
         <label for="description">첨부된 이미지들</label>
         <table class="table text-center">
