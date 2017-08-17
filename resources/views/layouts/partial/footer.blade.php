@@ -1,4 +1,9 @@
 <style>
+    .footer__master {
+        padding-top: 1em;
+        border-top: 1px solid lightgray;
+    }
+
     .ft-title {
         font-size: 14px;
         color: #333;

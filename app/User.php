@@ -25,6 +25,7 @@ class User extends Authenticatable
         'naver_id',
         'google_id',
         'kakao_id',
+        'grade'
     ];
 
     /**
@@ -117,6 +118,10 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
+        if ($this->grade === 10) {
+            return true;
+        }
+
         return ($this->id === 1) ? true : false;
     }
 
@@ -127,7 +132,11 @@ class User extends Authenticatable
 
     public function isStudent()
     {
-        return ($this->id === 1) ? true : false;
+        if ($this->grade >= 5) {
+            return true;
+        }
+
+        return ($this->id === 1) || ($this->id === 63) || ($this->id === 65) ? true : false;
     }
 
     public function isSocialUser()

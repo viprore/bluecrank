@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Blurb;
+use App\Comment;
 use App\Order;
+use App\Product;
+use App\User;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -212,12 +215,33 @@ class AdminController extends Controller
         return view('admin.main', compact('blurbs', 'status_cnt'));
     }
 
+    public function manageUsers()
+    {
+        $users = User::orderBy('grade', 'desc')->get();
+        $status_cnt = \DB::table('orders')
+            ->select(\DB::raw('status, count(*) as status_count'))
+            ->groupBy('status')
+            ->get();
+        return view('admin.users', compact('users', 'status_cnt'));
+    }
+
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::find($id);
+        $user->update($request->all());
+
+        flash()->success($user->name . '의 회원 정보가 변경되었습니다.');
+
+        return redirect()->back();
+
+    }
+
     public function storeBlurb(Request $request)
     {
         $id = $request->input('id');
 
         $payload = [
-            'type' => $request->input('type'),
+            'target' => $request->input('target'),
             'order' => $request->input('order'),
             'link' => $request->input('link'),
             'title' => $request->input('title'),
@@ -267,5 +291,25 @@ class AdminController extends Controller
 
         $blurb->attachments()->create($payload);
 
+    }
+
+    public function manageProducts()
+    {
+        $products = Product::orderBy('is_old', 'asc')->get();
+        $status_cnt = \DB::table('orders')
+            ->select(\DB::raw('status, count(*) as status_count'))
+            ->groupBy('status')
+            ->get();
+        return view('admin.products', compact('products', 'status_cnt'));
+    }
+
+    public function manageComments()
+    {
+        $comments = Comment::where('user_id','!=', 1)->paginate(15);
+        $status_cnt = \DB::table('orders')
+            ->select(\DB::raw('status, count(*) as status_count'))
+            ->groupBy('status')
+            ->get();
+        return view('admin.comments', compact('comments', 'status_cnt'));
     }
 }

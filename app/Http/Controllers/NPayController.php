@@ -64,7 +64,7 @@ class NPayController extends Controller
                 $option = "색상 : " . $opt->color . " / 사이즈 : " . $opt->size;
             }
 
-            $itemStack = new ItemStack($id, $ec_mall_pid, $uprice, $name, false, $tprice, $option, $count);
+            $itemStack = new ItemStack($id, $ec_mall_pid, $name, $uprice, false, $tprice, $option, $count);
             $totalMoney += $tprice;
             $queryString .= '&' . $itemStack->makeQueryString();
         }
@@ -253,6 +253,7 @@ class NPayController extends Controller
             $item_ws = new ItemStack($uid, $ec_mall_pid, $name, $uprice, true, $image, $thumb, $url);
             $queryString .= '&' . $item_ws->makeQueryString();
         }
+
 
         $logs = 'query : ' . $queryString . "<br>\n";
 

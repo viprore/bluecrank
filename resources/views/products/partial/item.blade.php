@@ -25,17 +25,19 @@
         </div>
         <div class="ratings">
             <ul class="tags__product">
-                @foreach ($product->tags as $tag)
-                    <li>
-                        @if(str_contains($viewName, 'products'))
-                            <a href="{{ route('products.index', ['slug'=>$tag->slug]) }}">{{ $tag->name }}</a>
-                        @elseif(str_contains($viewName, 'olds'))
-                            <a href="{{ route('olds.index', ['slug'=>$tag->slug]) }}">{{ $tag->name }}</a>
-                        @else
-                            <a href="{{ route('tags.articles.index', $tag->slug) }}">{{ $tag->name }}</a>
-                        @endif
-                    </li>
-                @endforeach
+                @if($viewName != 'root')
+                    @foreach ($product->tags as $tag)
+                        <li>
+                            @if(str_contains($viewName, 'products'))
+                                <a href="{{ route('products.index', ['slug'=>$tag->slug]) }}">{{ $tag->name }}</a>
+                            @elseif(str_contains($viewName, 'olds'))
+                                <a href="{{ route('olds.index', ['slug'=>$tag->slug]) }}">{{ $tag->name }}</a>
+                            @else
+                                <a href="{{ route('tags.articles.index', $tag->slug) }}">{{ $tag->name }}</a>
+                            @endif
+                        </li>
+                    @endforeach
+                @endif
             </ul>
         </div>
     </div>

@@ -1,7 +1,7 @@
 <aside>
     <p class="lead">
         <i class="fa fa-list"></i>
-        Status
+        배송
     </p>
 </aside>
 <div class="list-group">
@@ -18,9 +18,12 @@
 <aside>
     <p class="lead">
         <i class="fa fa-pencil"></i>
-        웹 수정
+        관리
     </p>
 </aside>
 <div class="list-group">
-    <a href="{{ route('admin.edit.main') }}" class="list-group-item">메인페이지</a>
+    <a href="{{ route('admin.edit.main') }}" class="list-group-item">메인페이지 수정</a>
+    <a href="{{ route('admin.manage.users') }}" class="list-group-item">회원관리</a>
+    <a href="{{ route('admin.manage.products') }}" class="list-group-item">상품관리</a>
+    <a href="{{ route('admin.manage.comments') }}" class="list-group-item">최근문의</a>
 </div>

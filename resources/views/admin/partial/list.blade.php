@@ -17,7 +17,7 @@
             <td class="text-center">{{ $data->id }}</td>
             <td class="text-center">{{ $data->created_at }}</td>
             <td><a href="{{ route('orders.show', $data->id) }}">
-                    {{ $data->items->count() > 0 ? $data->items->first()->option->product->ad_title . "외 " . $data->items->count() . "건" : '' }}
+                    {{ $data->items->count() > 0 ? $data->items->first()->option->product->ad_title . "외 " . $data->items->count() . "건" : '주문서에 기록된 상품이 없습니다' }}
                 </a></td>
             <td class="text-center">{{ $data->status }}</td>
             @if(str_contains(request()->path(), 'shipping'))

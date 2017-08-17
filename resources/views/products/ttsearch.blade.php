@@ -66,6 +66,156 @@
         }
 
 
+        /*아이템*/
+        .card .card-image {
+            overflow: hidden;
+            -webkit-transform-style: preserve-3d;
+            -moz-transform-style: preserve-3d;
+            -ms-transform-style: preserve-3d;
+            -o-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+        }
+
+        .card .card-image img {
+            -webkit-transition: all 0.4s ease;
+            -moz-transition: all 0.4s ease;
+            -ms-transition: all 0.4s ease;
+            -o-transition: all 0.4s ease;
+            transition: all 0.4s ease;
+        }
+
+        .card .card-image:hover img {
+            -webkit-transform: scale(1.1);
+            -moz-transform: scale(1.1);
+            -ms-transform: scale(1.1);
+            -o-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+
+        .card {
+            /*-webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+            -moz-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+            box-shadow: 2 1px 2px 0 rgba(0, 0, 0, 0.16), 0 1px 5px 0 rgba(0, 0, 0, 0.12);*/
+            border: transparent;
+        }
+
+        .padding-option {
+            padding: 24px;
+        }
+
+        .thumbnail {
+            padding: 0
+        }
+
+        .glyphicon-heart {
+            padding-right: 3px;
+            color: #ff514d;
+        }
+
+        .glyphicon-comment {
+            padding-left: 10px;
+            padding-right: 3px;
+            color: #6f80bd;
+        }
+
+        .img-product {
+            object-fit: contain;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .ratings {
+            margin-top: 0;
+            border-top: 1px solid lightgray;
+            padding-top: 10px;
+            padding-right: 10px;
+            padding-left: 10px;
+            color: #0E2231;
+        }
+
+        .ratings > p {
+            padding-top: 2px;
+            border-top: 1px solid lightgray;
+        }
+
+        .ratings > div > h5, .ratings > div > h6 {
+            margin: 0;
+        }
+
+        .ratings > div > h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .caption {
+            height: auto;
+            overflow: hidden;
+        }
+
+        .caption>h4 {
+            margin: 0;
+            margin-top: 6px;
+            margin-bottom: 1em;
+        }
+
+        .caption>h4 > a {
+            color: black;
+        }
+
+        .caption>p {
+            margin: 0;
+            color: darkgray;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .price {
+            display: inline-block;
+            float: right;
+            vertical-align: middle;
+            color: #475cdd;
+        }
+
+        .caption>h6 {
+            padding-right: 0.5em;
+            padding-top: 2px;
+            display: inline-block;
+            float: right;
+            vertical-align: middle;
+            margin: 0;
+            margin-top: 6px;
+        }
+
+        .tags__product {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-weight: 100;
+            font-size: 0.8em;
+        }
+
+        .tags__product li {
+            display: inline-block;
+            padding: 2px 8px;
+            margin-right: 0.6em;
+            background-color: #8fa9d5;
+            border-radius: 0;
+        }
+
+        .tags__product a {
+            background-color : transparent;
+            color: white;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .padding-option {
+                padding: 0;
+            }
+
+        }
+
+
     </style>
 @endsection
 

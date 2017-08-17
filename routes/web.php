@@ -339,10 +339,28 @@ Route::get('admin/edit/main', [
     'as' => 'admin.edit.main',
     'uses' => 'AdminController@editMain'
 ]);
+Route::get('admin/manage/users', [
+    'as' => 'admin.manage.users',
+    'uses' => 'AdminController@manageUsers'
+]);
+Route::post('users/{id}', [
+    'as' => 'admin.update.users',
+    'uses' => 'AdminController@updateUser'
+]);
 // 광고 저장
 Route::post('blurb', [
     'as' => 'blurb.store',
     'uses' => 'AdminController@storeBlurb'
+]);
+
+Route::get('admin/manage/products', [
+    'as' => 'admin.manage.products',
+    'uses' => 'AdminController@manageProducts'
+]);
+
+Route::get('admin/manage/comments', [
+    'as' => 'admin.manage.comments',
+    'uses' => 'AdminController@manageComments'
 ]);
 
 
@@ -425,10 +443,10 @@ Route::get('categories/{category}/markets', [
  * 로그인시 사용했던 페이지이나
  * 현재 미사용중(6월 말 까지 경과 보고 관련 데이터 제거)
  */
-/*Route::get('/home', [
+Route::get('/home', [
     'as' => 'home',
     'uses' => 'HomeController@index',
-]);*/
+]);
 
 /* 다국어 지원용이었으나 폐기됨 */
 /*Route::get('locale', [

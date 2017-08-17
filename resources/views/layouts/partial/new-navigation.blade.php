@@ -61,17 +61,26 @@
     /* 중단 네비게이션 */
     @media (min-width: 768px) {
         .navbar-form-alt > .form-group > .input-group {
-            padding-right: 7%;
-            padding-left: 7%;
+            padding-right: 20%;
+            padding-left: 20%;
+            padding-top: 12px;
         }
 
         .navbar-default .nav-product > li > a {
             padding-left: 0.6em;
             padding-right: 0.6em;
         }
+
+
     }
 
     @media (min-width: 992px) {
+        .navbar-form-alt > .form-group > .input-group {
+            padding-right: 7%;
+            padding-left: 7%;
+            padding-top: 0;
+        }
+
         .navbar-default .nav-product > li > a {
             padding-left: 1em;
             padding-right: 1em;
@@ -80,8 +89,9 @@
 
     @media (min-width: 1200px) {
         .navbar-form-alt > .form-group > .input-group {
-            padding-right: 15%;
-            padding-left: 15%;
+            padding-right: 12%;
+            padding-left: 12%;
+            padding-top: 0;
         }
 
         .navbar-default .nav-product > li > a {
@@ -201,7 +211,16 @@
         border-bottom: #dddddd solid 1px;
     }
 
+    @media (max-width: 768px) {
+        .navbar-brand > img {
+            height: 58px;
+            padding: 14px;
+        }
 
+        .navbar-toggle {
+            margin-right: 4px;
+        }
+    }
 </style>
 
 <nav id="header" class="navbar navbar-default navbar-static-top-top">
@@ -311,14 +330,14 @@
 
 
                 <!-- Branding Image -->
-                <a class="navbar-brand" href="{{ auth()->check() ? route('products.index') : route('root') }}">
+                <a class="navbar-brand" href="{{ auth()->check() ? route('root') : route('root') }}">
                     {{--<b>B L U E C R A N K</b>--}}
                     <img src="{{ url('icons/' .  'brand.png') }}"/>
                     {{--{{ config('project.name', 'Laravel') }}--}}
                 </a>
             </div>
 
-            <div class="collapse navbar-collapse" id="site-menu">
+            <div class="collapse navbar-collapse hidden-xs">
                 <!-- Right Side Of Navbar -->
                 <ul class="nav navbar-nav navbar-right">
                     @if(Auth::check() && Auth::user()->isStudent())
@@ -348,7 +367,7 @@
                     </li>
                 </ul>
 
-                <form method="get" action="{{ route('products.search') }}" role="search" class="navbar-form-alt">
+                <form method="get" action="{{ route('products.search') }}" role="search" class="navbar-form-alt hidden-xs">
                     <div class="form-group">
                         <div class="input-group">
                             <input type="text" name="q" class="form-control form-search" placeholder="SCR2 Plus">
@@ -362,9 +381,9 @@
                         <div class="row search-tag text-center">
                             <a href="{{ route('products.index') }}?slug=giant">자이언트</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
                             <a href="{{ route('products.index') }}?slug=canon">캐논데일</a><u
-                                    class="a-divider hidden-sm hidden-xs">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</u>
-                            <a class="hidden-sm hidden-xs" href="#">SCR2</a><u class="a-divider hidden-sm hidden-xs">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</u>
-                            <a class="hidden-sm hidden-xs" href="{{ route('products.index') }}?slug=fuji">후지</a>
+                                    class="a-divider hidden-md">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</u>
+                            <a class="hidden-md" href="#">SCR2</a><u class="a-divider hidden-md">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</u>
+                            <a class="hidden-md" href="{{ route('products.index') }}?slug=fuji">후지</a>
                         </div>
 
 
@@ -373,8 +392,8 @@
 
 
             </div>
-            <div class="visible-xs">
-                <div class="collapse navbar-collapse" id="user-menu">
+            <div class="visible-xs hidden-xs">
+                <div class="collapse navbar-collapse">
                     <!-- Right Side Of Navbar -->
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
@@ -431,7 +450,7 @@
                         </li>
                         <li {!! str_contains(request()->path(), 'wants') ? 'class="active"' : '' !!}>
                             <a href="{{ route('wants.index') }}" title="관심목록">
-                                관심목록록
+                                관심목록
                             </a>
                         </li>
 
@@ -490,7 +509,209 @@
                         </a>
                     </li>
                 </ul>
+
+                <hr class="visible-xs" />
+                <form method="get" action="{{ route('products.search') }}" role="search" class="navbar-form-alt visible-xs">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control form-search" placeholder="SCR2 Plus">
+                            <span class="input-group-btn">
+                                    <button class="btn btn-default btn-nav-search">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                        </div>
+
+                        <div class="row search-tag text-center">
+                            <a href="{{ route('products.index') }}?slug=giant">자이언트</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                            <a href="{{ route('products.index') }}?slug=canon">캐논데일</a><u
+                                    class="a-divider hidden-md">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</u>
+                            <a class="hidden-md" href="#">SCR2</a><u class="a-divider hidden-md">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</u>
+                            <a class="hidden-md" href="{{ route('products.index') }}?slug=fuji">후지</a>
+                        </div>
+
+
+                    </div>
+                </form>
             </div>
+
+            <div class="visible-xs">
+                <div class="collapse navbar-collapse" id="site-menu">
+                    <!-- Right Side Of Navbar -->
+                    <ul class="nav navbar-nav navbar-right">
+                        @if(Auth::check() && Auth::user()->isStudent())
+                            <li {!! str_contains(request()->path(), 'secrets') ? 'class="active"' : '' !!}>
+                                <a href="{{ route('secrets.index') }}">
+                                    교육생몰
+                                </a>
+                            </li>
+                            <div class="li-divider hidden-xs">|</div>
+                        @endif
+                        <li {!! str_contains(request()->path(), 'shops') ? 'class="active"' : '' !!}>
+                            <a href="{{ route('shops.index') }}">
+                                패밀리샵
+                            </a>
+                        </li>
+                        <div class="li-divider hidden-xs">|</div>
+                        <li>
+                            <a href="#">
+                                이벤트
+                            </a>
+                        </li>
+                        <div class="li-divider hidden-xs">|</div>
+                        <li {!! str_contains(request()->path(), ['tags', 'articles']) ? 'class="active"' : '' !!}>
+                            <a href="{{ route('articles.index') }}">
+                                커뮤니티
+                            </a>
+                        </li>
+                    </ul>
+
+                    <form method="get" action="{{ route('products.search') }}" role="search" class="navbar-form-alt hidden-xs">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" name="q" class="form-control form-search" placeholder="SCR2 Plus">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default btn-nav-search">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                            </div>
+
+                            <div class="row search-tag text-center">
+                                <a href="{{ route('products.index') }}?slug=giant">자이언트</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                                <a href="{{ route('products.index') }}?slug=canon">캐논데일</a><u
+                                        class="a-divider hidden-md">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</u>
+                                <a class="hidden-md" href="#">SCR2</a><u class="a-divider hidden-md">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</u>
+                                <a class="hidden-md" href="{{ route('products.index') }}?slug=fuji">후지</a>
+                            </div>
+
+
+                        </div>
+                    </form>
+
+
+                </div>
+                <div class="collapse navbar-collapse" id="user-menu">
+                    <!-- Right Side Of Navbar -->
+                    <ul class="nav navbar-nav navbar-right">
+                        <!-- Authentication Links -->
+                        @if (Auth::guest())
+                            <li {!! str_contains(request()->path(), 'auth/login') ? 'class="active"' : '' !!}>
+                                <a href="{{ route('sessions.create', ['return' => urlencode($currentUrl)]) }}">
+                                    로그인
+                                </a>
+                            </li>
+                        @else
+
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-expanded="false">
+                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                </a>
+
+                                <ul class="dropdown-menu" role="menu">
+                                    @if(Auth::user()->isAdmin())
+
+                                    @endif
+
+                                    <li>
+                                        <a href="{{ route('orders.index') }}">
+                                            주문내역
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            작성글 관리
+                                        </a>
+                                    </li>
+
+
+                                    <li>
+                                        <a href="{{ route('sessions.destroy') }}">
+                                            로그아웃
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
+                        @if(Auth::check() && Auth::user()->isAdmin())
+                            <li {!! str_contains(request()->path(), 'admin') ? 'class="active"' : '' !!}>
+                                <a href="{{ route('admin.index') }}" title="관리자 페이지">
+                                    관리자
+                                </a>
+                            </li>
+                        @endif
+                        <li {!! str_contains(request()->path(), 'carts') ? 'class="active"' : '' !!}>
+                            <a href="{{ route('carts.index') }}" title="카트">
+                                카트
+                            </a>
+                        </li>
+                        <li {!! str_contains(request()->path(), 'wants') ? 'class="active"' : '' !!}>
+                            <a href="{{ route('wants.index') }}" title="관심목록">
+                                관심목록
+                            </a>
+                        </li>
+
+
+                    </ul>
+                </div>
+            </div>
+
+            {{--<div class="collapse navbar-collapse visible-xs" id="site-menu">
+                <!-- Right Side Of Navbar -->
+                <ul class="nav navbar-nav navbar-right">
+                    @if(Auth::check() && Auth::user()->isStudent())
+                        <li {!! str_contains(request()->path(), 'secrets') ? 'class="active"' : '' !!}>
+                            <a href="{{ route('secrets.index') }}">
+                                교육생몰
+                            </a>
+                        </li>
+                        <div class="li-divider hidden-xs">|</div>
+                    @endif
+                    <li {!! str_contains(request()->path(), 'shops') ? 'class="active"' : '' !!}>
+                        <a href="{{ route('shops.index') }}">
+                            패밀리샵
+                        </a>
+                    </li>
+                    <div class="li-divider hidden-xs">|</div>
+                    <li>
+                        <a href="#">
+                            이벤트
+                        </a>
+                    </li>
+                    <div class="li-divider hidden-xs">|</div>
+                    <li {!! str_contains(request()->path(), ['tags', 'articles']) ? 'class="active"' : '' !!}>
+                        <a href="{{ route('articles.index') }}">
+                            커뮤니티
+                        </a>
+                    </li>
+                </ul>
+
+                <form method="get" action="{{ route('products.search') }}" role="search" class="navbar-form-alt hidden-xs">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control form-search" placeholder="SCR2 Plus">
+                            <span class="input-group-btn">
+                                    <button class="btn btn-default btn-nav-search">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </span>
+                        </div>
+
+                        <div class="row search-tag text-center">
+                            <a href="{{ route('products.index') }}?slug=giant">자이언트</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                            <a href="{{ route('products.index') }}?slug=canon">캐논데일</a><u
+                                    class="a-divider hidden-md">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</u>
+                            <a class="hidden-md" href="#">SCR2</a><u class="a-divider hidden-md">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</u>
+                            <a class="hidden-md" href="{{ route('products.index') }}?slug=fuji">후지</a>
+                        </div>
+
+
+                    </div>
+                </form>
+
+
+            </div>--}}
         </div>
     </div>
 

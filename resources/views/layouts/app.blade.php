@@ -53,6 +53,24 @@
 
 @yield('style')
 
+    <style>
+        .pagination {
+            margin: 1em 0;
+        }
+
+        .pagination>li>a, .pagination>li>span {
+            border: 1px solid transparent;
+        }
+
+        .pagination>.disabled>a, .pagination>.disabled>a:focus, .pagination>.disabled>a:hover, .pagination>.disabled>span, .pagination>.disabled>span:focus, .pagination>.disabled>span:hover {
+            display: none;
+            color: #777;
+            background-color: #fff;
+            border-color: transparent;
+            cursor: not-allowed;
+        }
+    </style>
+
 <!-- Scripts -->
 
     <script>

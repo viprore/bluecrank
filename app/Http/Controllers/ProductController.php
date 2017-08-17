@@ -57,9 +57,19 @@ class ProductController extends Controller implements Cacheable
         );
 
         // 운영자가 아닐 경우 판매중인 상품만 전시
-        if (!\Auth::check() || !$request->user()->isAdmin()) {
+        if (!\Auth::check()) {
+            // 게스트
             $query = $query->whereIn('ad_status', ['판매', '매진']);
+        }else{
+            if ($request->user()->isAdmin()) {
+                $query = $query->whereIn('ad_status', ['준비중', '판매', '매진']);
+            }else if (str_contains($request->url(), 'secrets') && $request->user()->isStudent()) {
+                $query = $query->whereIn('ad_status', ['준비중', '판매', '매진']);
+            }else{
+                $query = $query->whereIn('ad_status', ['판매', '매진']);
+            }
         }
+
 
         // 검색 관련 쿼리 및 캐싱
         $cacheKey = cache_key('products.index');

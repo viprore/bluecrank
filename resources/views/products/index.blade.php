@@ -56,7 +56,7 @@
             padding-top: 1em;
         }
 
-/*아이템*/
+        /*아이템*/
         .card .card-image {
             overflow: hidden;
             -webkit-transform-style: preserve-3d;
@@ -196,6 +196,17 @@
             background-color : transparent;
             color: white;
             text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .padding-option {
+                padding: 0;
+            }
+
+            .padding-12 {
+                padding: 0;
+            }
+
         }
     </style>
 @endsection

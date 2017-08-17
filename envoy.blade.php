@@ -50,6 +50,7 @@ ln -nfs {{ $release_dir }}/{{ $distname }} {{ $project_root }};
 sudo chmod -R 775 {{ $shared_dir }}/storage;
 sudo chmod -R 775 {{ $shared_dir }}/cache;
 sudo chmod -R 775 {{ $shared_dir }}/files;
+sudo chown -R viprore /home/deployer/www/bluecrank/;
 chgrp -h -R www-data {{ $release_dir }}/{{ $distname }};
 
 sudo service nginx restart;

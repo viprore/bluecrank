@@ -40,7 +40,7 @@ class Product extends Model
      * @var array
      */
     protected $with = [
-
+        'tags'
     ];
 
     /**

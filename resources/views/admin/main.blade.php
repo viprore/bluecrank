@@ -17,11 +17,11 @@
     </div>
 
     <div class="row">
-        <div class="col-md-3 sidebar__article">
+        <div class="col-md-2 sidebar__article">
             @include('admin.partial.menu', $statusList)
         </div>
 
-        <div class="col-md-9 list__article">
+        <div class="col-md-10 list__article">
 
             @foreach($blurbs as $blurb)
                 <div class="row">
